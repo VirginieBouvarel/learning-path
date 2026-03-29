@@ -1,0 +1,73 @@
+﻿Compétence,Acquise,Catégorie,Phase,Étape
+Timeouts sur les API externes,No,Performances,Phase 5,5
+Docker multi-stage — JDK build vers JRE léger,No,CI/CD,Phase 7,1
+Implémenter Problem Details RFC 7807,No,Sécurité,Phase 1,4
+"Headers HTTP de sécurité (CSP, X-Frame-Options, HSTS)",No,Sécurité,Phase 6,4
+Créer un projet Spring Boot avec Spring Initializr,No,CI/CD,Phase 0,2
+Pattern Builder,No,Design patterns,Phase 4,4
+Grand refactoring guidé par les tests,No,Refactoring,Phase 4,7
+Composable headless useAsync (infrastructure),No,Design patterns,Phase 2,9
+Template literal types pour les routes API,No,Typage fort,Phase 2,4
+"Mettre en place ESLint, Prettier et Husky",No,CI/CD,Phase 0,4
+Pattern never pour l'exhaustivité,No,Typage fort,Phase 2,2
+Métriques Actuator — identifier les endpoints lents,No,Performances,Phase 6,5
+"Value Objects Java (record, compact constructor)",No,Typage fort,Phase 3,2
+"Result pattern (Ok/Err, AppError union)",No,Typage fort,Phase 2,3
+Installer Java 21 via SDKMAN,No,CI/CD,Phase 0,1
+Utiliser @WebMvcTest et @SpringBootTest,No,TDD,Phase 1,5
+Pattern Decorator — logging et métriques,No,Design patterns,Phase 6,2
+Architecture hexagonale back — domain/application/infrastructure,No,Archi hexagonale,Phase 4,1
+Écrire des migrations SQL avec Flyway,No,CI/CD,Phase 1,3
+Persister des données avec JPA et Flyway,No,Archi hexagonale,Phase 1,3
+Domain Events nommés en langage métier,No,DDD,Phase 5,1
+Pagination avec Pageable Spring Data,No,Performances,Phase 5,3
+Spring Security + JWT stateless,No,Sécurité,Phase 3,4
+Anti-Corruption Layer côté front,No,Archi hexagonale,Phase 5,4
+Pattern Factory,No,Design patterns,Phase 4,4
+Créer des use cases purs testables sans Vue,No,Archi hexagonale,Phase 2,7
+Utiliser Pinia comme état seul (jamais de fetch direct),No,Design patterns,Phase 2,8
+Architecture hexagonale front — domain/infrastructure/stores/ui,No,Archi hexagonale,Phase 4,2
+Pattern Observer avec Spring Events,No,Design patterns,Phase 5,1
+Configurer Docker Compose pour l'infra locale,No,CI/CD,Phase 0,5
+"Discriminated unions (AsyncState, SessionState)",No,Typage fort,Phase 2,2
+Pipeline CI/CD complet GitHub Actions (5 étapes),No,CI/CD,Phase 7,2
+Créer des index SQL pour les performances,No,Performances,Phase 1,3
+Health checks et graceful shutdown,No,CI/CD,Phase 7,3
+Écrire un ADR (Architecture Decision Record),No,CI/CD,Phase 0,7
+Configurer Vue 3 avec TypeScript strict,No,Typage fort,Phase 0,3
+Configurer GitLab et le workflow MR,No,CI/CD,Phase 0,8
+Écrire des mappers comme Anti-Corruption Layer,No,Archi hexagonale,Phase 2,6
+Composable UI avec cycle de vie Vue (ui/composables),No,Design patterns,Phase 2,10
+BCrypt pour les mots de passe,No,Sécurité,Phase 3,4
+Détecter et corriger les N+1 queries JPA,No,Performances,Phase 4,6
+Contrat OpenAPI 3 — spec YAML,No,CI/CD,Phase 6,1
+Créer un LogService typé (port + adapters),No,Archi hexagonale,Phase 2,5
+Scan de vulnérabilités Trivy en CI,No,Sécurité,Phase 7,2
+Créer un endpoint REST avec Spring Boot,No,Archi hexagonale,Phase 1,2
+Gestion des secrets en production,No,Sécurité,Phase 7,4
+Installer et configurer WSL2 et ZSH,No,CI/CD,Phase 0,9
+Génération de client TypeScript depuis OpenAPI,No,Typage fort,Phase 6,1
+Composable useHintStream headless,No,Design patterns,Phase 5,2
+Cache Redis avec @Cacheable et @CacheEvict,No,Performances,Phase 5,3
+Principe SOLID — Single Responsibility,No,Design patterns,Phase 3,3
+Refactoring guidé par les types,No,Refactoring,Phase 2,11
+Provider pattern — DI côté front,No,Design patterns,Phase 4,5
+Rate limiting avec Bucket4j,No,Sécurité,Phase 3,4
+SSE streaming — SseEmitter côté back,No,Archi hexagonale,Phase 5,2
+Container Docker non-root,No,Sécurité,Phase 7,2
+DDD — Aggregate Root,No,DDD,Phase 4,3
+Testcontainers — vraie DB en CI,No,TDD,Phase 6,3
+Principe SOLID — Open/Closed,No,Design patterns,Phase 3,3
+"Principe SOLID — Liskov, Interface Segregation, Dependency Inversion",No,Design patterns,Phase 3,3
+Pattern Strategy,No,Design patterns,Phase 4,4
+Écrire des tests JUnit 5 avec AssertJ,No,TDD,Phase 1,5
+Refactoring guidé par le compilateur Java,No,Refactoring,Phase 3,6
+Type guards avec validation runtime,No,Typage fort,Phase 2,4
+DDD — Domain Events,No,DDD,Phase 4,3
+Tests e2e Playwright front et back,No,TDD,Phase 6,3
+"Branded types TypeScript (KataId, UserId)",No,Typage fort,Phase 2,1
+Compound Component Vue,No,Design patterns,Phase 4,5
+Bean Validation et annotation custom @PasswordsMatch,No,Archi hexagonale,Phase 3,5
+Cycle TDD Red/Green/Refactor,No,TDD,Phase 1,1
+Déployer en prod avec http://Fly.io dès le jour 1,No,CI/CD,Phase 0,6
+Centraliser la gestion des erreurs avec @ControllerAdvice,No,Sécurité,Phase 1,4
