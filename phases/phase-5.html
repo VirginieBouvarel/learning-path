@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 5 — Events + SSE + Redis · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="../index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 5 — Events, SSE streaming, cache Redis</span>
+</nav>
+
+<div class="layout layout--guide">
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette vue d'ensemble</p>
+      <ul class="toc__list">
+        <li><a href="#vision">1 — Ce qui change dans l’expérience</a></li>
+        <li><a href="#chantiers">2 — Les chantiers</a></li>
+        <li><a href="#ordre">3 — Ordre recommandé</a></li>
+        <li><a href="#docs">4 — Docs utiles</a></li>
+        <li><a href="#checklist">Checklist</a></li>
+        <li><a href="#validation">Sortie de phase</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+    <div class="guide-header">
+      <span class="guide-header__phase-badge" style="background: var(--phase-5); color: #fff;">Phase 5</span>
+      <h1 class="guide-header__title">Events, SSE streaming, cache Redis + ACL front</h1>
+      <p class="guide-header__meta">Durée estimée : ~10h réparties sur 2 semaines</p>
+      <p class="guide-header__intro">La phase 5 rend KataSensei vivant. Les événements métier déclenchent des réactions découplées, le hint IA devient progressif grâce au streaming, les lectures répétitives passent par Redis et le front protège son domaine via une anti-corruption layer claire.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="../ressources.html?phase=Phase%205" class="subpage">📖 Ressources phase 5</a>
+        <a href="../references/arborescence.html" class="subpage">📄 Arborescence cible</a>
+        <a href="../references/checklist-securite.html" class="subpage">📄 Checklist sécurité</a>
+      </div>
+    </div>
+
+    <section class="guide-step" id="vision">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-5);">1</div>
+        <h2 class="guide-step__title">Ce qui change dans l’expérience utilisateur</h2>
+      </div>
+
+      <p>Le système ne répond plus seulement “une fois terminé”. Il commence à réagir au fil de l’eau. Lorsqu’un kata est complété, plusieurs conséquences peuvent suivre. Lorsqu’un hint est demandé, la réponse apparaît token par token. Lorsqu’une liste est lue souvent, Redis amortit la charge.</p>
+
+      <table>
+        <thead>
+          <tr><th>Sujet</th><th>Résultat attendu</th><th>Bénéfice</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Domain Events</td><td>Listeners spécialisés pour streak, badges, progression</td><td>SRP et évolutivité</td></tr>
+          <tr><td>SSE</td><td>Hint IA streamé côté front</td><td>Perception de rapidité et feedback progressif</td></tr>
+          <tr><td>Redis</td><td>Cache sur les lectures stables</td><td>Réduction du coût DB</td></tr>
+          <tr><td>ACL front</td><td>Mapping API → domaine local</td><td>Front plus robuste aux variations du backend</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="guide-step" id="chantiers">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-5);">2</div>
+        <h2 class="guide-step__title">Les chantiers de la phase</h2>
+      </div>
+
+      <h3>2.1 — Domain Events et listeners</h3>
+      <p>Créer des faits métier nommés proprement comme <code>KataCompleted</code> et les publier depuis les use cases. Chaque réaction annexe doit vivre dans son listener dédié.</p>
+
+      <h3>2.2 — Streaming de hints</h3>
+      <p>Mettre en place <code>SseEmitter</code> côté Spring et un composable type <code>useHintStream</code> côté Vue. L’objectif est de traiter le flux comme une primitive réutilisable, pas comme du code ad hoc collé dans un composant.</p>
+
+      <h3>2.3 — Cache Redis</h3>
+      <p>Choisir un ou deux cas de lecture vraiment répétitifs, puis mesurer la cohérence du cache avec les invalidations associées. Le cache doit accélérer, pas introduire des bugs fantômes.</p>
+
+      <h3>2.4 — Anti-Corruption Layer front</h3>
+      <p>Formaliser les mappers d’API dans l’infrastructure front pour que le domaine ne parle jamais le dialecte du backend ni des APIs externes.</p>
+    </section>
+
+    <section class="guide-step" id="ordre">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-5);">3</div>
+        <h2 class="guide-step__title">Ordre recommandé</h2>
+      </div>
+
+      <ol>
+        <li>Commencer par les Domain Events pour clarifier les responsabilités métier.</li>
+        <li>Brancher les listeners les plus simples, puis valider leurs tests indépendants.</li>
+        <li>Ajouter ensuite le streaming SSE de bout en bout avec un seul flux de hints.</li>
+        <li>Introduire Redis sur une lecture stable et tracer précisément les invalidations.</li>
+        <li>Finir par l’ACL front pour consolider les contrats manipulés côté Vue.</li>
+      </ol>
+
+      <div class="callout--warning"><strong>Vigilance</strong> La tentation est forte de cacher trop tôt ou de publier trop d’événements. N’ajoute un event ou un cache que si la responsabilité ou le coût qu’il traite est déjà tangible.</div>
+    </section>
+
+    <section class="guide-step" id="docs">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-5);">4</div>
+        <h2 class="guide-step__title">Docs utiles pour mener cette phase</h2>
+      </div>
+
+      <ul>
+        <li><a href="../ressources.html?phase=Phase%205">Ressources filtrées phase 5</a> pour Spring Events, SSE, Redis et cache Spring.</li>
+        <li><a href="../references/arborescence.html">Arborescence et testabilité</a> pour garder le bon emplacement des listeners, mappers et adapters.</li>
+        <li><a href="../references/checklist-securite.html">Checklist sécurité</a> pour cadrer les points de vigilance réseau, cache et exposition d’erreurs.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
+        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 5 sera rédigé avant l’implémentation complète.</p>
+      </div>
+    </section>
+
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">☑ Checklist de phase</h2>
+      <ul>
+        <li><input type="checkbox">Les événements métier sont nommés avec le vocabulaire du domaine.</li>
+        <li><input type="checkbox">Les listeners sont indépendants et testés séparément.</li>
+        <li><input type="checkbox">Le hint stream fonctionne de bout en bout via SSE.</li>
+        <li><input type="checkbox">Le cache Redis couvre un vrai cas d’usage et ses invalidations.</li>
+        <li><input type="checkbox">Le front mappe les DTOs API vers des objets domaine internes.</li>
+      </ul>
+    </section>
+
+    <section class="skills-summary" id="validation">
+      <h2>Ce que tu dois sentir à la sortie</h2>
+      <ul>
+        <li>Tu sais découpler un use case de ses effets secondaires.</li>
+        <li>Tu sais raisonner sur le temps réel côté produit sans perdre la maîtrise du code.</li>
+        <li>Tu sais où placer un mapper pour protéger le domaine front.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+</body>
+</html>

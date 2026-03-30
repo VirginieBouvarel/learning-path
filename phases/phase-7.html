@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 7 — CI/CD + prod · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="../index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 7 — CI/CD complète et mise en prod</span>
+</nav>
+
+<div class="layout layout--guide">
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette vue d'ensemble</p>
+      <ul class="toc__list">
+        <li><a href="#vision">1 — Ce que tu fiabilises</a></li>
+        <li><a href="#chantiers">2 — Les chantiers</a></li>
+        <li><a href="#ordre">3 — Ordre recommandé</a></li>
+        <li><a href="#docs">4 — Docs utiles</a></li>
+        <li><a href="#checklist">Checklist</a></li>
+        <li><a href="#validation">Sortie de phase</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+    <div class="guide-header">
+      <span class="guide-header__phase-badge" style="background: var(--phase-7); color: #fff;">Phase 7</span>
+      <h1 class="guide-header__title">CI/CD complète, Docker multi-stage, mise en prod</h1>
+      <p class="guide-header__meta">Durée estimée : ~6h réparties sur 1 semaine</p>
+      <p class="guide-header__intro">Dernière phase du parcours : la plateforme devient déployable et maintenable pour de vrais utilisateurs. Le pipeline minimal de la phase 0 se transforme en chaîne complète, la prod expose ses signaux vitaux et les secrets ne vivent jamais dans le code.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="../ressources.html?phase=Phase%207" class="subpage">📖 Ressources phase 7</a>
+        <a href="../references/workflow-gitlab.html" class="subpage">📄 Workflow Git</a>
+        <a href="../references/checklist-securite.html" class="subpage">📄 Checklist sécurité</a>
+      </div>
+    </div>
+
+    <section class="guide-step" id="vision">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-7);">1</div>
+        <h2 class="guide-step__title">Ce que tu fiabilises dans cette phase</h2>
+      </div>
+
+      <p>La valeur de cette phase n’est pas le YAML en soi, mais la confiance : savoir qu’un push qui passe la chaîne a de bonnes chances d’être déployable, observable et réversible. Le but est d’obtenir une mise en prod monotone, pas héroïque.</p>
+
+      <table>
+        <thead>
+          <tr><th>Sujet</th><th>Attendu</th><th>Risque couvert</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Docker multi-stage</td><td>Images plus petites et plus propres</td><td>Builds lents, images lourdes, surface d’attaque inutile</td></tr>
+          <tr><td>Pipeline complet</td><td>Unitaires, intégration, e2e, build, deploy</td><td>Déploiement de code insuffisamment validé</td></tr>
+          <tr><td>Actuator et health checks</td><td>État lisible de l’app, DB, Redis, dépendances critiques</td><td>Prod opaque ou diagnostics tardifs</td></tr>
+          <tr><td>Secrets management</td><td>Variables injectées hors du code</td><td>Fuite de credentials, configuration divergente</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="guide-step" id="chantiers">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-7);">2</div>
+        <h2 class="guide-step__title">Les chantiers de la phase</h2>
+      </div>
+
+      <h3>2.1 — Images de prod</h3>
+      <p>Préparer des Dockerfiles propres pour le back et le front, avec un stage de build et un stage de run orienté exécution. L’image finale ne doit contenir que ce qui est nécessaire.</p>
+
+      <h3>2.2 — Chaîne CI/CD complète</h3>
+      <p>Assembler les étapes validées précédemment en une séquence cohérente : unitaires, intégration, e2e, build image, déploiement conditionnel.</p>
+
+      <h3>2.3 — Santé de l’application</h3>
+      <p>Exposer des health checks utiles, activer le graceful shutdown, vérifier que la plateforme sait dire clairement “je suis prête”, “je suis dégradée” ou “je suis cassée”.</p>
+
+      <h3>2.4 — Configuration et secrets</h3>
+      <p>Externaliser la configuration sensible via les mécanismes CI et la plateforme d’hébergement. L’objectif est qu’un artefact identique puisse tourner selon son environnement.</p>
+    </section>
+
+    <section class="guide-step" id="ordre">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-7);">3</div>
+        <h2 class="guide-step__title">Ordre recommandé</h2>
+      </div>
+
+      <ol>
+        <li>Stabiliser les Dockerfiles et vérifier les builds localement.</li>
+        <li>Assembler le pipeline en réutilisant les commandes déjà prouvées aux phases précédentes.</li>
+        <li>Ajouter health checks et graceful shutdown avant le déploiement final.</li>
+        <li>Brancher les secrets via la plateforme CI/hébergement et supprimer toute dépendance à des secrets locaux committés.</li>
+        <li>Terminer par une répétition générale du déploiement et une checklist de mise en service.</li>
+      </ol>
+
+      <div class="callout--tip"><strong>Objectif final</strong> À la fin, quelqu’un d’autre que toi doit pouvoir comprendre comment démarrer, tester et déployer le projet sans te poser de question orale.</div>
+    </section>
+
+    <section class="guide-step" id="docs">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-7);">4</div>
+        <h2 class="guide-step__title">Docs utiles pour mener cette phase</h2>
+      </div>
+
+      <ul>
+        <li><a href="../ressources.html?phase=Phase%207">Ressources filtrées phase 7</a> pour Docker multi-stage, GitHub Actions, Actuator et Trivy.</li>
+        <li><a href="../references/workflow-gitlab.html">Workflow Git / review</a> pour garder une discipline de branche et de livraison lisible.</li>
+        <li><a href="../references/checklist-securite.html">Checklist sécurité</a> pour secrets, validation pré-prod, exposition des erreurs et contrôles finaux.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
+        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 7 sera rédigé avant l’implémentation complète.</p>
+      </div>
+    </section>
+
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">☑ Checklist de phase</h2>
+      <ul>
+        <li><input type="checkbox">Le back et le front disposent d’images de prod adaptées.</li>
+        <li><input type="checkbox">Le pipeline exécute unitaires, intégration, e2e, build et déploiement.</li>
+        <li><input type="checkbox">Les health checks remontent l’état des dépendances critiques.</li>
+        <li><input type="checkbox">Le graceful shutdown est configuré et testé.</li>
+        <li><input type="checkbox">Aucun secret de prod n’est stocké dans le repo.</li>
+        <li><input type="checkbox">Le README final permet un démarrage et un déploiement compréhensibles.</li>
+      </ul>
+    </section>
+
+    <section class="skills-summary" id="validation">
+      <h2>Ce que tu dois sentir à la sortie</h2>
+      <ul>
+        <li>Tu sais transformer un projet qui fonctionne en projet livrable.</li>
+        <li>Tu sais distinguer “testé localement” de “déployable avec confiance”.</li>
+        <li>Tu sais traiter la prod comme un système observable, pas comme une boîte noire.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+</body>
+</html>

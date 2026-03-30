@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 6 — OpenAPI + tests avancés · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="../index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 6 — OpenAPI, tests avancés et Decorator</span>
+</nav>
+
+<div class="layout layout--guide">
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette vue d'ensemble</p>
+      <ul class="toc__list">
+        <li><a href="#vision">1 — Ce que tu verrouilles</a></li>
+        <li><a href="#chantiers">2 — Les chantiers</a></li>
+        <li><a href="#ordre">3 — Ordre recommandé</a></li>
+        <li><a href="#docs">4 — Docs utiles</a></li>
+        <li><a href="#checklist">Checklist</a></li>
+        <li><a href="#validation">Sortie de phase</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+    <div class="guide-header">
+      <span class="guide-header__phase-badge" style="background: var(--phase-6); color: #fff;">Phase 6</span>
+      <h1 class="guide-header__title">Contrat OpenAPI, tests avancés, Decorator, docs</h1>
+      <p class="guide-header__meta">Durée estimée : ~10h réparties sur 2 semaines</p>
+      <p class="guide-header__intro">La phase 6 transforme le projet en produit techniquement crédible : contrat API vérifiable, client TypeScript généré, vraies intégrations testées avec infra réelle, parcours utilisateur validés par Playwright et instrumentation orientée prod.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="../ressources.html?phase=Phase%206" class="subpage">📖 Ressources phase 6</a>
+        <a href="../references/arborescence.html" class="subpage">📄 Arborescence cible</a>
+        <a href="../references/checklist-securite.html" class="subpage">📄 Checklist sécurité</a>
+      </div>
+    </div>
+
+    <section class="guide-step" id="vision">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-6);">1</div>
+        <h2 class="guide-step__title">Ce que tu verrouilles dans cette phase</h2>
+      </div>
+
+      <p>Le projet cesse de reposer uniquement sur des conventions implicites. À partir d’ici, le contrat d’API est explicite, le front consomme un client généré, les tests d’intégration parlent à de vraies dépendances et les scénarios e2e couvrent la valeur utilisateur visible.</p>
+
+      <table>
+        <thead>
+          <tr><th>Axe</th><th>But</th><th>Signe de réussite</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>OpenAPI</td><td>Une source de vérité contractuelle</td><td>Le front compile avec le client généré, la CI casse si la spec dérive</td></tr>
+          <tr><td>Decorators</td><td>Ajouter logs et métriques sans polluer le domaine</td><td>Les comportements observables s’ajoutent par composition</td></tr>
+          <tr><td>Testcontainers</td><td>Tester contre de vraies dépendances</td><td>Les migrations et comportements infra sont réellement exercés</td></tr>
+          <tr><td>Playwright</td><td>Valider les parcours clés</td><td>Un utilisateur peut aller au bout d’un scénario métier complet</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="guide-step" id="chantiers">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-6);">2</div>
+        <h2 class="guide-step__title">Les chantiers de la phase</h2>
+      </div>
+
+      <h3>2.1 — Contract-first OpenAPI</h3>
+      <p>Poser un YAML OpenAPI qui décrit réellement ce que l’API expose. Le contrat doit être assez précis pour générer un client TS utile et casser en CI si le backend diverge.</p>
+
+      <h3>2.2 — Decorator pattern</h3>
+      <p>Ajouter des comportements transverses comme le logging ou les métriques autour des repositories et services externes par composition, sans recontaminer le domaine.</p>
+
+      <h3>2.3 — Tests d’intégration avec Testcontainers</h3>
+      <p>Utiliser de vrais conteneurs PostgreSQL et Redis pour valider migrations, mapping et comportements réels d’infrastructure.</p>
+
+      <h3>2.4 — Playwright + observabilité</h3>
+      <p>Couvrir les parcours critiques côté navigateur et brancher Sentry côté prod pour sortir du simple “ça marche sur ma machine”.</p>
+    </section>
+
+    <section class="guide-step" id="ordre">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-6);">3</div>
+        <h2 class="guide-step__title">Ordre recommandé</h2>
+      </div>
+
+      <ol>
+        <li>Écrire ou nettoyer la spec OpenAPI avant de générer quoi que ce soit.</li>
+        <li>Faire consommer le client généré au front et stabiliser l’ACL.</li>
+        <li>Mettre les decorators autour des points où les logs et métriques apportent vraiment de la lisibilité.</li>
+        <li>Introduire Testcontainers, puis corriger les hypothèses cassées par la vraie infra.</li>
+        <li>Terminer par 2 ou 3 scénarios Playwright représentatifs et le branchement Sentry.</li>
+      </ol>
+
+      <div class="callout--info"><strong>Heuristique</strong> Si ton client généré ou tes tests containers révèlent des incohérences, considère-les comme de bonnes nouvelles. Le but de la phase est justement de faire remonter ces écarts avant la prod.</div>
+    </section>
+
+    <section class="guide-step" id="docs">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-6);">4</div>
+        <h2 class="guide-step__title">Docs utiles pour mener cette phase</h2>
+      </div>
+
+      <ul>
+        <li><a href="../ressources.html?phase=Phase%206">Ressources filtrées phase 6</a> pour OpenAPI, générateurs TS, Testcontainers, Playwright et Sentry.</li>
+        <li><a href="../references/arborescence.html">Arborescence et testabilité</a> pour garder les tests et adapters bien placés.</li>
+        <li><a href="../references/checklist-securite.html">Checklist sécurité</a> pour cadrer logs, monitoring, erreurs et exposition d’informations.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
+        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 6 sera rédigé avant l’implémentation complète.</p>
+      </div>
+    </section>
+
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">☑ Checklist de phase</h2>
+      <ul>
+        <li><input type="checkbox">La spec OpenAPI est versionnée et utilisée comme contrat.</li>
+        <li><input type="checkbox">Le front consomme un client généré plutôt que des appels à la main.</li>
+        <li><input type="checkbox">Les decorators ajoutent des comportements transverses sans modifier le domaine.</li>
+        <li><input type="checkbox">Les tests d’intégration tournent contre de vrais conteneurs.</li>
+        <li><input type="checkbox">2 à 3 scénarios Playwright couvrent les parcours à forte valeur.</li>
+        <li><input type="checkbox">Sentry ou un équivalent capte les erreurs de prod.</li>
+      </ul>
+    </section>
+
+    <section class="skills-summary" id="validation">
+      <h2>Ce que tu dois sentir à la sortie</h2>
+      <ul>
+        <li>Tu sais passer d’une API “décrite oralement” à un contrat exécutable.</li>
+        <li>Tu sais tester l’infra réelle sans te réfugier derrière des mocks optimistes.</li>
+        <li>Tu sais couvrir un flux utilisateur complet, pas seulement des fonctions isolées.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+</body>
+</html>

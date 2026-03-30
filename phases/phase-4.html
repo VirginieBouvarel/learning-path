@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 4 — Hexagonale complète · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="../index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 4 — Architecture hexagonale complète</span>
+</nav>
+
+<div class="layout layout--guide">
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette vue d'ensemble</p>
+      <ul class="toc__list">
+        <li><a href="#vision">1 — Ce que tu reconstruis</a></li>
+        <li><a href="#chantiers">2 — Les 4 chantiers</a></li>
+        <li><a href="#ordre">3 — Ordre recommandé</a></li>
+        <li><a href="#docs">4 — Docs utiles</a></li>
+        <li><a href="#checklist">Checklist</a></li>
+        <li><a href="#validation">Sortie de phase</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+    <div class="guide-header">
+      <span class="guide-header__phase-badge" style="background: var(--phase-4); color: #fff;">Phase 4</span>
+      <h1 class="guide-header__title">Architecture hexagonale complète + DDD + patterns front</h1>
+      <p class="guide-header__meta">Durée estimée : ~14h réparties sur 3 semaines</p>
+      <p class="guide-header__intro">La phase 4 est le grand basculement du projet : tu prends le code utile mais encore naïf des phases 1 à 3 et tu le restructures pour que le domaine soit testable, lisible et autonome des frameworks. C’est aussi l’entrée réelle de l’IA dans KataSensei avec les adapters Piston et Claude.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="../ressources.html?phase=Phase%204" class="subpage">📖 Ressources phase 4</a>
+        <a href="../references/arborescence.html" class="subpage">📄 Arborescence cible</a>
+        <a href="../references/ubiquitous-language.html" class="subpage">📄 Ubiquitous Language</a>
+        <a href="../references/conventions-front.html" class="subpage">📄 Conventions front</a>
+      </div>
+    </div>
+
+    <section class="guide-step" id="vision">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-4);">1</div>
+        <h2 class="guide-step__title">Ce que tu reconstruis vraiment</h2>
+      </div>
+
+      <p>Jusqu’ici, le projet prouve que les fonctionnalités existent. À partir d’ici, tu rends le système durable. Le but n’est pas de “faire de l’archi pour faire joli”, mais de faire en sorte qu’un changement métier n’oblige plus à traverser Spring, JPA, Vue, l’API IA et l’exécution sandbox en même temps.</p>
+
+      <table>
+        <thead>
+          <tr><th>Zone</th><th>Avant phase 4</th><th>Après phase 4</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Backend</td><td>Logique dispersée, dépendance forte à Spring</td><td>Domaine pur + ports + adapters</td></tr>
+          <tr><td>Frontend</td><td>Types et services mieux structurés mais encore proches de l’API</td><td>Domaine front autonome, mapping et UI découplés</td></tr>
+          <tr><td>Modélisation</td><td>Services centrés sur des opérations</td><td>Aggregate <code>KataSession</code>, événements métier et invariants</td></tr>
+          <tr><td>Intégrations</td><td>Appels externes difficiles à tester</td><td>Ports sortants pour Piston et l’AI sensei</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout--tip"><strong>Point de méthode</strong> Cette phase se mène au compilateur et aux tests. Tu ne réécris pas tout. Tu déplaces, tu extrais, tu renomme, puis tu remets les adapters autour du domaine.</div>
+    </section>
+
+    <section class="guide-step" id="chantiers">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-4);">2</div>
+        <h2 class="guide-step__title">Les 4 chantiers de la phase</h2>
+      </div>
+
+      <h3>2.1 — Hexagonale back</h3>
+      <p>Créer la séparation <code>domain/port/usecase/infrastructure</code> côté Spring Boot. Le domaine ne doit plus importer Spring, JPA ou des clients HTTP.</p>
+
+      <h3>2.2 — Hexagonale front</h3>
+      <p>Faire miroir côté Vue avec <code>domain/</code>, <code>infrastructure/</code> et <code>ui/</code>. Le composant n’appelle pas l’API directement ; il dépend d’un port injecté.</p>
+
+      <h3>2.3 — DDD tactique et patterns</h3>
+      <p>Modéliser <code>KataSession</code> comme aggregate root, nommer les événements métier, et utiliser Strategy / Factory / Builder là où ils clarifient une variation réelle du système.</p>
+
+      <h3>2.4 — Adapters externes</h3>
+      <p>Introduire proprement l’exécution de code via Piston et les hints IA via Claude. Le domaine doit exprimer une intention, pas connaître la forme des APIs externes.</p>
+    </section>
+
+    <section class="guide-step" id="ordre">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-4);">3</div>
+        <h2 class="guide-step__title">Ordre recommandé</h2>
+      </div>
+
+      <ol>
+        <li>Figer l’existant avec les tests utiles des phases 1 à 3.</li>
+        <li>Créer les packages et déplacer d’abord le domaine backend sans changer les comportements.</li>
+        <li>Extraire les ports entrants et sortants, puis rebrancher les adapters Spring/JPA.</li>
+        <li>Faire le même travail côté frontend avec les repositories API et les composants Vue.</li>
+        <li>Introduire <code>KataSession</code>, puis brancher Piston et Claude derrière des ports dédiés.</li>
+        <li>Finir par les patterns utiles et l’ADR qui explique les choix faits.</li>
+      </ol>
+
+      <div class="callout--info"><strong>Important</strong> Si tu bloques entre “déplacer des fichiers” et “repenser le modèle”, sépare les deux. Le déplacement structurel doit rester mécanique ; la refonte métier vient ensuite.</div>
+    </section>
+
+    <section class="guide-step" id="docs">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-4);">4</div>
+        <h2 class="guide-step__title">Docs utiles pour mener cette phase</h2>
+      </div>
+
+      <ul>
+        <li><a href="../ressources.html?phase=Phase%204">Ressources filtrées phase 4</a> pour retrouver DDD, hexagonal architecture, Piston et les patterns.</li>
+        <li><a href="../references/arborescence.html">Arborescence et testabilité</a> pour garder le découpage cible sous les yeux pendant le refactoring.</li>
+        <li><a href="../references/conventions-front.html">Conventions front</a> pour cadrer le miroir de l’architecture côté Vue.</li>
+        <li><a href="../references/ubiquitous-language.html">Ubiquitous Language</a> pour nommer correctement aggregates, events et use cases.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
+        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 4 sera rédigé avant l’implémentation complète.</p>
+      </div>
+    </section>
+
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">☑ Checklist de phase</h2>
+      <ul>
+        <li><input type="checkbox">Le backend a une structure <code>domain / port / usecase / infrastructure</code>.</li>
+        <li><input type="checkbox">Le frontend a un découpage <code>domain / infrastructure / ui</code> cohérent avec le back.</li>
+        <li><input type="checkbox"><code>KataSession</code> porte les invariants métier importants.</li>
+        <li><input type="checkbox">Piston et Claude sont branchés via des ports sortants testables.</li>
+        <li><input type="checkbox">Les tests domaine back restent rapides et n’ont ni DB ni réseau.</li>
+        <li><input type="checkbox">L’ADR de la phase explique les choix et leurs conséquences.</li>
+      </ul>
+    </section>
+
+    <section class="skills-summary" id="validation">
+      <h2>Ce que tu dois sentir à la sortie</h2>
+      <ul>
+        <li>Tu sais distinguer une règle métier d’un détail d’infrastructure.</li>
+        <li>Tu sais brancher une API externe sans contaminer le domaine.</li>
+        <li>Tu sais justifier quand un pattern clarifie le code, et quand il ajoute juste du bruit.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+</body>
+</html>
