@@ -99,6 +99,7 @@ function escapeHTML(value) {
 
 function buildResourceCard(resource) {
   const isExternal = resource.href.startsWith("http");
+  const phaseClass = `resource-badge--phase-${slugify(resource.phase)}`;
   const action = resource.href
     ? `<a class="resource-card__link" href="${escapeHTML(resource.href)}"${isExternal ? ' target="_blank" rel="noopener"' : ""}>${isExternal ? "Ouvrir la ressource" : "Ouvrir la page du site"}</a>`
     : '<span class="resource-card__link resource-card__link--disabled">Lien à ajouter</span>';
@@ -107,7 +108,7 @@ function buildResourceCard(resource) {
     <article class="resource-card" data-resource-card data-category="${slugify(resource.category)}" data-phase="${slugify(resource.phase)}" data-type="${slugify(resource.type)}" data-search="${escapeHTML(normalize(`${resource.title} ${resource.description} ${resource.category} ${resource.phase} ${resource.type}`))}">
       <div class="resource-card__meta">
         <span class="resource-badge resource-badge--category">${escapeHTML(resource.category)}</span>
-        <span class="resource-badge resource-badge--phase">${escapeHTML(resource.phase)}</span>
+        <span class="resource-badge resource-badge--phase ${phaseClass}">${escapeHTML(resource.phase)}</span>
         <span class="resource-badge resource-badge--type">${escapeHTML(resource.type)}</span>
       </div>
       <h2 class="resource-card__title">${escapeHTML(resource.title)}</h2>

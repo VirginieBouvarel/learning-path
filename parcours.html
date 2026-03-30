@@ -53,11 +53,7 @@
           <div class="phase-title">Setup — environnement, config, prod day 1</div>
           <div class="phase-subtitle">On installe chaque outil en comprenant pourquoi il est là</div>
           <div class="tags phase-tags">
-            <span class="tag">SDKMAN</span>
-            <span class="tag">ESLint + Prettier</span>
-            <span class="tag">Docker Compose</span>
-            <span class="tag">Fly.io</span>
-            <span class="tag">ADR</span>
+            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -109,12 +105,8 @@
           <div class="phase-title">HTTP, REST, persistance naïve + gestion des erreurs</div>
           <div class="phase-subtitle">Code simple et imparfait — la douleur justifiera l'archi hexagonale en phase 4</div>
           <div class="tags phase-tags">
-            <span class="tag">HTTP + REST</span>
-            <span class="tag">Spring Boot</span>
-            <span class="tag">PostgreSQL</span>
-            <span class="tag">JPA</span>
-            <span class="tag">TDD</span>
-            <span class="tag">Error handling</span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true">🔴</span><span class="tag__label">Gestion des erreurs</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -159,11 +151,9 @@
           <div class="phase-title">Typage fort TS + LogService + useAsync + archi hexa front</div>
           <div class="phase-subtitle">Le TypeScript qui protège vraiment. Premiers patterns headless. Première archi hexa front.</div>
           <div class="tags phase-tags">
-            <span class="tag">Branded types</span>
-            <span class="tag">Discriminated unions</span>
-            <span class="tag">Result pattern</span>
-            <span class="tag">useAsync</span>
-            <span class="tag">Hexa front</span>
+            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -216,12 +206,11 @@
           <div class="phase-title">Auth JWT, SOLID, Value Objects + erreurs exhaustives</div>
           <div class="phase-subtitle">Spring Security + typage fort Java + 5 principes SOLID dans le vrai code</div>
           <div class="tags phase-tags">
-            <span class="tag">JWT</span>
-            <span class="tag">Spring Security</span>
-            <span class="tag">Value Objects</span>
-            <span class="tag">SOLID</span>
-            <span class="tag">Bean Validation</span>
-            <span class="tag">AppError union</span>
+            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true">🔴</span><span class="tag__label">Gestion des erreurs</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -266,14 +255,10 @@
           <div class="phase-title">Architecture hexagonale complète + DDD + patterns front</div>
           <div class="phase-subtitle">L'IA entre en scène — grand refactoring phases 1–3 en hexagonal</div>
           <div class="tags phase-tags">
-            <span class="tag">Hexa front + back</span>
-            <span class="tag">DDD tactique</span>
-            <span class="tag">Strategy</span>
-            <span class="tag">Factory</span>
-            <span class="tag">Builder</span>
-            <span class="tag">Compound Component</span>
-            <span class="tag">Claude API</span>
-            <span class="tag">Piston API</span>
+            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -326,12 +311,9 @@
           <div class="phase-title">Events, SSE streaming, cache Redis + ACL front</div>
           <div class="phase-subtitle">Observer pattern, streaming IA token par token, dashboard de progression</div>
           <div class="tags phase-tags">
-            <span class="tag">Spring Events</span>
-            <span class="tag">Observer</span>
-            <span class="tag">SSE streaming</span>
-            <span class="tag">Cache Redis</span>
-            <span class="tag">JPQL</span>
-            <span class="tag">ACL front</span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
+            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -380,12 +362,10 @@
           <div class="phase-title">Contrat OpenAPI, tests avancés, Decorator</div>
           <div class="phase-subtitle">Contract-first, Testcontainers, Playwright e2e, documentation complète</div>
           <div class="tags phase-tags">
-            <span class="tag">OpenAPI 3</span>
-            <span class="tag">Codegen TS</span>
-            <span class="tag">Decorator pattern</span>
-            <span class="tag">Testcontainers</span>
-            <span class="tag">Playwright</span>
-            <span class="tag">Sentry</span>
+            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
+            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -434,11 +414,7 @@
           <div class="phase-title">CI/CD complète, Docker multi-stage, mise en prod</div>
           <div class="phase-subtitle">Le pipeline minimal de la phase 0 devient complet — KataSensei tourne pour de vrais utilisateurs</div>
           <div class="tags phase-tags">
-            <span class="tag">Docker multi-stage</span>
-            <span class="tag">GitHub Actions</span>
-            <span class="tag">Health checks</span>
-            <span class="tag">Secrets management</span>
-            <span class="tag">Fly.io</span>
+            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>

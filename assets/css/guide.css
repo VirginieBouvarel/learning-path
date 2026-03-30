@@ -127,6 +127,10 @@
   color: var(--color-text-light);
 }
 
+.guide-header__phase-badge[style*="var(--phase-"] {
+  color: #fff;
+}
+
 .guide-header__title {
   font-size: 26px;
   font-weight: 700;
@@ -145,6 +149,10 @@
   color: var(--color-text-light);
   border-left: 3px solid var(--color-accent-purple);
   padding-left: 16px;
+  margin-top: 16px;
+}
+
+.guide-header .tags {
   margin-top: 16px;
 }
 
