@@ -8,7 +8,7 @@
 
 /**
  * Retourne le préfixe racine selon la profondeur de la page courante.
- * - pages à la racine (index.html, ressources.html) → ""
+ * - pages à la racine (index.html, parcours.html, ressources.html) → ""
  * - pages dans un sous-dossier (phases/, references/) → "../"
  */
 function getRootPrefix() {
@@ -30,7 +30,7 @@ function buildNavHTML(r) {
   <a href="${r}index.html" class="site-nav__brand">KataSensei</a>
   <button class="site-nav__hamburger" id="hamburger" aria-label="Menu">☰</button>
   <ul class="site-nav__links" id="nav-links">
-    <li><a href="${r}index.html" class="site-nav__link" data-page="index">Parcours</a></li>
+    <li><a href="${r}parcours.html" class="site-nav__link" data-page="parcours">Parcours</a></li>
     <li class="site-nav__dropdown" id="dropdown-phases">
       <a class="site-nav__link site-nav__dropdown-trigger" data-page="phases">Phases</a>
       <ul class="site-nav__dropdown-menu">
@@ -82,7 +82,7 @@ function highlightActivePage() {
   document.querySelectorAll('.site-nav__link[data-page]').forEach(link => {
     const page = link.dataset.page;
     let isActive = false;
-    if (page === 'index' && (path.endsWith('index.html') || path.endsWith('/') || path === '')) {
+    if (page === 'parcours' && path.endsWith('parcours.html')) {
       isActive = true;
     } else if (page === 'phases' && path.includes('/phases/')) {
       isActive = true;
