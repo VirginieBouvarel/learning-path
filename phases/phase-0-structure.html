@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Structure de dossiers · Phase 0 · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="/perso/learning-path/phases/phase-0.html">Phase 0 — Setup</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Structure de dossiers</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <!-- ToC gauche -->
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans ce guide</p>
+      <ul class="toc__list">
+        <li><a href="#commandes">Commandes</a></li>
+        <li><a href="#resultat">Résultat attendu</a></li>
+        <li><a href="#regle">Règle des 3 niveaux</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Phase 0 — Sous-page</span>
+      <h1 class="guide-header__title">Structure de dossiers — à créer en phase 0</h1>
+      <p class="guide-header__intro">Créer les dossiers vides dès le setup. Comme les fondations d'une maison — plus facile à poser avant de construire les murs.</p>
+    </div>
+
+    <!-- Commandes -->
+    <section class="guide-step" id="commandes">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">⌘</div>
+        <h2 class="guide-step__title">Commandes</h2>
+      </div>
+
+      <pre><code class="language-bash">cd katasensei-front/src
+
+# Domaine (zéro import Vue, zéro Pinia)
+mkdir -p domain/types domain/ports domain/usecases
+
+# Infrastructure (adapters, mappers, composables headless)
+mkdir -p infrastructure/api/dto infrastructure/api/mappers
+mkdir -p infrastructure/logging infrastructure/composables
+
+# Stores Pinia (état seul)
+mkdir -p stores
+
+# UI (composants Vue + composables avec cycle de vie)
+mkdir -p ui/components ui/views ui/composables
+
+# Fichiers .gitkeep pour committer les dossiers vides
+find . -type d -empty -exec touch {}/.gitkeep \;</code></pre>
+    </section>
+
+    <!-- Résultat -->
+    <section class="guide-step" id="resultat">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">✓</div>
+        <h2 class="guide-step__title">Résultat attendu</h2>
+      </div>
+
+      <pre><code class="language-bash">src/
+├── domain/
+│   ├── types/         .gitkeep
+│   ├── ports/         .gitkeep
+│   └── usecases/      .gitkeep
+├── infrastructure/
+│   ├── api/
+│   │   ├── dto/       .gitkeep
+│   │   └── mappers/   .gitkeep
+│   ├── logging/       .gitkeep
+│   └── composables/   .gitkeep
+├── stores/            .gitkeep
+└── ui/
+    ├── components/    .gitkeep
+    ├── views/         .gitkeep
+    └── composables/   .gitkeep</code></pre>
+    </section>
+
+    <!-- Règle des 3 niveaux -->
+    <section class="guide-step" id="regle">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">≡</div>
+        <h2 class="guide-step__title">Règle des 3 niveaux de composables</h2>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Où</th><th>Dépendances</th><th>Testable comment</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>domain/usecases/</code></td>
+            <td>Zéro</td>
+            <td>Vitest pur</td>
+          </tr>
+          <tr>
+            <td><code>infrastructure/composables/</code></td>
+            <td><code>ref</code>, <code>watch</code> — pas de <code>onMounted</code></td>
+            <td>Vitest + <code>@vue/test-utils</code> minimal</td>
+          </tr>
+          <tr>
+            <td><code>ui/composables/</code></td>
+            <td><code>onMounted</code>, <code>useRouter</code>, stores Pinia</td>
+            <td>Vitest + <code>@vue/test-utils</code> complet</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout--info" style="margin-top: 20px;"><strong>ℹ️ La règle</strong> Pousser la logique le plus bas possible. Si un composable n'a pas besoin du cycle de vie Vue, il va dans <code>infrastructure/composables/</code>. S'il a besoin d'être dans un contexte de composant monté, il va dans <code>ui/composables/</code>.</div>
+    </section>
+
+    <div class="subpages-section">
+      <p class="subpages-section__title">Retour au guide</p>
+      <div class="subpages">
+        <a href="/perso/learning-path/phases/phase-0.html" class="subpage">← Phase 0 — Guide principal</a>
+        <a href="/perso/learning-path/phases/phase-0-wsl2.html" class="subpage">WSL2 + ZSH</a>
+        <a href="/perso/learning-path/phases/phase-0-ide.html" class="subpage">IntelliJ IDEA</a>
+      </div>
+    </div>
+
+    <p class="footer">KataSensei Learning Path · Phase 0 — Structure de dossiers</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

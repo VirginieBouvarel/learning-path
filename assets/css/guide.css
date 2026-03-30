@@ -1,0 +1,586 @@
+/* ==========================================================================
+   KataSensei Learning Path — Guide CSS
+   ToC sidebar sticky, code blocks (Prism), <details> toggles, callouts, tables
+   ========================================================================== */
+
+/* ==========================================================================
+   Layout — Guide (ToC gauche + contenu principal)
+   ========================================================================== */
+
+.layout--guide {
+  max-width: calc(var(--content-width) + 240px + 80px);
+  flex-direction: row;
+}
+
+.layout--guide .layout__main {
+  max-width: var(--content-width);
+  order: 2;
+}
+
+.guide-toc {
+  width: 220px;
+  flex-shrink: 0;
+  order: 1;
+  position: sticky;
+  top: calc(var(--nav-height) + 24px);
+  align-self: flex-start;
+  max-height: calc(100vh - var(--nav-height) - 48px);
+  overflow-y: auto;
+}
+
+@media (max-width: 1100px) {
+  .layout--guide {
+    flex-direction: column;
+  }
+  .guide-toc {
+    width: 100%;
+    position: static;
+    max-height: none;
+    order: -1;
+  }
+}
+
+/* ==========================================================================
+   Table of Contents
+   ========================================================================== */
+
+.toc {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  font-size: 13px;
+}
+
+.toc__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
+}
+
+.toc__list {
+  list-style: none;
+}
+
+.toc__list li {
+  margin-bottom: 1px;
+}
+
+.toc__list a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-light);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: background .12s, color .12s;
+}
+
+.toc__list a:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.toc__list a.active {
+  background: var(--color-accent-purple-bg);
+  color: var(--color-accent-purple);
+  font-weight: 500;
+}
+
+.toc__list--sub {
+  list-style: none;
+  padding-left: 12px;
+  border-left: 2px solid var(--color-border);
+  margin: 2px 0 4px 8px;
+}
+
+.toc__list--sub a {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  padding: 3px 8px;
+}
+
+/* ==========================================================================
+   Guide Header (titre, durée, fil d'ariane)
+   ========================================================================== */
+
+.guide-header {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-card);
+}
+
+.guide-header__phase-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 12px;
+  background: var(--color-bg-tag);
+  color: var(--color-text-light);
+}
+
+.guide-header__title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.guide-header__meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+.guide-header__intro {
+  font-size: 15px;
+  color: var(--color-text-light);
+  border-left: 3px solid var(--color-accent-purple);
+  padding-left: 16px;
+  margin-top: 16px;
+}
+
+/* ==========================================================================
+   Guide Step (étape numérotée)
+   ========================================================================== */
+
+.guide-step {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+  scroll-margin-top: calc(var(--nav-height) + 24px);
+}
+
+.guide-step__heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.guide-step__number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent-purple);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.guide-step__title {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.guide-step h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 24px 0 8px;
+  color: var(--color-text);
+}
+
+.guide-step p {
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin-bottom: 12px;
+  line-height: 1.65;
+}
+
+.guide-step strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.guide-step ul,
+.guide-step ol {
+  font-size: 14px;
+  color: var(--color-text-light);
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.guide-step li {
+  margin-bottom: 4px;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   Code Blocks (Prism.js)
+   ========================================================================== */
+
+.guide-step pre,
+pre[class*="language-"] {
+  border-radius: var(--radius-md);
+  margin: 12px 0 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-x: auto;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: var(--font-mono);
+}
+
+/* Inline code */
+.guide-step p code,
+.guide-step li code,
+.guide-step td code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  background: var(--color-bg-tag);
+  color: var(--color-accent-purple);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-tag);
+}
+
+/* Commit suggestion block (language-text) */
+pre.language-text,
+pre:not([class]) {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--color-text-light);
+  margin: 8px 0 16px;
+  overflow-x: auto;
+}
+
+/* ==========================================================================
+   Callouts / Blockquotes
+   ========================================================================== */
+
+.callout--warning {
+  background: #fff3e0;
+  border-left: 4px solid var(--color-accent-orange);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin: 12px 0 16px;
+  font-size: 13.5px;
+  color: var(--color-text-light);
+}
+
+.callout--info {
+  background: var(--color-accent-purple-bg);
+  border-left: 4px solid var(--color-accent-purple);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin: 12px 0 16px;
+  font-size: 13.5px;
+  color: var(--color-text-light);
+}
+
+.callout--tip {
+  background: var(--color-accent-green-bg);
+  border-left: 4px solid var(--color-accent-green);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin: 12px 0 16px;
+  font-size: 13.5px;
+  color: var(--color-text-light);
+}
+
+.callout--warning strong,
+.callout--info strong,
+.callout--tip strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+}
+
+.callout--warning strong { color: var(--color-accent-orange); }
+.callout--info strong { color: var(--color-accent-purple); }
+.callout--tip strong { color: var(--color-accent-green); }
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+.guide-step table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin: 12px 0 16px;
+}
+
+.guide-step th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid var(--color-border);
+  padding: 8px 12px;
+}
+
+.guide-step td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-light);
+  vertical-align: top;
+}
+
+.guide-step tr:last-child td {
+  border-bottom: none;
+}
+
+.guide-step tr:hover td {
+  background: var(--color-bg-hover);
+}
+
+/* ==========================================================================
+   Solution toggles (<details>/<summary>)
+   ========================================================================== */
+
+.exercise {
+  background: var(--color-accent-green-bg);
+  border: 1px solid #c3e6cb;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+
+.exercise__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--color-accent-green);
+  margin-bottom: 6px;
+}
+
+.exercise p {
+  font-size: 14px;
+  color: var(--color-text);
+  margin-bottom: 0;
+}
+
+details.solution {
+  margin-top: 10px;
+}
+
+details.solution summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent-purple);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-purple-bg);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+  transition: background .15s;
+}
+
+details.solution summary::before {
+  content: '▶';
+  font-size: 10px;
+  transition: transform .2s;
+}
+
+details[open].solution summary::before {
+  transform: rotate(90deg);
+}
+
+details.solution summary:hover {
+  background: #e4d4f4;
+}
+
+details.solution summary::-webkit-details-marker {
+  display: none;
+}
+
+details.solution .solution__content {
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 16px;
+  margin-top: -1px;
+  background: var(--color-bg-card);
+  font-size: 13.5px;
+  color: var(--color-text-light);
+}
+
+/* ==========================================================================
+   Checklist finale
+   ========================================================================== */
+
+.checklist {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.checklist__title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checklist ul {
+  list-style: none;
+  padding: 0;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-light);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  line-height: 1.5;
+}
+
+.checklist li:last-child {
+  border-bottom: none;
+}
+
+.checklist li input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--color-accent-green);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Error Table (erreurs fréquentes)
+   ========================================================================== */
+
+.errors-table {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.errors-table h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* ==========================================================================
+   Skills summary
+   ========================================================================== */
+
+.skills-summary {
+  background: var(--color-accent-green-bg);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--color-accent-green);
+}
+
+.skills-summary h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--color-accent-green);
+}
+
+.skills-summary ul {
+  list-style: none;
+  padding: 0;
+}
+
+.skills-summary li {
+  font-size: 14px;
+  color: var(--color-text-light);
+  padding: 4px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.skills-summary li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent-green);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Sous-pages links (en bas du guide)
+   ========================================================================== */
+
+.subpages-section {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.subpages-section__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 12px;
+}
+
+.subpages-section .subpages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Commit suggestion
+   ========================================================================== */
+
+.commit-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg);
+  border: 1px dashed var(--color-border-tag);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  margin: 16px 0 8px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+.commit-suggestion::before {
+  content: '📦';
+  flex-shrink: 0;
+}

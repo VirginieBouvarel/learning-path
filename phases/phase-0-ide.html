@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliJ IDEA · Phase 0 · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="/perso/learning-path/phases/phase-0.html">Phase 0 — Setup</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>IntelliJ IDEA</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <!-- ToC gauche -->
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans ce guide</p>
+      <ul class="toc__list">
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#java">Config Java (back)</a>
+          <ul class="toc__list--sub">
+            <li><a href="#java-jdk">JDK 21</a></li>
+            <li><a href="#java-assist">Assistance de code</a></li>
+            <li><a href="#java-style">Style Google</a></li>
+            <li><a href="#java-plugins">Plugins Java</a></li>
+            <li><a href="#java-shortcuts">Raccourcis Java</a></li>
+          </ul>
+        </li>
+        <li><a href="#vue">Config Vue/TS (front)</a>
+          <ul class="toc__list--sub">
+            <li><a href="#ts-service">TypeScript Language Service</a></li>
+            <li><a href="#prettier">Prettier</a></li>
+            <li><a href="#eslint">ESLint</a></li>
+            <li><a href="#vue-plugins">Plugins Vue</a></li>
+            <li><a href="#vue-shortcuts">Raccourcis Vue</a></li>
+          </ul>
+        </li>
+        <li><a href="#ouvrir">Ouvrir les deux projets</a></li>
+        <li><a href="#datagrip">DataGrip intégré</a></li>
+        <li><a href="#claude">Claude dans IntelliJ</a></li>
+        <li><a href="#verification">Vérification finale</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Phase 0 — Sous-page</span>
+      <h1 class="guide-header__title">IDE — IntelliJ IDEA configuration complète</h1>
+      <p class="guide-header__intro">On travaille exclusivement avec <strong>IntelliJ IDEA Ultimate</strong>. Il gère Java et Vue/TypeScript nativement dans un seul IDE — pas de switch entre éditeurs, pas de contexte à perdre.</p>
+    </div>
+
+    <!-- Installation -->
+    <section class="guide-step" id="installation">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">↓</div>
+        <h2 class="guide-step__title">Installation</h2>
+      </div>
+
+      <h3>Option A — JetBrains Toolbox (recommandé)</h3>
+      <pre><code class="language-bash"># Dans WSL2
+wget -qO - https://raw.githubusercontent.com/nagygergo/jetbrains-toolbox-install/master/jetbrains-toolbox.sh | bash</code></pre>
+      <p>Ou télécharge <a href="https://www.jetbrains.com/toolbox-app/" target="_blank" rel="noopener">JetBrains Toolbox</a> pour Windows, installe-le, puis installe IntelliJ IDEA Ultimate depuis l'interface. Toolbox gère les mises à jour automatiquement.</p>
+
+      <h3>Option B — Early Access Program (gratuit)</h3>
+      <p>Si tu n'as pas de licence, la version EAP est gratuite et complète : <a href="https://www.jetbrains.com/idea/nextversion/" target="_blank" rel="noopener">jetbrains.com/idea/nextversion</a></p>
+
+      <h3>Option C — Licence étudiante (gratuit sur justificatif)</h3>
+      <p><a href="https://www.jetbrains.com/community/education/" target="_blank" rel="noopener">jetbrains.com/community/education</a></p>
+    </section>
+
+    <!-- Config Java -->
+    <section class="guide-step" id="java">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">☕</div>
+        <h2 class="guide-step__title">Configuration Java (back)</h2>
+      </div>
+
+      <h3 id="java-jdk">1. Configurer le JDK</h3>
+      <p>File → Project Structure → Project :</p>
+      <ul>
+        <li>Project SDK : <strong>Add SDK → JDK</strong> → navigue vers <code>~/.sdkman/candidates/java/current</code></li>
+        <li>Language level : <strong>21</strong></li>
+      </ul>
+
+      <h3 id="java-assist">2. Activer l'assistance de code Java</h3>
+      <p>Settings → Editor → General → Auto Import :</p>
+      <ul>
+        <li>✅ <strong>Add unambiguous imports on the fly</strong></li>
+        <li>✅ <strong>Optimize imports on the fly</strong></li>
+      </ul>
+      <p>Settings → Tools → Actions on Save :</p>
+      <ul>
+        <li>✅ <strong>Reformat code</strong></li>
+        <li>✅ <strong>Optimize imports</strong></li>
+        <li>✅ <strong>Run code cleanup</strong></li>
+      </ul>
+      <p>Settings → Editor → Inspections :</p>
+      <ul>
+        <li>Cherche "Java" → active le profil <strong>Default</strong> ou <strong>Strict</strong></li>
+        <li>Les erreurs et warnings apparaissent en temps réel dans l'éditeur</li>
+      </ul>
+      <div class="callout--tip"><strong>💡 Astuce</strong> Si tu vois une ligne soulignée, <code>Alt+Enter</code> affiche les corrections suggérées.</div>
+
+      <h3 id="java-style">3. Configurer le style de code Google Java</h3>
+      <p>Télécharge <a href="https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml" target="_blank" rel="noopener">intellij-java-google-style.xml</a>.</p>
+      <p>Settings → Editor → Code Style → Java → Import Scheme → sélectionne le fichier XML.</p>
+
+      <h3 id="java-plugins">4. Plugins Java</h3>
+      <p>Settings → Plugins → Marketplace :</p>
+      <table>
+        <thead><tr><th>Plugin</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SonarQube for IDE</strong></td><td>Détecte les bugs et vulnérabilités en temps réel (anciennement SonarLint)</td></tr>
+          <tr><td><strong>CheckStyle-IDEA</strong></td><td>Intègre Checkstyle dans l'IDE</td></tr>
+          <tr><td><strong>Maven Helper</strong></td><td>Analyse les dépendances, détecte les conflits</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="java-shortcuts">5. Raccourcis Java indispensables</h3>
+      <table>
+        <thead><tr><th>Action</th><th>Raccourci Mac</th><th>Raccourci Win/Linux</th></tr></thead>
+        <tbody>
+          <tr><td>Lancer les tests</td><td><code>Ctrl+Shift+F10</code></td><td><code>Ctrl+Shift+F10</code></td></tr>
+          <tr><td>Refactoring → Rename</td><td><code>Shift+F6</code></td><td><code>Shift+F6</code></td></tr>
+          <tr><td>Extraire une méthode</td><td><code>Ctrl+Alt+M</code></td><td><code>Ctrl+Alt+M</code></td></tr>
+          <tr><td>Voir les implémentations</td><td><code>Ctrl+Alt+B</code></td><td><code>Ctrl+Alt+B</code></td></tr>
+          <tr><td>Générer (constructeur…)</td><td><code>Cmd+N</code></td><td><code>Alt+Insert</code></td></tr>
+          <tr><td>Reformater le code</td><td><code>Cmd+Alt+L</code></td><td><code>Ctrl+Alt+L</code></td></tr>
+          <tr><td>Chercher partout</td><td><code>Shift+Shift</code></td><td><code>Shift+Shift</code></td></tr>
+          <tr><td>Aller à la déclaration</td><td><code>Cmd+Click</code></td><td><code>Ctrl+Click</code></td></tr>
+          <tr><td>Afficher les erreurs</td><td><code>F2</code> (next)</td><td><code>F2</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Config Vue/TS -->
+    <section class="guide-step" id="vue">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">V</div>
+        <h2 class="guide-step__title">Configuration Vue/TypeScript (front)</h2>
+      </div>
+
+      <div class="callout--info"><strong>ℹ️ IntelliJ Ultimate uniquement</strong> Disponible uniquement en IntelliJ Ultimate — c'est pourquoi on ne fait pas de compromis sur la version.</div>
+
+      <h3 id="ts-service">1. Activer l'assistance de code TypeScript</h3>
+      <p>Settings → Languages &amp; Frameworks → TypeScript :</p>
+      <ul>
+        <li>✅ <strong>TypeScript Language Service</strong> activé</li>
+        <li>TypeScript version : <code>katasensei-front/node_modules/typescript</code> (version du projet, pas celle de l'IDE)</li>
+        <li>✅ <strong>Show project errors</strong></li>
+      </ul>
+      <div class="callout--warning"><strong>⚠️ Case la plus importante</strong> Sans ça, IntelliJ utilise sa propre version de TypeScript et ne voit pas les erreurs de ton projet. Avec ça, les erreurs apparaissent en temps réel dans l'éditeur — exactement comme <code>tsc --watch</code> mais inline.</div>
+
+      <h3 id="prettier">2. Configurer Prettier</h3>
+      <p>Settings → Languages &amp; Frameworks → JavaScript → Prettier :</p>
+      <ul>
+        <li>Prettier package : <code>katasensei-front/node_modules/prettier</code></li>
+        <li>✅ <strong>On save</strong></li>
+        <li>✅ <strong>On 'Reformat Code' action</strong></li>
+      </ul>
+
+      <h3 id="eslint">3. Configurer ESLint</h3>
+      <p>Settings → Languages &amp; Frameworks → JavaScript → ESLint :</p>
+      <ul>
+        <li>✅ <strong>Automatic ESLint configuration</strong></li>
+        <li>✅ <strong>Run eslint --fix on save</strong></li>
+      </ul>
+      <div class="callout--tip"><strong>💡 ESLint + Prettier on save</strong> <code>Cmd+S</code> / <code>Ctrl+S</code> formate le code et corrige les erreurs lint automatiquement.</div>
+
+      <h3 id="vue-plugins">4. Plugins Vue/TS</h3>
+      <table>
+        <thead><tr><th>Plugin</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Vue.js</strong></td><td>Support Vue 3, <code>&lt;script setup&gt;</code>, Composition API</td></tr>
+          <tr><td><strong>Prettier</strong></td><td>Formatage inline dans l'IDE</td></tr>
+          <tr><td><strong>ESLint</strong></td><td>Lint en temps réel</td></tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 16px;"><strong>Plugins visuels et confort</strong></p>
+      <table>
+        <thead><tr><th>Plugin</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Atom Material Icons</strong></td><td>Icônes dans l'arborescence — bien plus lisible</td></tr>
+          <tr><td><strong>Material Theme UI</strong></td><td>Thème visuel — sélectionne Light With Light Header après installation</td></tr>
+        </tbody>
+      </table>
+      <div class="callout--info"><strong>ℹ️ Installation</strong> Settings → Plugins → Marketplace → cherche le nom exact → Install → Redémarre IntelliJ.<br>Pour Material Theme UI : Settings → Appearance → Theme → <strong>Material Light With Light Header</strong>.</div>
+
+      <h3 id="vue-shortcuts">5. Raccourcis Vue/TS indispensables</h3>
+      <table>
+        <thead><tr><th>Action</th><th>Raccourci Mac</th><th>Raccourci Win/Linux</th></tr></thead>
+        <tbody>
+          <tr><td>Aller au type/interface</td><td><code>Cmd+Click</code></td><td><code>Ctrl+Click</code></td></tr>
+          <tr><td>Voir toutes les erreurs TS</td><td><code>F2</code> (next error)</td><td><code>F2</code></td></tr>
+          <tr><td>Refactoring → Rename</td><td><code>Shift+F6</code></td><td><code>Shift+F6</code></td></tr>
+          <tr><td>Extraire une variable</td><td><code>Cmd+Alt+V</code></td><td><code>Ctrl+Alt+V</code></td></tr>
+          <tr><td>Reformater + Prettier</td><td><code>Cmd+Alt+L</code></td><td><code>Ctrl+Alt+L</code></td></tr>
+          <tr><td>Terminal intégré</td><td><code>Ctrl+`</code></td><td><code>Ctrl+`</code></td></tr>
+          <tr><td>Panneau Problems</td><td><code>Cmd+6</code></td><td><code>Alt+6</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Ouvrir les deux projets -->
+    <section class="guide-step" id="ouvrir">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">▶</div>
+        <h2 class="guide-step__title">Ouvrir les deux projets dans IntelliJ</h2>
+      </div>
+
+      <p>File → Open → sélectionne le dossier racine <code>katasensei/</code>.</p>
+      <p>IntelliJ détecte automatiquement :</p>
+      <ul>
+        <li>Le <code>pom.xml</code> → importe le projet Maven (back)</li>
+        <li>Le <code>package.json</code> → importe le projet npm (front)</li>
+      </ul>
+    </section>
+
+    <!-- DataGrip -->
+    <section class="guide-step" id="datagrip">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">🗄</div>
+        <h2 class="guide-step__title">DataGrip — panneau Database intégré</h2>
+      </div>
+
+      <p>DataGrip est inclus dans IntelliJ Ultimate via le panneau <strong>Database</strong> — pas besoin d'installer une application séparée.</p>
+      <p>Ouvre-le : <code>View → Tool Windows → Database</code> (ou icône cylindre à droite).</p>
+      <p>Consulte la page <a href="/perso/learning-path/references/datagrip.html">Utiliser DataGrip dans KataSensei</a> pour la configuration complète.</p>
+      <div class="callout--info"><strong>ℹ️ Bruno</strong> Bruno s'installe en phase 1 quand on crée les premiers endpoints — pas maintenant.</div>
+    </section>
+
+    <!-- Claude dans IntelliJ -->
+    <section class="guide-step" id="claude">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--color-accent-purple);">AI</div>
+        <h2 class="guide-step__title">Claude dans IntelliJ</h2>
+      </div>
+
+      <h3>Extension Claude (questions rapides inline)</h3>
+      <p>Settings → Plugins → Marketplace → cherche <strong>Claude</strong> → Installe → connecte ton compte Anthropic.</p>
+      <p>Utilisation : sélectionne du code → clic droit → Claude → Ask / Explain / Refactor.</p>
+
+      <h3>Claude Code CLI (sessions de travail intensif)</h3>
+      <p>Dans le terminal intégré d'IntelliJ à la racine du projet :</p>
+      <pre><code class="language-bash">npm install -g @anthropic-ai/claude-code
+claude</code></pre>
+    </section>
+
+    <!-- Vérification finale -->
+    <section class="checklist" id="verification">
+      <h2 class="checklist__title">☑ Vérification finale</h2>
+      <ul>
+        <li><input type="checkbox"> IntelliJ Ultimate installé (EAP ou licence)</li>
+        <li><input type="checkbox"> JDK 21 configuré (pointe vers SDKMAN)</li>
+        <li><input type="checkbox"> Auto-import Java activé</li>
+        <li><input type="checkbox"> Actions on Save : reformat + optimize imports</li>
+        <li><input type="checkbox"> SonarQube for IDE installé</li>
+        <li><input type="checkbox"> CheckStyle-IDEA installé</li>
+        <li><input type="checkbox"> Maven Helper installé</li>
+        <li><input type="checkbox"> TypeScript Language Service activé avec la version du projet (<code>node_modules/typescript</code>)</li>
+        <li><input type="checkbox"> ESLint configuré (run on save)</li>
+        <li><input type="checkbox"> Prettier configuré (on save)</li>
+        <li><input type="checkbox"> Plugin Vue.js installé</li>
+        <li><input type="checkbox"> Atom Material Icons installé</li>
+        <li><input type="checkbox"> Material Theme UI installé — thème Light With Light Header sélectionné</li>
+        <li><input type="checkbox"> Les erreurs TypeScript apparaissent en rouge dans l'éditeur</li>
+        <li><input type="checkbox"> Les erreurs Java apparaissent en rouge dans l'éditeur</li>
+        <li><input type="checkbox"> Terminal intégré ouvre dans WSL2</li>
+        <li><input type="checkbox"> Panneau Database ouvert et fonctionnel</li>
+        <li><input type="checkbox"> Extension Claude installée</li>
+      </ul>
+    </section>
+
+    <div class="subpages-section">
+      <p class="subpages-section__title">Retour au guide</p>
+      <div class="subpages">
+        <a href="/perso/learning-path/phases/phase-0.html" class="subpage">← Phase 0 — Guide principal</a>
+        <a href="/perso/learning-path/phases/phase-0-wsl2.html" class="subpage">WSL2 + ZSH</a>
+        <a href="/perso/learning-path/phases/phase-0-structure.html" class="subpage">Structure de dossiers →</a>
+      </div>
+    </div>
+
+    <p class="footer">KataSensei Learning Path · Phase 0 — IntelliJ IDEA</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

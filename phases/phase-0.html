@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 0 — Setup · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <!-- Prism.js — coloration syntaxique (Java, TypeScript, bash, YAML, JSON, XML) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 0 — Setup</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <!-- ToC gauche -->
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans ce guide</p>
+      <ul class="toc__list">
+        <li><a href="#etape-1">1 — Java &amp; SDKMAN</a></li>
+        <li><a href="#etape-2">2 — Spring Boot</a></li>
+        <li><a href="#etape-3">3 — Vue 3</a></li>
+        <li><a href="#etape-4">4 — Lint &amp; Hooks</a></li>
+        <li><a href="#etape-5">5 — Docker &amp; .env</a></li>
+        <li><a href="#etape-6">6 — Checkstyle</a></li>
+        <li><a href="#etape-7">7 — Déploiement Fly.io</a></li>
+        <li><a href="#etape-8">8 — GitHub Actions</a></li>
+        <li><a href="#etape-9">9 — ADR 001</a></li>
+        <li><a href="#etape-10">10 — Stylelint</a></li>
+        <li><a href="#etape-11">11 — shadcn-vue</a></li>
+        <li><a href="#etape-12">12 — Structure tests/</a></li>
+        <li><a href="#checklist">Checklist finale</a></li>
+        <li><a href="#erreurs">Erreurs fréquentes</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="layout__main">
+
+    <!-- En-tête du guide -->
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Phase 0</span>
+      <h1 class="guide-header__title">Setup — environnement, config, prod day 1</h1>
+      <p class="guide-header__meta">Durée estimée : ~6h réparties sur 1 semaine</p>
+      <p class="guide-header__intro">Ce guide te conduit de zéro à un projet qui tourne en prod. Chaque commande est expliquée. Lis avant de copier-coller.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="/perso/learning-path/phases/phase-0-wsl2.html" class="subpage">📄 WSL2 + ZSH</a>
+        <a href="/perso/learning-path/phases/phase-0-ide.html" class="subpage">📄 IntelliJ IDEA</a>
+        <a href="/perso/learning-path/phases/phase-0-structure.html" class="subpage">📄 Structure de dossiers</a>
+      </div>
+    </div>
+
+    <!-- Étape 1 -->
+    <section class="guide-step" id="etape-1">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">1</div>
+        <h2 class="guide-step__title">Installer Java sans souffrir (SDKMAN)</h2>
+      </div>
+
+      <p><strong>Pourquoi SDKMAN ?</strong> Parce que les projets Java ont souvent des contraintes de version. SDKMAN te permet de switcher comme <code>nvm</code> avec Node. Tu ne touches jamais au Java système de ta machine.</p>
+
+      <h3>1.1 — Installer SDKMAN</h3>
+      <pre><code class="language-bash">curl -s "https://get.sdkman.io" | bash</code></pre>
+      <p>Ferme et rouvre ton terminal (ou <code>source ~/.zshrc</code>), puis vérifie :</p>
+      <pre><code class="language-bash">sdk version
+# SDKMAN 5.x.x</code></pre>
+      <div class="callout--warning"><strong>⚠️ Erreur fréquente</strong> Si tu as déjà un Java installé via Homebrew, SDKMAN peut entrer en conflit. Désinstalle le Java Homebrew d'abord : <code>brew uninstall java</code></div>
+
+      <h3>1.2 — Installer Java 21</h3>
+      <pre><code class="language-bash">sdk install java 21.0.3-tem
+sdk default java 21.0.3-tem</code></pre>
+      <p>Vérification :</p>
+      <pre><code class="language-bash">java -version
+# openjdk version "21.0.3" ...</code></pre>
+
+      <h3>1.3 — Installer Maven</h3>
+      <pre><code class="language-bash">sdk install maven
+mvn -version
+# Apache Maven 3.x.x</code></pre>
+      <p><strong>Maven c'est quoi ?</strong> L'équivalent de <code>npm</code> pour Java. <code>pom.xml</code> = <code>package.json</code>. <code>mvn install</code> = <code>npm install</code>. <code>mvn test</code> = <code>npm test</code>.</p>
+      <div class="commit-suggestion">chore(infra): installation SDKMAN Java 21 Maven</div>
+    </section>
+
+    <!-- Étape 2 -->
+    <section class="guide-step" id="etape-2">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">2</div>
+        <h2 class="guide-step__title">Créer le projet Spring Boot</h2>
+      </div>
+
+      <h3>2.1 — Spring Initializr (le create-vue du Java)</h3>
+      <p>Rends-toi sur <a href="https://start.spring.io" target="_blank" rel="noopener">start.spring.io</a> et configure :</p>
+      <table>
+        <thead><tr><th>Option</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Project</td><td>Maven</td></tr>
+          <tr><td>Language</td><td>Java</td></tr>
+          <tr><td>Spring Boot</td><td>3.3.x (dernière stable)</td></tr>
+          <tr><td>Group</td><td><code>dev.katasensei</code></td></tr>
+          <tr><td>Artifact</td><td><code>katasensei-back</code></td></tr>
+          <tr><td>Java</td><td>21</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Dépendances à cocher</strong> — lis chaque description avant de cocher :</p>
+      <table>
+        <thead><tr><th>Dépendance</th><th>Rôle</th><th>Équivalent front</th></tr></thead>
+        <tbody>
+          <tr><td>Spring Web</td><td>Serveur HTTP + REST</td><td>Express.js</td></tr>
+          <tr><td>Spring Data JPA</td><td>ORM pour la DB</td><td>Prisma / TypeORM</td></tr>
+          <tr><td>PostgreSQL Driver</td><td>Connecteur PostgreSQL</td><td>pg (node-postgres)</td></tr>
+          <tr><td>Spring Security</td><td>Auth + protection des routes</td><td>middleware d'auth</td></tr>
+          <tr><td>Validation</td><td>Validation des DTOs</td><td>Zod / Valibot</td></tr>
+          <tr><td>Spring Actuator</td><td>Health check + métriques</td><td>/healthz endpoint</td></tr>
+          <tr><td>Flyway Migration</td><td>Migrations SQL versionnées</td><td>git pour la DB</td></tr>
+        </tbody>
+      </table>
+      <p>Clique <strong>Generate</strong>, dézippe dans ton dossier de projets.</p>
+
+      <h3>2.2 — Ouvrir dans IntelliJ IDEA</h3>
+      <p>Télécharge <a href="https://www.jetbrains.com/idea/download/" target="_blank" rel="noopener">IntelliJ IDEA Community</a> (gratuit). Ouvre le dossier du projet — IntelliJ détecte Maven automatiquement et télécharge les dépendances.</p>
+      <div class="callout--info"><strong>ℹ️ Pourquoi IntelliJ et pas VS Code ?</strong> Pour Java, IntelliJ a une compréhension du langage sans comparaison. Tu peux utiliser VS Code avec l'extension Java mais tu te bats contre l'outil. IntelliJ Community est gratuit.</div>
+
+      <h3>2.3 — Lire le pom.xml</h3>
+      <p>Ouvre <code>pom.xml</code> et lis chaque balise. Tu dois pouvoir répondre à :</p>
+      <ul>
+        <li>Quel est le <code>groupId</code> et pourquoi ?</li>
+        <li>À quoi sert chaque <code>&lt;dependency&gt;</code> ?</li>
+        <li>Que fait le plugin <code>spring-boot-maven-plugin</code> ?</li>
+      </ul>
+      <div class="callout--warning"><strong>⚠️ Erreur fréquente</strong> Ignorer le <code>pom.xml</code>. Un dev qui ne comprend pas son <code>pom.xml</code> subira son projet.</div>
+      <div class="commit-suggestion">chore(back): initialisation projet Spring Boot</div>
+    </section>
+
+    <!-- Étape 3 -->
+    <section class="guide-step" id="etape-3">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">3</div>
+        <h2 class="guide-step__title">Créer le projet Vue 3</h2>
+      </div>
+
+      <h3>3.1 — create-vue avec toutes les options</h3>
+      <pre><code class="language-bash">npm create vue@latest katasensei-front</code></pre>
+      <p>Réponds exactement comme ceci :</p>
+      <pre><code class="language-bash">✔ Add TypeScript? › Yes
+✔ Add JSX Support? › No
+✔ Add Vue Router? › Yes
+✔ Add Pinia? › Yes
+✔ Add Vitest? › Yes
+✔ Add an End-to-End Testing Solution? › Playwright
+✔ Add ESLint? › Yes
+✔ Add Prettier? › Yes
+✔ Add Vue DevTools? › Yes</code></pre>
+      <div class="callout--info"><strong>ℹ️ Pourquoi tout maintenant ?</strong> Installer Playwright sur un projet existant = refactoring douloureux. Partir avec tout configuré coûte rien.</div>
+      <pre><code class="language-bash">cd katasensei-front
+npm install
+npm run dev
+# → http://localhost:5173</code></pre>
+
+      <h3>3.2 — Activer TypeScript strict</h3>
+      <p>Ouvre <code>tsconfig.app.json</code> et ajoute ces options :</p>
+      <pre><code class="language-json">{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}</code></pre>
+      <p><strong>Pourquoi ces options ?</strong></p>
+      <ul>
+        <li><code>strict</code> : active 8 règles strictes d'un coup (noImplicitAny, strictNullChecks…)</li>
+        <li><code>noUncheckedIndexedAccess</code> : <code>array[0]</code> peut être <code>undefined</code> — le compilateur te force à le gérer</li>
+        <li><code>exactOptionalPropertyTypes</code> : différencie <code>{ a?: string }</code> de <code>{ a: string | undefined }</code></li>
+      </ul>
+      <div class="callout--warning"><strong>⚠️ Erreur fréquente</strong> Activer strict sur un projet existant = des centaines d'erreurs. C'est pourquoi on le fait maintenant.</div>
+
+      <h3>3.3 — Créer la structure hexagonale front dès le début</h3>
+      <pre><code class="language-bash">mkdir -p src/domain src/infrastructure src/ui
+touch src/domain/.gitkeep src/infrastructure/.gitkeep src/ui/.gitkeep</code></pre>
+      <p>Dans <code>src/domain/</code> on mettra les types purs et les use cases. Dans <code>src/infrastructure/</code> les appels API. Dans <code>src/ui/</code> les composants Vue.</p>
+      <div class="callout--tip"><strong>💡 Note</strong> Ce sont les fondations. Plus facile à poser avant de construire les murs.</div>
+      <div class="commit-suggestion">chore(front): initialisation projet Vue 3 TypeScript strict</div>
+    </section>
+
+    <!-- Étape 4 -->
+    <section class="guide-step" id="etape-4">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">4</div>
+        <h2 class="guide-step__title">Configurer le lint, Prettier et les hooks</h2>
+      </div>
+
+      <h3>4.1 — Configurer ESLint</h3>
+      <p>create-vue a déjà généré <code>.eslintrc.cjs</code>. Installe les plugins TypeScript stricts :</p>
+      <pre><code class="language-bash">npm install -D @typescript-eslint/eslint-plugin @typescript-eslint/parser</code></pre>
+      <p>Mets à jour <code>.eslintrc.cjs</code> :</p>
+      <pre><code class="language-javascript">module.exports = {
+  extends: [
+    'plugin:vue/vue3-recommended',
+    '@vue/eslint-config-typescript/recommended',
+    '@vue/eslint-config-prettier'
+  ],
+  rules: {
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/explicit-function-return-type': 'warn',
+    'vue/component-api-style': ['error', ['script-setup']]
+  }
+}</code></pre>
+
+      <h3>4.2 — Configurer Prettier</h3>
+      <p>Crée <code>.prettierrc</code> à la racine :</p>
+      <pre><code class="language-json">{
+  "singleQuote": true,
+  "semi": false,
+  "printWidth": 100,
+  "trailingComma": "es5"
+}</code></pre>
+
+      <h3>4.3 — Husky + lint-staged (pre-commit hook)</h3>
+      <pre><code class="language-bash">npm install -D husky lint-staged
+npx husky init</code></pre>
+      <p>Écrase <code>.husky/pre-commit</code> avec :</p>
+      <pre><code class="language-bash">npx lint-staged</code></pre>
+      <p>Ajoute dans <code>package.json</code> :</p>
+      <pre><code class="language-json">"lint-staged": {
+  "*.{ts,vue}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,css}": ["prettier --write"]
+}</code></pre>
+      <p>Test : essaie de committer du code avec une erreur TypeScript → le commit est refusé. ✅</p>
+
+      <h3>4.4 — Conventional Commits + Commitizen</h3>
+      <pre><code class="language-bash">npm install -D commitizen cz-conventional-changelog
+npx commitizen init cz-conventional-changelog --save-dev --save-exact</code></pre>
+      <p>Ajoute dans <code>package.json</code> :</p>
+      <pre><code class="language-json">"scripts": {
+  "commit": "cz"
+}</code></pre>
+      <p>Désormais : <code>npm run commit</code> au lieu de <code>git commit</code> → interface guidée.</p>
+      <p>Format des commits :</p>
+      <pre><code class="language-bash">feat(kata): add GET /katas endpoint
+fix(auth): handle expired JWT gracefully
+refactor(domain): extract KataId value object
+docs(adr): add ADR 001 tech choices</code></pre>
+      <div class="commit-suggestion">chore(front): configuration ESLint Prettier Husky Conventional Commits</div>
+    </section>
+
+    <!-- Étape 5 -->
+    <section class="guide-step" id="etape-5">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">5</div>
+        <h2 class="guide-step__title">Docker Compose + variables d'environnement</h2>
+      </div>
+
+      <h3>5.1 — Créer docker-compose.yml</h3>
+      <p>À la racine du projet back, crée <code>docker-compose.yml</code> :</p>
+      <pre><code class="language-yaml">services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: katasensei
+      POSTGRES_USER: katasensei
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U katasensei"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:</code></pre>
+      <div class="callout--warning"><strong>⚠️ Le healthcheck est critique</strong> Sans lui, Spring Boot démarre avant que PostgreSQL soit prêt et plante avec une erreur cryptique.</div>
+
+      <h3>5.2 — Variables d'environnement</h3>
+      <p>Crée <code>.env</code> (ignoré par git) :</p>
+      <pre><code class="language-bash">DB_PASSWORD=localpassword123
+DB_URL=jdbc:postgresql://localhost:5432/katasensei
+DB_USERNAME=katasensei
+JWT_SECRET=mon-secret-local-au-moins-256-bits-de-long
+CLAUDE_API_KEY=sk-ant-...
+PISTON_URL=https://emkc.org/api/v2/piston</code></pre>
+      <p>Crée <code>.env.example</code> (commité dans git) :</p>
+      <pre><code class="language-bash">DB_PASSWORD=CHANGE_ME
+DB_URL=jdbc:postgresql://localhost:5432/katasensei
+DB_USERNAME=katasensei
+JWT_SECRET=CHANGE_ME_min_256_bits
+CLAUDE_API_KEY=CHANGE_ME
+PISTON_URL=https://emkc.org/api/v2/piston</code></pre>
+      <p>Ajoute dans <code>.gitignore</code> :</p>
+      <pre><code class="language-bash">.env
+*.env.local</code></pre>
+
+      <h3>5.3 — Profils Spring Boot</h3>
+      <p>Renomme <code>src/main/resources/application.properties</code> en <code>application.yml</code> :</p>
+      <pre><code class="language-yaml">spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info</code></pre>
+      <p>Crée <code>application-dev.yml</code> :</p>
+      <pre><code class="language-yaml">spring:
+  jpa:
+    show-sql: true
+logging:
+  level:
+    dev.katasensei: DEBUG</code></pre>
+
+      <h3>5.4 — Démarrer l'infra locale</h3>
+      <pre><code class="language-bash">docker-compose up -d
+# ✅ postgres démarré
+# ✅ redis démarré</code></pre>
+      <p>Vérification :</p>
+      <pre><code class="language-bash">docker-compose ps
+# katasensei-postgres   running (healthy)
+# katasensei-redis      running (healthy)</code></pre>
+      <div class="commit-suggestion">chore(infra): ajout Docker Compose PostgreSQL Redis avec variables d'environnement</div>
+    </section>
+
+    <!-- Étape 6 -->
+    <section class="guide-step" id="etape-6">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">6</div>
+        <h2 class="guide-step__title">Checkstyle côté Java</h2>
+      </div>
+
+      <h3>6.1 — Ajouter Checkstyle dans pom.xml</h3>
+      <pre><code class="language-xml">&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-checkstyle-plugin&lt;/artifactId&gt;
+  &lt;version&gt;3.3.1&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;configLocation&gt;google_checks.xml&lt;/configLocation&gt;
+    &lt;failsOnError&gt;true&lt;/failsOnError&gt;
+  &lt;/configuration&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;&lt;goal&gt;check&lt;/goal&gt;&lt;/goals&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+      <pre><code class="language-bash">mvn checkstyle:check</code></pre>
+      <div class="callout--info"><strong>ℹ️ Équivalent Java d'ESLint</strong> Google Checks est un standard répandu — tu rencontreras ce style sur la plupart des projets Java sérieux.</div>
+      <div class="commit-suggestion">chore(back): ajout Checkstyle Google Java style</div>
+    </section>
+
+    <!-- Étape 7 -->
+    <section class="guide-step" id="etape-7">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">7</div>
+        <h2 class="guide-step__title">Premier déploiement en prod (Fly.io)</h2>
+      </div>
+
+      <h3>7.1 — Installer le CLI Fly</h3>
+      <pre><code class="language-bash">brew install flyctl
+fly auth login</code></pre>
+
+      <h3>7.2 — Dockerfile minimal (imparfait, c'est voulu)</h3>
+      <p>Crée <code>Dockerfile</code> à la racine du back :</p>
+      <pre><code class="language-docker">FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY target/katasensei-back-*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+      <div class="callout--tip"><strong>💡 Note</strong> Dockerfile imparfait déployé > Dockerfile parfait non déployé. Le multi-stage viendra en phase 7.</div>
+
+      <h3>7.3 — Déployer sur Fly.io</h3>
+      <pre><code class="language-bash">mvn package -DskipTests
+fly launch
+# Fly détecte le Dockerfile automatiquement
+# Réponds aux questions : région = cdg (Paris), PostgreSQL = non (on gère le nôtre)</code></pre>
+      <p>Ajoute les secrets :</p>
+      <pre><code class="language-bash">fly secrets set DB_URL="jdbc:postgresql://..."
+fly secrets set JWT_SECRET="..."
+fly secrets set CLAUDE_API_KEY="..."</code></pre>
+      <pre><code class="language-bash">fly deploy</code></pre>
+
+      <h3>7.4 — Vérifier que ça tourne</h3>
+      <pre><code class="language-bash">curl https://katasensei-back.fly.dev/actuator/health
+# {"status":"UP"}</code></pre>
+      <p>🎉 <strong>KataSensei a une URL publique.</strong></p>
+      <div class="commit-suggestion">chore(infra): premier déploiement Fly.io GET /actuator/health</div>
+    </section>
+
+    <!-- Étape 8 -->
+    <section class="guide-step" id="etape-8">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">8</div>
+        <h2 class="guide-step__title">Pipeline GitHub Actions minimal</h2>
+      </div>
+
+      <p>Crée <code>.github/workflows/ci.yml</code> :</p>
+      <pre><code class="language-yaml">name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-back:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Run tests
+        run: mvn test
+        working-directory: katasensei-back
+
+  test-front:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+        working-directory: katasensei-front
+      - run: npm run type-check
+        working-directory: katasensei-front
+      - run: npm run lint
+        working-directory: katasensei-front
+      - run: npm run test:unit
+        working-directory: katasensei-front
+
+  deploy:
+    needs: [test-back, test-front]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: fly deploy katasensei-back
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}</code></pre>
+      <div class="callout--info"><strong>ℹ️ Règle d'or CI</strong> Le job <code>deploy</code> ne tourne que si <code>test-back</code> et <code>test-front</code> sont verts. Les tests protègent la prod.</div>
+      <div class="commit-suggestion">chore(ci): ajout pipeline GitHub Actions test + deploy</div>
+    </section>
+
+    <!-- Étape 9 -->
+    <section class="guide-step" id="etape-9">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">9</div>
+        <h2 class="guide-step__title">ADR 001 : tes premiers choix documentés</h2>
+      </div>
+
+      <p>Crée <code>docs/adr/001-choix-technologiques.md</code> dans ton repo KataSensei :</p>
+      <pre><code class="language-markdown"># ADR 001 — Choix technologiques de KataSensei
+
+## Date
+2026-XX-XX
+
+## Statut
+Accepté
+
+## Contexte
+Premier projet fullstack personnel visant à apprendre
+l'architecture hexagonale, le TDD et le typage fort.
+
+## Décisions
+
+### Backend : Java 21 + Spring Boot 3
+Java 21 apporte les records, les sealed classes et les
+pattern matching — le système de types le plus proche
+de TypeScript côté Java.
+
+### Frontend : Vue 3 + TypeScript strict
+Stack déjà maîtrisée. TypeScript strict avec
+noUncheckedIndexedAccess dès le départ.
+
+### Architecture : Hexagonale (Ports &amp; Adapters)
+Permet de tester le domaine sans infrastructure.
+Le domaine ne dépend d'aucun framework.
+
+### Déploiement : Fly.io
+Gratuit pour les petits projets, CLI simple,
+PostgreSQL managed disponible.
+
+### Exécution de code : Piston API
+Sandbox externe gratuite et open source.
+
+## Alternatives rejetées
+- Gradle : plus puissant mais moins lisible que Maven pour débuter
+- Quarkus : excellent mais Spring a une meilleure documentation
+- Railway : Fly.io a un meilleur free tier en 2026
+
+## Conséquences
+- Apprentissage de Maven obligatoire
+- IntelliJ IDEA recommandé (gratuit Community)
+- Dépendance à Piston API pour l'exécution de code</code></pre>
+      <div class="commit-suggestion">docs(adr): ajout ADR 001 choix technologiques</div>
+    </section>
+
+    <!-- Étape 10 -->
+    <section class="guide-step" id="etape-10">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">10</div>
+        <h2 class="guide-step__title">Stylelint</h2>
+      </div>
+
+      <h3>10.1 — Installer Stylelint</h3>
+      <pre><code class="language-bash">npm install -D stylelint stylelint-config-recommended-vue</code></pre>
+      <p>Crée <code>.stylelintrc.json</code> à la racine du front :</p>
+      <pre><code class="language-json">{
+  "extends": ["stylelint-config-recommended-vue"]
+}</code></pre>
+      <p>Ajoute le script dans <code>package.json</code> :</p>
+      <pre><code class="language-json">"scripts": {
+  "lint:css": "stylelint \"src/**/*.vue\""
+}</code></pre>
+      <p>Ajoute dans <code>lint-staged</code> (dans <code>package.json</code>) :</p>
+      <pre><code class="language-json">"lint-staged": {
+  "*.vue": ["eslint --fix", "stylelint --fix", "prettier --write"]
+}</code></pre>
+
+      <h3>10.2 — Configurer dans IntelliJ</h3>
+      <p>Settings → Languages &amp; Frameworks → Style Sheets → Stylelint :</p>
+      <ul>
+        <li>✅ <strong>Enable</strong></li>
+        <li>Stylelint package : <code>katasensei-front/node_modules/stylelint</code></li>
+        <li>✅ <strong>Run on save</strong></li>
+      </ul>
+      <div class="commit-suggestion">chore(front): ajout Stylelint avec config Vue</div>
+    </section>
+
+    <!-- Étape 11 -->
+    <section class="guide-step" id="etape-11">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">11</div>
+        <h2 class="guide-step__title">shadcn-vue</h2>
+      </div>
+
+      <h3>11.1 — Installer shadcn-vue</h3>
+      <pre><code class="language-bash">npx shadcn-vue@latest init</code></pre>
+      <p>Réponds aux questions :</p>
+      <pre><code class="language-bash">Which style would you like to use? → Default
+Which color would you like to use as base color? → Zinc
+Where is your global CSS file? → src/assets/main.css
+Where is your tailwind.config? → tailwind.config.js
+Configure the import alias for components? → @/ui/components</code></pre>
+      <div class="callout--info"><strong>ℹ️ shadcn-vue</strong> shadcn-vue copie les composants directement dans ton projet — tu en es propriétaire. Ce ne sont pas des dépendances opaques, ce sont des fichiers que tu lis et modifies.</div>
+
+      <h3>11.2 — Ajouter le premier composant</h3>
+      <pre><code class="language-bash">npx shadcn-vue@latest add button card badge</code></pre>
+      <p>Les composants sont générés dans <code>src/ui/components/ui/</code>. Ouvre-les et lis-les avant de les utiliser.</p>
+      <div class="commit-suggestion">chore(front): installation shadcn-vue avec composants button card badge</div>
+    </section>
+
+    <!-- Étape 12 -->
+    <section class="guide-step" id="etape-12">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">12</div>
+        <h2 class="guide-step__title">Structure tests/</h2>
+      </div>
+
+      <p>Crée le dossier <code>tests/</code> à côté de <code>src/</code> reproduisant la même arborescence :</p>
+      <pre><code class="language-bash">mkdir -p tests/domain/usecases
+mkdir -p tests/domain/types
+mkdir -p tests/infrastructure/api/mappers
+mkdir -p tests/stores
+mkdir -p tests/ui/components
+mkdir -p tests/ui/views
+mkdir -p tests/ui/composables</code></pre>
+      <p>Configure Vitest pour trouver les tests dans ce dossier. Dans <code>vite.config.ts</code> :</p>
+      <pre><code class="language-typescript">export default defineConfig({
+  plugins: [vue()],
+  test: {
+    include: ['tests/**/*.test.ts'],
+    environment: 'happy-dom',
+  },
+})</code></pre>
+      <div class="callout--info"><strong>ℹ️ Convention</strong> <code>tests/domain/usecases/GetKatasUseCase.test.ts</code> teste <code>src/domain/usecases/GetKatasUseCase.ts</code>. L'arborescence est identique, seul le dossier racine change.</div>
+      <div class="commit-suggestion">chore(front): création structure dossier tests/</div>
+    </section>
+
+    <!-- Checklist finale -->
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">☑ Checklist finale — Phase 0</h2>
+      <ul>
+        <li><input type="checkbox"> <code>java -version</code> → Java 21</li>
+        <li><input type="checkbox"> <code>mvn -version</code> → Maven 3.x</li>
+        <li><input type="checkbox"> IntelliJ ouvre le projet sans erreur</li>
+        <li><input type="checkbox"> <code>npm run dev</code> → Vue tourne sur localhost:5173</li>
+        <li><input type="checkbox"> TypeScript strict activé (<code>strict: true</code> + les 4 autres options)</li>
+        <li><input type="checkbox"> Structure <code>domain/infra/ui</code> créée côté front</li>
+        <li><input type="checkbox"> ESLint + Prettier configurés</li>
+        <li><input type="checkbox"> Pre-commit hook actif (teste avec un commit incorrect)</li>
+        <li><input type="checkbox"> <code>docker-compose up -d</code> → postgres + redis healthy</li>
+        <li><input type="checkbox"> <code>mvn spring-boot:run</code> → Spring démarre et se connecte à la DB</li>
+        <li><input type="checkbox"> <code>curl localhost:8080/actuator/health</code> → <code>{"status":"UP"}</code></li>
+        <li><input type="checkbox"> <code>.env.example</code> commité, <code>.env</code> ignoré</li>
+        <li><input type="checkbox"> <code>fly deploy</code> → KataSensei a une URL publique</li>
+        <li><input type="checkbox"> Pipeline GitHub Actions vert sur le premier push</li>
+        <li><input type="checkbox"> ADR 001 commité dans <code>docs/adr/</code></li>
+        <li><input type="checkbox"> Stylelint installé et configuré (on save dans IntelliJ)</li>
+        <li><input type="checkbox"> shadcn-vue initialisé, composants button + card + badge ajoutés</li>
+        <li><input type="checkbox"> Structure <code>tests/</code> créée et configurée dans Vitest</li>
+        <li><input type="checkbox"> ADR 003 commité dans <code>docs/adr/</code></li>
+      </ul>
+    </section>
+
+    <!-- Erreurs fréquentes -->
+    <section class="errors-table" id="erreurs">
+      <h2>Erreurs fréquentes</h2>
+      <table>
+        <thead><tr><th>Erreur</th><th>Cause probable</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>SDKMAN command not found</code></td>
+            <td>Shell non rechargé</td>
+            <td><code>source ~/.zshrc</code> ou rouvre le terminal</td>
+          </tr>
+          <tr>
+            <td><code>Connection refused</code> à la DB</td>
+            <td>Docker pas démarré</td>
+            <td><code>docker-compose up -d</code></td>
+          </tr>
+          <tr>
+            <td><code>Could not connect to localhost:5432</code></td>
+            <td>PostgreSQL pas encore healthy</td>
+            <td>Attendre 10s, retester</td>
+          </tr>
+          <tr>
+            <td><code>Whitelabel Error Page</code></td>
+            <td>Route introuvable</td>
+            <td>Normal sans contrôleur — <code>/actuator/health</code> fonctionne</td>
+          </tr>
+          <tr>
+            <td>Commit refusé par Husky</td>
+            <td>Lint ou type error</td>
+            <td>Lire le message d'erreur, corriger, recommitter</td>
+          </tr>
+          <tr>
+            <td><code>FLY_API_TOKEN</code> manquant en CI</td>
+            <td>Secret GitHub non configuré</td>
+            <td><code>fly tokens create deploy</code> puis <code>gh secret set FLY_API_TOKEN</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Ce que tu sais faire -->
+    <section class="skills-summary">
+      <h2>Ce que tu sais faire après cette phase</h2>
+      <ul>
+        <li>Installer et gérer Java avec SDKMAN</li>
+        <li>Lire et comprendre un <code>pom.xml</code></li>
+        <li>Créer un projet Spring Boot depuis Spring Initializr</li>
+        <li>Configurer TypeScript strict sur Vue 3</li>
+        <li>Mettre en place ESLint + Prettier + Husky</li>
+        <li>Écrire des commits Conventional Commits</li>
+        <li>Utiliser Docker Compose pour l'infra locale</li>
+        <li>Gérer les variables d'environnement proprement</li>
+        <li>Déployer sur Fly.io</li>
+        <li>Écrire un pipeline GitHub Actions basique</li>
+        <li>Documenter une décision technique (ADR)</li>
+      </ul>
+    </section>
+
+    <!-- Sous-pages -->
+    <div class="subpages-section">
+      <p class="subpages-section__title">Guides complémentaires — Phase 0</p>
+      <div class="subpages">
+        <a href="/perso/learning-path/phases/phase-0-wsl2.html" class="subpage">📄 WSL2 + ZSH + Terminal</a>
+        <a href="/perso/learning-path/phases/phase-0-ide.html" class="subpage">📄 IntelliJ IDEA — configuration complète</a>
+        <a href="/perso/learning-path/phases/phase-0-structure.html" class="subpage">📄 Structure de dossiers</a>
+      </div>
+    </div>
+
+    <p class="footer">KataSensei Learning Path · Phase 0</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

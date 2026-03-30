@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WSL2 + ZSH · Phase 0 · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="/perso/learning-path/phases/phase-0.html">Phase 0 — Setup</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>WSL2 + ZSH</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <!-- ToC gauche -->
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans ce guide</p>
+      <ul class="toc__list">
+        <li><a href="#etape-1">1 — Installer WSL2</a></li>
+        <li><a href="#etape-2">2 — Mettre à jour Ubuntu</a></li>
+        <li><a href="#etape-3">3 — Installer ZSH</a></li>
+        <li><a href="#etape-4">4 — Oh My Zsh</a></li>
+        <li><a href="#etape-5">5 — Powerlevel10k</a></li>
+        <li><a href="#etape-6">6 — Plugins ZSH</a></li>
+        <li><a href="#etape-7">7 — Configurer Git</a></li>
+        <li><a href="#etape-8">8 — Windows Terminal</a></li>
+        <li><a href="#checkpoint">Checkpoint</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Contenu principal -->
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Phase 0 — Sous-page</span>
+      <h1 class="guide-header__title">WSL2 + ZSH + Terminal — configuration complète</h1>
+      <p class="guide-header__meta">Durée estimée : ~45 min</p>
+      <p class="guide-header__intro">À faire en premier, avant toute installation Java ou Node. Ton terminal est ton environnement de travail — un bon terminal change radicalement le confort de développement.</p>
+    </div>
+
+    <!-- Étape 1 -->
+    <section class="guide-step" id="etape-1">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">1</div>
+        <h2 class="guide-step__title">Installer WSL2</h2>
+      </div>
+
+      <pre><code class="language-powershell"># Dans PowerShell en administrateur
+wsl --install
+# Redémarre Windows quand demandé
+# Ubuntu sera installé par défaut</code></pre>
+      <p>Après redémarrage, Ubuntu s'ouvre et te demande un nom d'utilisateur et un mot de passe.</p>
+      <p>Vérification :</p>
+      <pre><code class="language-powershell"># Dans PowerShell
+wsl --list --verbose
+# Ubuntu   Running   2   ← WSL2 confirmé</code></pre>
+      <div class="callout--info"><strong>ℹ️ Pourquoi WSL2 ?</strong> Tu travailles sur Windows mais tous les outils de développement (Java, Node, Docker, Git) fonctionnent infiniment mieux sur Linux. WSL2 te donne un vrai noyau Linux sans quitter Windows.</div>
+    </section>
+
+    <!-- Étape 2 -->
+    <section class="guide-step" id="etape-2">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">2</div>
+        <h2 class="guide-step__title">Mettre à jour Ubuntu</h2>
+      </div>
+
+      <pre><code class="language-bash"># Dans le terminal Ubuntu
+sudo apt update && sudo apt upgrade -y</code></pre>
+    </section>
+
+    <!-- Étape 3 -->
+    <section class="guide-step" id="etape-3">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">3</div>
+        <h2 class="guide-step__title">Installer ZSH</h2>
+      </div>
+
+      <pre><code class="language-bash">sudo apt install zsh -y
+zsh --version
+# zsh 5.x.x</code></pre>
+    </section>
+
+    <!-- Étape 4 -->
+    <section class="guide-step" id="etape-4">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">4</div>
+        <h2 class="guide-step__title">Oh My Zsh</h2>
+      </div>
+
+      <pre><code class="language-bash">sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# Répond 'y' pour faire de ZSH ton shell par défaut</code></pre>
+    </section>
+
+    <!-- Étape 5 -->
+    <section class="guide-step" id="etape-5">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">5</div>
+        <h2 class="guide-step__title">Powerlevel10k (thème recommandé)</h2>
+      </div>
+
+      <pre><code class="language-bash">git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k</code></pre>
+      <p>Édite <code>~/.zshrc</code> :</p>
+      <pre><code class="language-bash">ZSH_THEME="powerlevel10k/powerlevel10k"</code></pre>
+      <p>Relance le terminal — l'assistant de configuration de Powerlevel10k se lance automatiquement.</p>
+    </section>
+
+    <!-- Étape 6 -->
+    <section class="guide-step" id="etape-6">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">6</div>
+        <h2 class="guide-step__title">Plugins ZSH utiles</h2>
+      </div>
+
+      <pre><code class="language-bash"># zsh-autosuggestions — suggestions basées sur l'historique
+git clone https://github.com/zsh-users/zsh-autosuggestions \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# zsh-syntax-highlighting — colore les commandes
+git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting</code></pre>
+      <p>Dans <code>~/.zshrc</code> :</p>
+      <pre><code class="language-bash">plugins=(git zsh-autosuggestions zsh-syntax-highlighting node npm)</code></pre>
+      <pre><code class="language-bash">source ~/.zshrc</code></pre>
+    </section>
+
+    <!-- Étape 7 -->
+    <section class="guide-step" id="etape-7">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">7</div>
+        <h2 class="guide-step__title">Configurer Git</h2>
+      </div>
+
+      <pre><code class="language-bash">git config --global user.name "Ton Prénom Nom"
+git config --global user.email "ton@email.com"
+git config --global core.editor "code --wait"
+git config --global init.defaultBranch main</code></pre>
+    </section>
+
+    <!-- Étape 8 -->
+    <section class="guide-step" id="etape-8">
+      <div class="guide-step__heading">
+        <div class="guide-step__number">8</div>
+        <h2 class="guide-step__title">Configurer Windows Terminal</h2>
+      </div>
+
+      <p>Installe <a href="https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701" target="_blank" rel="noopener">Windows Terminal</a> depuis le Microsoft Store si ce n'est pas déjà fait.</p>
+      <p>Dans les paramètres Windows Terminal :</p>
+      <ul>
+        <li>Profil par défaut : <strong>Ubuntu</strong></li>
+        <li>Police : <a href="https://github.com/romkatv/powerlevel10k#meslo-nerd-font-patched-for-powerlevel10k" target="_blank" rel="noopener">MesloLGS NF</a> (requis pour Powerlevel10k)</li>
+      </ul>
+    </section>
+
+    <!-- Checkpoint -->
+    <section class="checklist" id="checkpoint">
+      <h2 class="checklist__title">☑ Checkpoint</h2>
+      <ul>
+        <li><input type="checkbox"> <code>wsl --list --verbose</code> montre Ubuntu en WSL2</li>
+        <li><input type="checkbox"> ZSH est le shell par défaut</li>
+        <li><input type="checkbox"> Oh My Zsh installé</li>
+        <li><input type="checkbox"> Powerlevel10k configuré</li>
+        <li><input type="checkbox"> <code>git config --list</code> montre ton nom et email</li>
+        <li><input type="checkbox"> Windows Terminal ouvert sur Ubuntu par défaut</li>
+      </ul>
+    </section>
+
+    <div class="subpages-section">
+      <p class="subpages-section__title">Retour au guide</p>
+      <div class="subpages">
+        <a href="/perso/learning-path/phases/phase-0.html" class="subpage">← Phase 0 — Guide principal</a>
+        <a href="/perso/learning-path/phases/phase-0-ide.html" class="subpage">IntelliJ IDEA →</a>
+        <a href="/perso/learning-path/phases/phase-0-structure.html" class="subpage">Structure de dossiers →</a>
+      </div>
+    </div>
+
+    <p class="footer">KataSensei Learning Path · Phase 0 — WSL2 + ZSH</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-powershell.min.js"></script>
+</body>
+</html>
