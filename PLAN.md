@@ -2,7 +2,7 @@
 
 ## Contexte
 
-Le repo `learning-path` contient un export Notion (markdown + CSV) et un premier `overview.html` avec des accordéons. L'objectif est de transformer ce repo en un **vrai site statique de formation** multi-pages, servi via Live Server (VS Code) ou WAMP, qui guide Virginie pas-à-pas dans la construction de KataSensei.
+Le repo `learning-path` contient un export Notion (markdown + CSV). L'objectif est de proposer un **vrai site statique de formation** multi-pages, servi via Live Server (VS Code) ou WAMP, qui guide Virginie pas-à-pas dans la construction de KataSensei.
 
 Notion reste pour l'**interactif** (backlog, suivi de progression). Le HTML est pour la **lecture** (guide, concepts, exercices, références, ressources).
 
@@ -54,7 +54,7 @@ learning-path/
 └── PLAN.md                           ← ce fichier
 ```
 
-**~23 fichiers HTML** · Le dossier `KataSensei — Learning Path/` sera supprimé une fois la migration terminée.
+**~23 fichiers HTML** · Le dossier `KataSensei — Learning Path/` est conservé comme export Notion local.
 
 ---
 
@@ -131,43 +131,42 @@ learning-path/
 - [x] `index.html` — page d'accueil complète avec sidebar Notion
 - [x] Vérifié via Live Server (VS Code)
 
-### 🔲 Sprint 2 — Template guide + Phase 0
-- [ ] `assets/css/guide.css` (ToC sidebar sticky, toggle solutions `<details>`, blocs de code, Prism.js)
-- [ ] `phases/phase-0.html` (801 lignes md → HTML, 12 étapes, ToC)
-- [ ] `phases/phase-0-wsl2.html` (134 lignes)
-- [ ] `phases/phase-0-ide.html` (222 lignes)
-- [ ] `phases/phase-0-structure.html` (65 lignes)
+### ✅ Sprint 2 — Template guide + Phase 0
+- [x] `assets/css/guide.css` (ToC sidebar sticky, toggle solutions `<details>`, blocs de code, Prism.js)
+- [x] `phases/phase-0.html` (801 lignes md → HTML, 12 étapes, ToC)
+- [x] `phases/phase-0-wsl2.html` (134 lignes)
+- [x] `phases/phase-0-ide.html` (222 lignes)
+- [x] `phases/phase-0-structure.html` (65 lignes)
 
-### 🔲 Sprint 3 — Pages de référence (9 pages)
-- [ ] `references/ubiquitous-language.html`
-- [ ] `references/conventions-front.html`
-- [ ] `references/conventional-commits.html`
-- [ ] `references/arborescence.html` (+ déplacer image)
-- [ ] `references/workflow-gitlab.html`
-- [ ] `references/utiliser-claude.html`
-- [ ] `references/optional-java.html`
-- [ ] `references/datagrip.html`
-- [ ] `references/checklist-securite.html`
+### ✅ Sprint 3 — Pages de référence (9 pages)
+- [x] `references/ubiquitous-language.html`
+- [x] `references/conventions-front.html`
+- [x] `references/conventional-commits.html`
+- [x] `references/arborescence.html` (+ déplacer image)
+- [x] `references/workflow-gitlab.html`
+- [x] `references/utiliser-claude.html`
+- [x] `references/optional-java.html`
+- [x] `references/datagrip.html`
+- [x] `references/checklist-securite.html`
 
-### 🔲 Sprint 4 — Guides Phases 1-3
-- [ ] `phases/phase-1.html` (~980 lignes, exercices TDD Java)
-- [ ] `phases/phase-2.html` (642 lignes, TypeScript)
-- [ ] `phases/phase-3.html` (~940 lignes, SOLID/JWT/Value Objects)
+### ✅ Sprint 4 — Guides Phases 1-3
+- [x] `phases/phase-1.html` (~980 lignes, exercices TDD Java)
+- [x] `phases/phase-2.html` (642 lignes, TypeScript)
+- [x] `phases/phase-3.html` (~940 lignes, SOLID/JWT/Value Objects)
 
-### 🔲 Sprint 5 — Phases 4-7 (overview only)
-- [ ] `phases/phase-4.html` à `phase-7.html` (overview + bannière "guide à venir")
+### ✅ Sprint 5 — Phases 4-7 (overview only)
+- [x] `phases/phase-4.html` à `phase-7.html` (overview + bannière "guide à venir")
 
-### 🔲 Sprint 6 — Page ressources
-- [ ] `assets/css/resources.css`
-- [ ] `assets/js/resources-filter.js`
-- [ ] `ressources.html` (78 cards filtrables par catégorie et phase)
+### ✅ Sprint 6 — Page ressources
+- [x] `assets/css/resources.css`
+- [x] `assets/js/resources-filter.js`
+- [x] `ressources.html` (78 cards filtrables par catégorie et phase)
 
-### 🔲 Sprint 7 — Polish + nettoyage
-- [ ] Cross-linking (phases ↔ références ↔ ressources)
-- [ ] Responsive (test 768px)
-- [ ] Supprimer `KataSensei — Learning Path/` et les CSV legacy
-- [ ] Supprimer `overview.html` (remplacé par `index.html`)
-- [ ] Mettre à jour `CLAUDE.md`
+### 🟡 Sprint 7 — Polish + nettoyage
+- [x] Cross-linking (phases ↔ références ↔ ressources)
+- [x] Responsive (test 768px)
+- [x] Supprimer `overview.html` (remplacé par `index.html`)
+- [x] Mettre à jour `CLAUDE.md`
 - [ ] Ajouter les vraies URLs Notion dans `index.html`
 
 ---
@@ -177,4 +176,4 @@ learning-path/
 - **Live Server** (extension VS Code) pour tester en local — pas besoin de WAMP
 - **Prism.js** à télécharger et mettre dans `assets/` pour la coloration syntaxique (Java, TypeScript, bash, SQL)
 - **Liens Notion** dans `index.html` sidebar : remplacer `https://www.notion.so` par les vraies URLs des databases
-- **`overview.html`** à conserver jusqu'à la fin du Sprint 7, puis supprimer
+- **Blocage actuel** : les vraies URLs Notion des databases ne sont pas présentes dans le repo, donc elles ne peuvent pas être injectées sans source supplémentaire

@@ -25,14 +25,13 @@ KataSensei = plateforme d'entraînement aux katas de code. Éditeur Monaco, supe
 
 ```
 index.html                ← page d'accueil / vue d'ensemble du parcours
-phases/                   ← une page par phase (guide pas-à-pas détaillé)
-  phase-0.html
-  phase-1.html
-  ...
-assets/                   ← CSS partagé, images, maquettes futures
+ressources.html           ← base documentaire filtrable par phase, catégorie, type
+phases/                   ← guides détaillés phases 0-3 + overview phases 4-7
+references/               ← conventions, ADR, aides transverses
+assets/                   ← CSS partagé, JS de navigation et filtres, images
 ```
 
-Le site est servi via WAMP : `http://localhost/perso/learning-path/`
+Le site est servi via Live Server (VS Code) ou WAMP.
 
 **Total parcours : ~76h · ~5 mois**
 
@@ -41,12 +40,14 @@ Le site est servi via WAMP : `http://localhost/perso/learning-path/`
 - Vue d'ensemble du projet + stack + timeline
 - Accordéons par phase : concepts (avec analogies Vue→Java), livrables, état de KataSensei
 - Guides pas-à-pas détaillés pour chaque phase
-- Liens vers les databases Notion (backlog, suivi, docs)
+- Pages de référence internes (workflow, conventions, sécurité, Optional, DataGrip)
+- Ressources filtrables par phase, catégorie et type
+- Liens vers les databases Notion (backlog, suivi, docs) quand les vraies URLs seront injectées
 - À venir : maquettes UI (Stitch/Lovable/Uizard) intégrées dans les phases
 
-## Fichiers markdown (héritage Notion)
+## Fichiers markdown / CSV (héritage Notion)
 
-Les `.md` dans `KataSensei — Learning Path/` sont l'export Notion d'origine. Le contenu est progressivement migré vers le site HTML. Les fichiers .md seront supprimés une fois leur contenu intégré.
+Les `.md` et `.csv` dans `KataSensei — Learning Path/` sont l'export Notion d'origine. Le contenu a largement été migré vers le site HTML, mais les exports sont conservés comme source de secours et archive locale pour Notion.
 
 ## Conventions clés
 
@@ -66,7 +67,6 @@ Les `.md` dans `KataSensei — Learning Path/` sont l'export Notion d'origine. L
 ## Lacunes connues
 
 - Phases 4-7 : overview seulement, pas de guide pas-à-pas
-- Guides phases 0-3 : TDD mentionné conceptuellement mais pas d'exercices concrets d'écriture de tests
-- Le site est encore un fichier unique (overview.html), pas encore découpé en pages
-- Liens Notion databases pas encore ajoutés
+- Les vraies URLs Notion des databases ne sont pas présentes dans le repo
+- L’export Notion legacy est conservé volontairement comme archive locale
 - Maquettes UI pas encore créées
