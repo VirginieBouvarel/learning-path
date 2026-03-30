@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 3 — Auth JWT + SOLID · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="../index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 3 — Auth JWT + SOLID</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans ce guide</p>
+      <ul class="toc__list">
+        <li><a href="#etape-1">1 — Comprendre ce qu'on construit</a></li>
+        <li><a href="#etape-2">2 — Value Objects Java</a></li>
+        <li><a href="#etape-3">3 — SOLID dans KataSensei</a></li>
+        <li><a href="#etape-4">4 — Spring Security + JWT</a></li>
+        <li><a href="#etape-5">5 — Gestion d'erreurs exhaustive</a></li>
+        <li><a href="#etape-6">6 — Bean Validation avancée</a></li>
+        <li><a href="#etape-7">7 — Grand refactoring back</a></li>
+        <li><a href="#etape-8">8 — ADR 004</a></li>
+        <li><a href="#checklist">Checklist finale</a></li>
+        <li><a href="#erreurs">Erreurs fréquentes</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge" style="background: var(--phase-3);">Phase 3</span>
+      <h1 class="guide-header__title">Auth JWT, SOLID, Value Objects + erreurs exhaustives</h1>
+      <p class="guide-header__meta">Durée estimée : ~10h réparties sur 2 semaines</p>
+      <p class="guide-header__intro">Sécuriser KataSensei avec JWT, appliquer SOLID sur du vrai code, créer les Value Objects Java qui mirroient tes branded types TS, et mettre en place une gestion d'erreurs exhaustive des deux côtés. À la fin, tu refactoriseras tout le code naïf du back de la phase 1.</p>
+    </div>
+
+    <!-- Étape 1 -->
+    <section class="guide-step" id="etape-1">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">1</div>
+        <h2 class="guide-step__title">Comprendre ce qu'on va construire</h2>
+      </div>
+
+      <p>Avant de toucher au clavier, relis <code>KataService.java</code> de la phase 1 et réponds par écrit :</p>
+      <ol>
+        <li>Qu'est-ce qui empêche de passer un <code>UUID</code> d'utilisateur là où un <code>UUID</code> de kata est attendu ?</li>
+        <li>Si <code>KataService</code> gérait aussi les emails de bienvenue, quel principe SOLID serait violé ?</li>
+        <li>Comment tester <code>KataService</code> sans Spring ni base de données ?</li>
+        <li>Si tu ajoutes un nouveau type d'erreur, combien de fichiers dois-tu modifier ?</li>
+      </ol>
+      <div class="callout--tip">Ces quatre douleurs ont chacune une réponse dans cette phase. Garde tes réponses — elles te serviront de motivation pendant les exercices.</div>
+
+      <div class="commit-suggestion">commit suggestion → refactor(kata): analyse du code naïf de la phase 1</div>
+    </section>
+
+    <!-- Étape 2 -->
+    <section class="guide-step" id="etape-2">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">2</div>
+        <h2 class="guide-step__title">Value Objects Java : les branded types du back</h2>
+      </div>
+
+      <div class="callout--info">En phase 1, tous les identifiants sont des <code>UUID</code> bruts. Rien n'empêche de passer un <code>userId</code> là où un <code>kataId</code> est attendu — le compilateur Java ne voit que deux <code>UUID</code>. C'est exactement le problème que les branded types TS ont résolu en phase 2. Les Value Objects Java sont la même solution.</div>
+
+      <div class="exercise">
+        <h3>Exercice 2.1 — Crée KataId</h3>
+        <p>Crée <code>src/main/java/dev/katasensei/kata/domain/KataId.java</code>.</p>
+        <ul>
+          <li>C'est un <strong>record Java</strong> : <code>record KataId(UUID value)</code></li>
+          <li>Une méthode factory statique <code>of(String s)</code> qui parse un UUID depuis une string</li>
+          <li>Une méthode factory statique <code>generate()</code> qui crée un nouveau KataId aléatoire</li>
+          <li>La classe est dans le package <code>domain</code> — elle ne dépend de rien d'autre</li>
+        </ul>
+        <p><strong>Question de réflexion :</strong> pourquoi un record plutôt qu'une classe normale ?</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">package dev.katasensei.kata.domain;
+
+import java.util.UUID;
+
+public record KataId(UUID value) {
+
+    public static KataId of(String s) {
+        return new KataId(UUID.fromString(s));
+    }
+
+    public static KataId generate() {
+        return new KataId(UUID.randomUUID());
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+}</code></pre>
+            <p><strong>Réponse :</strong> un record Java est immutable par défaut, génère automatiquement <code>equals()</code>, <code>hashCode()</code> et <code>toString()</code>. C'est l'équivalent d'une interface TypeScript en lecture seule — précisément ce qu'on veut pour un Value Object qui ne doit jamais changer après création.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 2.2 — Crée UserId et Email</h3>
+        <p><code>UserId</code> sur le même modèle que <code>KataId</code>. Pour <code>Email</code> :</p>
+        <ul>
+          <li>Le constructeur valide que la string contient bien <code>@</code> — sinon lève une <code>InvalidEmailException</code></li>
+          <li><code>InvalidEmailException</code> étend <code>DomainException</code> (créée en phase 1)</li>
+          <li>Une méthode <code>domain()</code> qui retourne la partie après le <code>@</code></li>
+        </ul>
+        <p><strong>Écris d'abord les tests :</strong></p>
+        <pre><code class="language-java">@Test
+void should_throwException_when_emailIsInvalid() {
+    assertThatThrownBy(() -> new Email("pasunemail"))
+        .isInstanceOf(InvalidEmailException.class);
+}
+
+@Test
+void should_returnDomain_when_emailIsValid() {
+    var email = new Email("alice@katasensei.dev");
+    assertThat(email.domain()).isEqualTo("katasensei.dev");
+}</code></pre>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">public record UserId(UUID value) {
+    public static UserId of(String s) { return new UserId(UUID.fromString(s)); }
+    public static UserId generate()   { return new UserId(UUID.randomUUID()); }
+}</code></pre>
+            <pre><code class="language-java">public class InvalidEmailException extends DomainException {
+    public InvalidEmailException(String email) {
+        super("Email invalide : " + email);
+    }
+}</code></pre>
+            <pre><code class="language-java">public record Email(String value) {
+
+    public Email {
+        if (!value.contains("@")) {
+            throw new InvalidEmailException(value);
+        }
+    }
+
+    public String domain() {
+        return value.substring(value.indexOf('@') + 1);
+    }
+}</code></pre>
+            <div class="callout--info">Le bloc <code>public Email { }</code> sans parenthèses est le <strong>compact constructor</strong> des records Java 16+. Il s'exécute à la création et peut valider les paramètres avant qu'ils soient assignés.</div>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 2.3 — Mets à jour Kata et KataService</h3>
+        <p>Remplace les <code>UUID</code> bruts par les Value Objects dans <code>Kata.java</code> et <code>KataService.java</code>.</p>
+        <ul>
+          <li><code>Kata.getId()</code> retourne <code>KataId</code>, pas <code>UUID</code></li>
+          <li><code>KataService.findById(KataId id)</code> prend un <code>KataId</code>, pas un <code>UUID</code></li>
+          <li>Le contrôleur extrait le <code>KataId</code> depuis le <code>@PathVariable</code> String</li>
+          <li><code>mvn test</code> doit rester vert — les tests existants guident le refactoring</li>
+        </ul>
+        <div class="callout--tip">Lance <code>mvn compile</code> après chaque changement — le compilateur te dit exactement où les types ne correspondent plus. C'est le compilateur qui guide le refactoring, exactement comme <code>tsc --noEmit</code> en TypeScript.</div>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">// Dans KataController
+@GetMapping("/{id}")
+public KataDto findById(@PathVariable String id) {
+    return kataService.findById(KataId.of(id));
+    // KataId.of() lève une exception si l'UUID est malformé
+    // — GlobalExceptionHandler la catchera automatiquement
+}
+
+// Dans KataService
+public KataDto findById(KataId id) {
+    return kataRepository.findById(id.value())
+        .map(this::toDto)
+        .orElseThrow(() -> new KataNotFoundException(id));
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → refactor(kata): remplacement UUID bruts par Value Objects KataId UserId Email</div>
+    </section>
+
+    <!-- Étape 3 -->
+    <section class="guide-step" id="etape-3">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">3</div>
+        <h2 class="guide-step__title">SOLID dans KataSensei : pas dans un livre</h2>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 3.1 — S : Single Responsibility</h3>
+        <p>Imagine que <code>KataService</code> gérait aussi l'envoi d'un email de confirmation à chaque nouveau kata créé.</p>
+        <p><strong>Question :</strong> combien de raisons de changer aurait <code>KataService</code> ? Nomme-les.</p>
+        <p><strong>Exercice :</strong> si tu devais ajouter "envoyer un email quand un kata est créé", comment l'organiserais-tu pour que <code>KataService</code> ne sache pas que les emails existent ?</p>
+        <p><em>Indice : pense aux Spring Events de la phase 5 — mais pour l'instant une simple interface <code>KataEventPublisher</code> suffit.</em></p>
+        <details class="solution">
+          <summary>Réponse et solution</summary>
+          <div class="solution__content">
+            <p><strong>Réponse :</strong> <code>KataService</code> aurait deux raisons de changer : 1) la logique métier des katas change, 2) la façon d'envoyer les emails change. Deux raisons = violation de S.</p>
+            <pre><code class="language-java">// Port sortant — dans domain/
+public interface KataEventPublisher {
+    void publishKataCreated(KataId kataId, String title);
+}
+
+// KataService reçoit le publisher par injection
+// Il publie un événement — il ne sait pas ce qui se passe ensuite
+public KataDto create(CreateKataRequest request) {
+    var kata = new Kata(request.title(), request.description(), request.difficulty());
+    var saved = kataRepository.save(kata);
+    eventPublisher.publishKataCreated(saved.getId(), saved.getTitle());
+    return toDto(saved);
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 3.2 — O : Open/Closed</h3>
+        <p>Scénario : tu dois ajouter un niveau de difficulté <code>EXPERT</code> avec un score bonus x2.</p>
+        <p>Observe ce code problématique :</p>
+        <pre><code class="language-java">public int calculateScore(Kata kata, int baseScore) {
+    if (kata.getDifficulty() == Difficulty.EASY)   return baseScore;
+    if (kata.getDifficulty() == Difficulty.MEDIUM) return baseScore * 2;
+    if (kata.getDifficulty() == Difficulty.HARD)   return baseScore * 3;
+    throw new IllegalArgumentException("Difficulty inconnue");
+}</code></pre>
+        <p><strong>Question :</strong> que faut-il modifier pour ajouter <code>EXPERT</code> ? Combien de fichiers ?</p>
+        <p><strong>Exercice :</strong> réécris ce calcul pour qu'ajouter <code>EXPERT</code> ne nécessite de modifier <strong>aucune classe existante</strong>. Indice : l'enum <code>Difficulty</code> peut avoir des méthodes.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">public enum Difficulty {
+    EASY(1), MEDIUM(2), HARD(3), EXPERT(5);
+
+    private final int multiplier;
+
+    Difficulty(int multiplier) {
+        this.multiplier = multiplier;
+    }
+
+    public int applyTo(int baseScore) {
+        return baseScore * multiplier;
+    }
+}
+
+// KataScorer devient trivial — et n'a plus besoin de changer pour EXPERT
+public int calculateScore(Kata kata, int baseScore) {
+    return kata.getDifficulty().applyTo(baseScore);
+}</code></pre>
+            <p>Ajouter <code>EXPERT(5)</code> dans l'enum n'ouvre aucun autre fichier. C'est le principe O.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 3.3 — L, I, D en contexte KataSensei</h3>
+
+        <h4>Liskov (L)</h4>
+        <pre><code class="language-java">public interface AiSensei {
+    Hint generateHint(KataId kataId, String code, int hintsAlreadyUsed);
+}</code></pre>
+        <p><strong>Question :</strong> <code>ClaudeAiSensei</code> et <code>MockAiSensei</code> doivent tous les deux implémenter cette interface. Qu'est-ce que ça garantit pour le code qui appelle <code>AiSensei</code> ?</p>
+
+        <h4>Interface Segregation (I)</h4>
+        <pre><code class="language-java">// Mauvaise version
+public interface AiService {
+    Hint generateHint(KataId kataId, String code, int hintsUsed);
+    CodeReview reviewCode(String code, String language);
+    String translateKata(String description, String targetLanguage);
+}</code></pre>
+        <p><strong>Question :</strong> qu'est-ce qui ne va pas ? Réécris en 3 interfaces séparées.</p>
+
+        <h4>Dependency Inversion (D)</h4>
+        <p><strong>Exercice :</strong> dessine (ou écris en texte) le graphe de dépendances entre <code>KataController</code>, <code>KataService</code>, <code>KataRepository</code> (interface), et <code>JpaKataRepository</code> (implémentation). Qui dépend de qui ?</p>
+
+        <details class="solution">
+          <summary>Réponses</summary>
+          <div class="solution__content">
+            <p><strong>Liskov :</strong> <code>ClaudeAiSensei</code> et <code>MockAiSensei</code> sont <strong>substituables</strong> — le code qui appelle <code>AiSensei</code> n'a pas besoin de savoir lequel il utilise. En test on injecte <code>MockAiSensei</code>, en prod <code>ClaudeAiSensei</code>.</p>
+            <pre><code class="language-java">// Interface Segregation
+public interface AiSensei      { Hint generateHint(...); }
+public interface CodeReviewer  { CodeReview reviewCode(...); }
+public interface KataTranslator { String translateKata(...); }</code></pre>
+            <p>Un use case qui n'a besoin que de hints ne dépend pas de <code>translateKata</code>.</p>
+            <pre><code class="language-bash"># Dependency Inversion
+KataController → KataService → KataRepository (interface)
+                                      ↑
+                              JpaKataRepository (implémentation)</code></pre>
+            <p>La règle : les modules de haut niveau (Service) ne dépendent pas des modules de bas niveau (JPA). Les deux dépendent d'une abstraction (l'interface). C'est le principe D — et c'est exactement la règle de dépendance de l'archi hexagonale.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → docs(kata): documentation principes SOLID appliqués au projet</div>
+    </section>
+
+    <!-- Étape 4 -->
+    <section class="guide-step" id="etape-4">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">4</div>
+        <h2 class="guide-step__title">Spring Security + JWT</h2>
+      </div>
+
+      <div class="callout--info">Un token JWT c'est un objet JSON signé avec une clé secrète. Le front Vue l'obtient à la connexion et l'envoie dans chaque requête via <code>Authorization: Bearer &lt;token&gt;</code>. Spring intercepte chaque requête, vérifie la signature, et peuple le contexte de sécurité — tout ça avant que ton code métier ne soit appelé.</div>
+
+      <div class="exercise">
+        <h3>Exercice 4.1 — Ajoute les dépendances JWT</h3>
+        <p>Ajoute la librairie <code>jjwt</code> dans <code>pom.xml</code> :</p>
+        <pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+    &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+    &lt;version&gt;0.12.6&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+    &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+    &lt;version&gt;0.12.6&lt;/version&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+    &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+    &lt;version&gt;0.12.6&lt;/version&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+        <p>Et dans <code>application.yml</code> :</p>
+        <pre><code class="language-yaml">app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 86400000  # 24 heures</code></pre>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 4.2 — Crée JwtService (🔴 RED d'abord)</h3>
+        <p>Écris les tests avant d'implémenter :</p>
+        <pre><code class="language-java">@Test
+void should_generateToken_and_extractUserId() {
+    var userId = UserId.generate();
+    var token = jwtService.generateToken(userId);
+    assertThat(jwtService.extractUserId(token)).isEqualTo(userId);
+}
+
+@Test
+void should_returnFalse_when_tokenIsExpired() {
+    // Indice : injecte un service avec une expiration de -1ms
+}</code></pre>
+        <p><strong>Question de réflexion :</strong> comment tester qu'un token est expiré sans attendre 24 heures ?</p>
+        <p>Puis implémente <code>JwtService</code> avec <code>generateToken</code>, <code>extractUserId</code>, <code>isTokenValid</code>.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">@Service
+public class JwtService {
+
+    private final SecretKey secretKey;
+    private final long expirationMs;
+
+    public JwtService(
+        @Value("${app.jwt.secret}") String secret,
+        @Value("${app.jwt.expiration-ms}") long expirationMs
+    ) {
+        this.secretKey   = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
+
+    public String generateToken(UserId userId) {
+        return Jwts.builder()
+            .subject(userId.value().toString())
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + expirationMs))
+            .signWith(secretKey)
+            .compact();
+    }
+
+    public UserId extractUserId(String token) {
+        var subject = parseClaims(token).getSubject();
+        return UserId.of(subject);
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+}</code></pre>
+            <p><strong>Réponse sur les tokens expirés :</strong> passe <code>expirationMs = -1</code> au constructeur dans le test — le token sera créé déjà expiré. C'est pourquoi l'injection par constructeur est indispensable : ça permet de contrôler le comportement dans les tests.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 4.3 — Filtre JWT + configuration Spring Security (🔴 RED)</h3>
+        <p>Tests à écrire d'abord :</p>
+        <pre><code class="language-java">@Test
+void should_return401_when_noTokenProvided() throws Exception {
+    mockMvc.perform(get("/katas"))
+        .andExpect(status().isUnauthorized());
+}
+
+@Test
+void should_return200_when_validTokenProvided() throws Exception {
+    var token = jwtService.generateToken(UserId.generate());
+
+    mockMvc.perform(get("/katas")
+            .header("Authorization", "Bearer " + token))
+        .andExpect(status().isOk());
+}</code></pre>
+        <p>Lance les tests — ils échouent car Spring Security n'est pas configuré. 🔴</p>
+        <p>Puis crée :</p>
+        <ol>
+          <li><code>JwtAuthenticationFilter extends OncePerRequestFilter</code> — extrait le token du header, valide, peuple <code>SecurityContextHolder</code></li>
+          <li><code>SecurityConfig</code> — configure les routes publiques (<code>/auth/**</code>) et protégées (tout le reste)</li>
+        </ol>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
+
+    public JwtAuthenticationFilter(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    @Override
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain chain
+    ) throws ServletException, IOException {
+
+        var header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        var token = header.substring(7);
+
+        if (jwtService.isTokenValid(token)) {
+            var userId = jwtService.extractUserId(token);
+            var auth = new UsernamePasswordAuthenticationToken(
+                userId, null, List.of()
+            );
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        chain.doFilter(request, response);
+    }
+}</code></pre>
+            <pre><code class="language-java">@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**", "/actuator/health").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 4.4 — Endpoints d'auth : POST /auth/register et POST /auth/login</h3>
+        <p>Crée en TDD :</p>
+        <ol>
+          <li><code>UserEntity</code> (entité JPA) avec <code>id</code> (UserId), <code>email</code> (Email), <code>passwordHash</code> (String)</li>
+          <li>Migration Flyway <code>V2__create_user_table.sql</code></li>
+          <li><code>AuthController</code> avec <code>POST /auth/register</code> et <code>POST /auth/login</code></li>
+          <li><code>AuthService</code> avec <code>register(RegisterRequest)</code> et <code>login(LoginRequest): String</code></li>
+        </ol>
+        <p><strong>Tests minimaux à écrire d'abord :</strong></p>
+        <pre><code class="language-java">@Test void should_return201_when_registrationIsValid()
+@Test void should_return400_when_emailAlreadyExists()
+@Test void should_returnToken_when_credentialsAreCorrect()
+@Test void should_return401_when_passwordIsWrong()</code></pre>
+        <details class="solution">
+          <summary>Solution migration SQL — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-sql">CREATE TABLE app_user (
+    id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at    TIMESTAMP    NOT NULL DEFAULT now()
+);</code></pre>
+            <div class="callout--warning"><strong>Pourquoi <code>app_user</code> et pas <code>user</code> ?</strong> <code>user</code> est un mot réservé en SQL. Ce genre de piège classique mérite d'être dans tes notes.</div>
+          </div>
+        </details>
+        <details class="solution">
+          <summary>Solution AuthService — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">@Service
+public class AuthService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    // injection par constructeur
+
+    public void register(RegisterRequest request) {
+        var email = new Email(request.email()); // validation via Value Object
+        if (userRepository.existsByEmail(email.value())) {
+            throw new EmailAlreadyExistsException(email);
+        }
+        var hash = passwordEncoder.encode(request.password());
+        userRepository.save(new UserEntity(UserId.generate(), email.value(), hash));
+    }
+
+    public String login(LoginRequest request) {
+        var user = userRepository.findByEmail(request.email())
+            .orElseThrow(() -> new InvalidCredentialsException());
+
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new InvalidCredentialsException();
+        }
+
+        return jwtService.generateToken(UserId.of(user.getId().toString()));
+    }
+}</code></pre>
+            <div class="callout--warning"><strong>Sécurité :</strong> <code>InvalidCredentialsException</code> est la même exception pour "email inconnu" et "mauvais mot de passe". On ne donne jamais à un attaquant l'information que l'email existe.</div>
+          </div>
+        </details>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → feat(auth): ajout JwtService avec tests token génération et validation</div>
+      <div class="commit-suggestion">commit suggestion → feat(secu): configuration Spring Security JWT stateless</div>
+      <div class="commit-suggestion">commit suggestion → feat(auth): ajout endpoints POST /auth/register et POST /auth/login</div>
+    </section>
+
+    <!-- Étape 5 -->
+    <section class="guide-step" id="etape-5">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">5</div>
+        <h2 class="guide-step__title">Gestion d'erreurs exhaustive : AppError côté back et front</h2>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 5.1 — Enrichis la hiérarchie d'exceptions</h3>
+        <p>Crée toutes les exceptions domaine de KataSensei :</p>
+        <ul>
+          <li>Toutes étendent <code>DomainException</code> (phase 1)</li>
+          <li><code>KataNotFoundException(KataId id)</code> — déjà créée</li>
+          <li><code>EmailAlreadyExistsException(Email email)</code></li>
+          <li><code>InvalidCredentialsException()</code> — message générique volontairement vague</li>
+          <li><code>InvalidEmailException(String email)</code> — déjà créée</li>
+          <li><code>UnauthorizedException(String action)</code> — pour les actions non permises</li>
+        </ul>
+        <p>Puis mets à jour <code>GlobalExceptionHandler</code> pour gérer chacune.</p>
+        <p><strong>Question de réflexion :</strong> combien de fichiers modifies-tu pour ajouter un nouveau type d'erreur ?</p>
+        <details class="solution">
+          <summary>Solution GlobalExceptionHandler enrichi — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">@ExceptionHandler(EmailAlreadyExistsException.class)
+ProblemDetail handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+    var problem = ProblemDetail.forStatusAndDetail(
+        HttpStatus.CONFLICT, ex.getMessage()
+    );
+    problem.setTitle("Email already exists");
+    problem.setType(URI.create("https://katasensei.dev/errors/email-conflict"));
+    return problem;
+}
+
+@ExceptionHandler(InvalidCredentialsException.class)
+ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
+    var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+    problem.setTitle("Invalid credentials");
+    problem.setType(URI.create("https://katasensei.dev/errors/invalid-credentials"));
+    return problem;
+}
+
+@ExceptionHandler(InvalidEmailException.class)
+ProblemDetail handleInvalidEmail(InvalidEmailException ex) {
+    var problem = ProblemDetail.forStatusAndDetail(
+        HttpStatus.BAD_REQUEST, ex.getMessage()
+    );
+    problem.setTitle("Invalid email format");
+    problem.setType(URI.create("https://katasensei.dev/errors/invalid-email"));
+    return problem;
+}</code></pre>
+            <p><strong>Réponse :</strong> exactement <strong>2 fichiers</strong> — l'exception elle-même + un <code>@ExceptionHandler</code> dans <code>GlobalExceptionHandler</code>. Le front Vue ne change pas, il reçoit toujours du Problem Details RFC 7807.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 5.2 — Mirror côté front : compléter AppError TS</h3>
+        <p>Mets à jour <code>src/domain/types/errors.ts</code> pour ajouter les erreurs liées à l'auth :</p>
+        <ul>
+          <li>Ajouter <code>ConflictError : { kind: 'conflict'; resource: string }</code></li>
+          <li>Mettre à jour <code>toUserMessage</code> pour couvrir le nouveau cas</li>
+          <li>Mettre à jour <code>isAppError</code> dans <code>guards.ts</code></li>
+          <li>Mettre à jour <code>ApiKataRepository</code> pour mapper les 401 vers <code>UnauthorizedError</code></li>
+        </ul>
+        <p><strong>Question de réflexion :</strong> que se passe-t-il si tu oublies de gérer <code>ConflictError</code> dans <code>toUserMessage</code> ?</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export type ConflictError = { kind: 'conflict'; resource: string }
+
+export type AppError =
+  | NetworkError | NotFoundError | ValidationError
+  | UnauthorizedError | ConflictError | UnexpectedError
+
+export function toUserMessage(error: AppError): string {
+  switch (error.kind) {
+    case 'network':      return 'Problème de connexion.'
+    case 'not-found':   return `${error.resource} introuvable.`
+    case 'validation':  return 'Certains champs sont invalides.'
+    case 'unauthorized': return 'Tu dois être connecté.'
+    case 'conflict':    return `${error.resource} existe déjà.`
+    case 'unexpected':  return 'Une erreur inattendue est survenue.'
+    // Si tu oublies 'conflict', TypeScript affiche une erreur ici
+    // car le type de retour ne couvre pas tous les cas
+  }
+}</code></pre>
+            <p><strong>Réponse :</strong> TypeScript détecte l'oubli ! La fonction déclare <code>string</code> comme type de retour. Si un cas du switch n'est pas couvert, TS signale que la fonction peut retourner <code>undefined</code> — incompatible avec <code>string</code>. Le compilateur est ton filet de sécurité.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → refactor(erreur): enrichissement GlobalExceptionHandler et AppError TS</div>
+    </section>
+
+    <!-- Étape 6 -->
+    <section class="guide-step" id="etape-6">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">6</div>
+        <h2 class="guide-step__title">Bean Validation avancée</h2>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 6.1 — Crée RegisterRequest et LoginRequest</h3>
+        <p>DTOs de requête avec validation Bean Validation.</p>
+        <p><strong>Contraintes pour <code>RegisterRequest</code> :</strong></p>
+        <ul>
+          <li><code>email</code> : <code>@Email</code> (annotation Jakarta) + <code>@NotBlank</code></li>
+          <li><code>password</code> : <code>@NotBlank</code> + <code>@Size(min = 8, message = "...")</code></li>
+          <li><code>confirmPassword</code> : <code>@NotBlank</code></li>
+          <li>Une annotation custom <code>@PasswordsMatch</code> au niveau de la classe</li>
+        </ul>
+        <p><strong>Question de réflexion :</strong> pourquoi une annotation class-level plutôt qu'une vérification dans le service ?</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-java">// L'annotation
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = PasswordsMatchValidator.class)
+public @interface PasswordsMatch {
+    String message() default "Les mots de passe ne correspondent pas";
+    Class&lt;?&gt;[] groups() default {};
+    Class&lt;? extends Payload&gt;[] payload() default {};
+}</code></pre>
+            <pre><code class="language-java">// Le validator
+public class PasswordsMatchValidator
+    implements ConstraintValidator&lt;PasswordsMatch, RegisterRequest&gt; {
+
+    @Override
+    public boolean isValid(RegisterRequest req, ConstraintValidatorContext ctx) {
+        if (req.password() == null || req.confirmPassword() == null) return true;
+        return req.password().equals(req.confirmPassword());
+    }
+}</code></pre>
+            <pre><code class="language-java">@PasswordsMatch
+public record RegisterRequest(
+    @NotBlank @Email String email,
+    @NotBlank @Size(min = 8, message = "8 caractères minimum") String password,
+    @NotBlank String confirmPassword
+) {}</code></pre>
+            <p><strong>Réponse :</strong> une annotation class-level est déclarative et réutilisable. Bean Validation l'intègre au Problem Details automatiquement — si tu mets la vérification dans le service, tu dois écrire le message d'erreur et le format à la main.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → feat(auth): ajout annotation @PasswordsMatch et RegisterRequest</div>
+    </section>
+
+    <!-- Étape 7 -->
+    <section class="guide-step" id="etape-7">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">7</div>
+        <h2 class="guide-step__title">Grand refactoring du back phase 1</h2>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 7.1 — Remplace tous les UUID bruts</h3>
+        <p>Scanner tout le code du back et remplacer chaque <code>UUID</code> brut par le bon Value Object.</p>
+        <p><strong>Méthode :</strong></p>
+        <ol>
+          <li>Dans IntelliJ : <code>Edit &gt; Find &gt; Find in Files</code> → cherche <code>UUID</code> dans <code>src/main/java</code></li>
+          <li>Pour chaque occurrence : est-ce un id de kata ? → <code>KataId</code>. D'utilisateur ? → <code>UserId</code></li>
+          <li><code>mvn compile</code> après chaque remplacement — le compilateur guide</li>
+          <li><code>mvn test</code> à la fin — aucun test ne doit casser</li>
+        </ol>
+        <div class="callout--tip">C'est le refactoring guidé par les types. Le compilateur Java se comporte exactement comme <code>tsc --noEmit</code> côté TypeScript.</div>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 7.2 — Vérifie SOLID dans chaque classe</h3>
+        <p>Passe en revue chaque classe de service :</p>
+        <table>
+          <thead>
+            <tr><th>Classe</th><th>S : une seule responsabilité ?</th><th>D : dépend d'interfaces ?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>KataService</code></td><td></td><td></td></tr>
+            <tr><td><code>AuthService</code></td><td></td><td></td></tr>
+            <tr><td><code>JwtService</code></td><td></td><td></td></tr>
+            <tr><td><code>GlobalExceptionHandler</code></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+        <p>Si une réponse est non : refactorise et documente le changement dans un commentaire <code>// SOLID: S - extraction de X</code>.</p>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → refactor(back): grand refactoring UUID vers Value Objects tests verts</div>
+    </section>
+
+    <!-- Étape 8 -->
+    <section class="guide-step" id="etape-8">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-3);">8</div>
+        <h2 class="guide-step__title">ADR 004</h2>
+      </div>
+
+      <div class="exercise">
+        <h3>Exercice 8.1 — Documente les décisions d'auth et de Value Objects</h3>
+        <p>Crée <code>docs/adr/004-auth-jwt-value-objects.md</code>.</p>
+        <pre><code class="language-bash"># ADR 004 — Auth JWT et Value Objects
+## Date
+## Statut
+## Contexte
+## Décisions
+  ### JWT sans session serveur
+  ### Value Objects plutôt qu'UUID bruts
+  ### jjwt comme librairie JWT
+## Conséquences
+## Alternatives rejetées</code></pre>
+        <p>C'est ton document — écris-le avec tes propres mots. Copie ensuite dans <code>docs/adr/</code> de ton projet GitLab avant de committer.</p>
+      </div>
+
+      <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 004 auth JWT et Value Objects</div>
+      <div class="commit-suggestion">commit suggestion → feat(auth): intégration JWT côté front Vue envoi header Authorization</div>
+    </section>
+
+    <!-- Checklist -->
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">Checklist finale phase 3</h2>
+      <ul>
+        <li><input type="checkbox"> <code>KataId</code>, <code>UserId</code>, <code>Email</code> créés avec tests</li>
+        <li><input type="checkbox"> <code>Kata.java</code> et <code>KataService.java</code> utilisent les Value Objects</li>
+        <li><input type="checkbox"> <code>mvn compile</code> passe après chaque remplacement de UUID</li>
+        <li><input type="checkbox"> SOLID documenté avec exemples dans le code (commentaires ou ADR)</li>
+        <li><input type="checkbox"> <code>JwtService</code> avec tests (dont token expiré)</li>
+        <li><input type="checkbox"> <code>JwtAuthenticationFilter</code> + <code>SecurityConfig</code></li>
+        <li><input type="checkbox"> Test <code>should_return401_when_noTokenProvided</code> vert</li>
+        <li><input type="checkbox"> Test <code>should_return200_when_validTokenProvided</code> vert</li>
+        <li><input type="checkbox"> <code>POST /auth/register</code> en TDD</li>
+        <li><input type="checkbox"> <code>POST /auth/login</code> en TDD</li>
+        <li><input type="checkbox"> Migration <code>V2__create_user_table.sql</code></li>
+        <li><input type="checkbox"> <code>EmailAlreadyExistsException</code>, <code>InvalidCredentialsException</code> dans <code>GlobalExceptionHandler</code></li>
+        <li><input type="checkbox"> <code>AppError</code> TS mise à jour avec <code>ConflictError</code></li>
+        <li><input type="checkbox"> <code>toUserMessage</code> exhaustif (compilateur vérifie)</li>
+        <li><input type="checkbox"> <code>@PasswordsMatch</code> annotation custom</li>
+        <li><input type="checkbox"> Grand refactoring UUID → Value Objects, tous tests verts</li>
+        <li><input type="checkbox"> SOLID checklist complète</li>
+        <li><input type="checkbox"> ADR 004 commité</li>
+        <li><input type="checkbox"> Frontend Vue envoie le token JWT dans les headers</li>
+        <li><input type="checkbox"> CI verte</li>
+      </ul>
+    </section>
+
+    <!-- Erreurs -->
+    <section id="erreurs">
+      <h2 style="font-size: 18px; font-weight: 700; margin: 32px 0 12px;">Erreurs fréquentes</h2>
+      <table class="errors-table">
+        <thead>
+          <tr><th>Erreur</th><th>Cause probable</th><th>Solution</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Cannot construct instance of 'KataId'</code></td>
+            <td>Jackson ne sait pas désérialiser un record custom</td>
+            <td>Ajoute <code>@JsonCreator</code> sur le constructeur ou utilise un <code>@PathVariable String</code> converti manuellement</td>
+          </tr>
+          <tr>
+            <td><code>401</code> sur toutes les routes même /auth</td>
+            <td>Routes publiques mal configurées</td>
+            <td>Vérifie <code>requestMatchers("/auth/**").permitAll()</code> AVANT <code>.anyRequest().authenticated()</code></td>
+          </tr>
+          <tr>
+            <td><code>403</code> au lieu de <code>401</code></td>
+            <td>CSRF activé</td>
+            <td>Ajoute <code>.csrf(AbstractHttpConfigurer::disable)</code> — on est en stateless JWT</td>
+          </tr>
+          <tr>
+            <td><code>SignatureException</code></td>
+            <td>Clé JWT différente entre génération et validation</td>
+            <td>La clé vient de <code>${JWT_SECRET}</code> — vérifie que <code>.env</code> est chargé</td>
+          </tr>
+          <tr>
+            <td>Tests <code>@WebMvcTest</code> échouent avec Spring Security</td>
+            <td>Security non bypassée dans les tests</td>
+            <td>Ajoute <code>@WithMockUser</code> ou configure un <code>TestSecurityConfig</code></td>
+          </tr>
+          <tr>
+            <td><code>Table app_user doesn't exist</code></td>
+            <td>Migration Flyway non exécutée</td>
+            <td>Vérifie que le nom du fichier respecte la convention <code>V2__</code> (double underscore)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="skills-summary">
+      <h2>Ce que tu sais faire après cette phase</h2>
+      <ul>
+        <li>Créer des Value Objects Java (records) qui mirroient les branded types TS</li>
+        <li>Appliquer les 5 principes SOLID sur du vrai code, avec exemples concrets</li>
+        <li>Configurer Spring Security avec JWT en stateless</li>
+        <li>Écrire un filtre HTTP personnalisé (<code>OncePerRequestFilter</code>)</li>
+        <li>Créer des endpoints d'authentification sécurisés en TDD</li>
+        <li>Créer des annotations Bean Validation custom (<code>@PasswordsMatch</code>)</li>
+        <li>Enrichir <code>GlobalExceptionHandler</code> pour chaque nouveau type d'erreur</li>
+        <li>Refactoriser du code guidée par le compilateur Java</li>
+        <li>Maintenir l'exhaustivité des erreurs côté TS avec le pattern <code>never</code></li>
+      </ul>
+      <div class="callout--tip">À retenir : les Value Objects Java et les branded types TS sont le même concept dans deux langages. SOLID et l'archi hexagonale se renforcent mutuellement — D (Dependency Inversion) <em>est</em> la règle de dépendance de l'hexagonale. Tu arrives en phase 4 avec tous les concepts théoriques vécus dans du vrai code.</div>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Phase 3</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
