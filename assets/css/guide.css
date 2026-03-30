@@ -322,6 +322,8 @@ pre:not([class]) {
 .guide-step table {
   width: 100%;
   border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
   font-size: 13.5px;
   margin: 12px 0 16px;
 }
@@ -517,6 +519,28 @@ details.solution .solution__content {
 .skills-summary ul {
   list-style: none;
   padding: 0;
+}
+
+@media (max-width: 768px) {
+  .guide-header,
+  .guide-step,
+  .checklist,
+  .errors-table,
+  .skills-summary {
+    padding: 22px;
+  }
+
+  .guide-header__title {
+    font-size: 22px;
+  }
+
+  .guide-step__heading {
+    align-items: flex-start;
+  }
+
+  .guide-step__title {
+    font-size: 17px;
+  }
 }
 
 .skills-summary li {
