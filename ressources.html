@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ressources — KataSensei</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/resources.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Ressources</span>
+</nav>
+
+<div class="layout layout--single resources-layout">
+  <main class="layout__main">
+
+    <section class="resources-hero">
+      <span class="resources-hero__eyebrow">Base documentaire</span>
+      <h1>Ressources de travail pour construire KataSensei</h1>
+      <p>Cette page remplace le CSV Notion pour la lecture. Tu peux filtrer par phase, catégorie ou type pour préparer un sprint, approfondir un sujet, ou retrouver rapidement une référence interne du site.</p>
+
+      <div class="resources-stats">
+        <div class="resources-stat">
+          <span class="resources-stat__value" id="resources-stat-total">78</span>
+          <span class="resources-stat__label">Ressources</span>
+        </div>
+        <div class="resources-stat">
+          <span class="resources-stat__value" id="resources-stat-categories">9</span>
+          <span class="resources-stat__label">Catégories</span>
+        </div>
+        <div class="resources-stat">
+          <span class="resources-stat__value" id="resources-stat-phases">9</span>
+          <span class="resources-stat__label">Phases couvertes</span>
+        </div>
+        <div class="resources-stat">
+          <span class="resources-stat__value" id="resources-stat-types">5</span>
+          <span class="resources-stat__label">Types de support</span>
+        </div>
+      </div>
+
+      <div class="resources-quicklinks">
+        <a href="ressources.html?phase=Phase%200" class="subpage">Phase 0</a>
+        <a href="ressources.html?phase=Phase%201" class="subpage">Phase 1</a>
+        <a href="ressources.html?phase=Phase%202" class="subpage">Phase 2</a>
+        <a href="ressources.html?phase=Phase%203" class="subpage">Phase 3</a>
+        <a href="ressources.html?phase=Phase%204" class="subpage">Phase 4</a>
+        <a href="ressources.html?phase=Phase%205" class="subpage">Phase 5</a>
+        <a href="ressources.html?phase=Phase%206" class="subpage">Phase 6</a>
+        <a href="ressources.html?phase=Phase%207" class="subpage">Phase 7</a>
+        <a href="ressources.html?type=Guide%20KS" class="subpage">Guides internes</a>
+        <a href="ressources.html?type=Livre" class="subpage">Livres</a>
+      </div>
+    </section>
+
+    <section class="resources-section">
+      <h2>Références du site</h2>
+      <p class="resources-section__intro">Les pages HTML du repo servent de base stable pour les conventions, l’architecture et les aides internes liées au parcours.</p>
+      <div class="resources-site-links">
+        <a href="references/arborescence.html" class="resource-site-link">
+          <span class="resource-site-link__title">Arborescence et testabilité</span>
+          <span class="resource-site-link__desc">Structure cible du code, découpage front/back, matrice de tests.</span>
+        </a>
+        <a href="references/ubiquitous-language.html" class="resource-site-link">
+          <span class="resource-site-link__title">Ubiquitous Language</span>
+          <span class="resource-site-link__desc">Vocabulaire métier partagé et conventions de nommage.</span>
+        </a>
+        <a href="references/checklist-securite.html" class="resource-site-link">
+          <span class="resource-site-link__title">Checklist sécurité</span>
+          <span class="resource-site-link__desc">Pré-prod, OWASP, secrets, validations, erreurs et observabilité.</span>
+        </a>
+        <a href="references/conventional-commits.html" class="resource-site-link">
+          <span class="resource-site-link__title">Conventional Commits</span>
+          <span class="resource-site-link__desc">Format des commits du parcours et exemples alignés avec KataSensei.</span>
+        </a>
+        <a href="references/optional-java.html" class="resource-site-link">
+          <span class="resource-site-link__title">Optional en Java</span>
+          <span class="resource-site-link__desc">Aide-mémoire pour les méthodes vraiment utilisées dans le projet.</span>
+        </a>
+        <a href="references/datagrip.html" class="resource-site-link">
+          <span class="resource-site-link__title">DataGrip</span>
+          <span class="resource-site-link__desc">Connexion à PostgreSQL, requêtes utiles et réflexes de diagnostic.</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="resources-panel">
+      <div class="resources-panel__header">
+        <div>
+          <div class="resources-panel__title">Filtrer les ressources</div>
+          <div class="resources-panel__subtitle">Recherche plein texte sur le titre, la description, la phase, la catégorie et le type.</div>
+        </div>
+        <div class="resources-count" id="resources-count">78 ressources affichées</div>
+      </div>
+
+      <div class="resources-filters">
+        <div class="resources-field">
+          <label for="resources-search">Recherche</label>
+          <input id="resources-search" type="search" placeholder="Ex. OpenAPI, Redis, TDD, Vue...">
+        </div>
+        <div class="resources-field">
+          <label for="resources-category">Catégorie</label>
+          <select id="resources-category">
+            <option value="all">Toutes</option>
+            <option value="API externe">API externe</option>
+            <option value="Architecture">Architecture</option>
+            <option value="Backend">Backend</option>
+            <option value="Frontend">Frontend</option>
+            <option value="Guide interne">Guide interne</option>
+            <option value="Infrastructure">Infrastructure</option>
+            <option value="Katas">Katas</option>
+            <option value="Outils">Outils</option>
+            <option value="Securite">Sécurité</option>
+          </select>
+        </div>
+        <div class="resources-field">
+          <label for="resources-phase">Phase</label>
+          <select id="resources-phase">
+            <option value="all">Toutes</option>
+            <option value="Phase 0">Phase 0</option>
+            <option value="Phase 1">Phase 1</option>
+            <option value="Phase 2">Phase 2</option>
+            <option value="Phase 3">Phase 3</option>
+            <option value="Phase 4">Phase 4</option>
+            <option value="Phase 5">Phase 5</option>
+            <option value="Phase 6">Phase 6</option>
+            <option value="Phase 7">Phase 7</option>
+            <option value="Toutes">Toutes phases</option>
+          </select>
+        </div>
+        <div class="resources-field">
+          <label for="resources-type">Type</label>
+          <select id="resources-type">
+            <option value="all">Tous</option>
+            <option value="Documentation">Documentation</option>
+            <option value="Guide KS">Guide KS</option>
+            <option value="Livre">Livre</option>
+            <option value="Ressource">Ressource</option>
+            <option value="Youtube">YouTube</option>
+          </select>
+        </div>
+        <button class="resources-reset" id="resources-reset" type="button">Réinitialiser</button>
+      </div>
+    </section>
+
+    <section class="resources-section">
+      <h2>Catalogue complet</h2>
+      <p class="resources-section__intro">Certains livres issus de l’export Notion n’ont pas encore de lien public associé. Ils restent visibles pour conserver l’inventaire complet des 78 références.</p>
+      <div class="resources-grid" id="resources-grid"></div>
+      <div class="resources-empty" id="resources-empty">
+        Aucun résultat pour ces filtres. Élargis la phase, retire le type, ou efface la recherche.
+      </div>
+    </section>
+
+    <div class="footer">
+      KataSensei Learning Path · Ressources filtrables · Navigation locale sans fetch externe
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/resources-filter.js"></script>
+</body>
+</html>
