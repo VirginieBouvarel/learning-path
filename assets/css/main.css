@@ -14,28 +14,57 @@
   --color-border: #eee;
   --color-border-tag: #e8e8e5;
 
+  /* Learning categories — Notion-inspired */
+  --cat-errors: #e03e3e;
+  --cat-errors-bg: #fbe4e4;
+  --cat-patterns: #d9730d;
+  --cat-patterns-bg: #faebdd;
+  --cat-tdd: #cb912f;
+  --cat-tdd-bg: #fbf3db;
+  --cat-hexa: #0f7b6c;
+  --cat-hexa-bg: #ddedea;
+  --cat-front: #0b6e99;
+  --cat-front-bg: #ddebf1;
+  --cat-typing: #6940a5;
+  --cat-typing-bg: #eae4f2;
+  --cat-ddd: #64473a;
+  --cat-ddd-bg: #e9e5e3;
+  --cat-ops: #4f4f4f;
+  --cat-ops-bg: #ebeced;
+  --cat-refactor: #ad1a72;
+  --cat-refactor-bg: #f4dfeb;
+
   /* Phase colors */
-  --phase-0: #787774;
-  --phase-1: #448361;
-  --phase-2: #c77d2e;
-  --phase-3: #c4554d;
-  --phase-4: #448361;
-  --phase-5: #6b3fa0;
-  --phase-6: #c77d2e;
-  --phase-7: #787774;
+  --phase-0: var(--cat-ops);
+  --phase-1: var(--cat-tdd);
+  --phase-2: var(--cat-typing);
+  --phase-3: var(--cat-errors);
+  --phase-4: var(--cat-hexa);
+  --phase-5: var(--cat-patterns);
+  --phase-6: var(--cat-typing);
+  --phase-7: var(--cat-ops);
+  --phase-0-bg: var(--cat-ops-bg);
+  --phase-1-bg: var(--cat-tdd-bg);
+  --phase-2-bg: var(--cat-typing-bg);
+  --phase-3-bg: var(--cat-errors-bg);
+  --phase-4-bg: var(--cat-hexa-bg);
+  --phase-5-bg: var(--cat-patterns-bg);
+  --phase-6-bg: var(--cat-typing-bg);
+  --phase-7-bg: var(--cat-ops-bg);
 
   /* Accent */
-  --color-accent-purple: #6b3fa0;
-  --color-accent-purple-bg: #f0e6ff;
-  --color-accent-green: #448361;
-  --color-accent-green-bg: #e8f5e9;
-  --color-accent-orange: #c77d2e;
-  --color-accent-orange-bg: #fef3e2;
-  --color-accent-red: #c4554d;
+  --color-accent-purple: var(--cat-typing);
+  --color-accent-purple-bg: var(--cat-typing-bg);
+  --color-accent-green: var(--cat-hexa);
+  --color-accent-green-bg: var(--cat-hexa-bg);
+  --color-accent-orange: var(--cat-patterns);
+  --color-accent-orange-bg: var(--cat-patterns-bg);
+  --color-accent-red: var(--cat-errors);
 
   /* Typography */
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
   --line-height: 1.6;
 
   /* Spacing */
@@ -327,6 +356,90 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
 .project-card p { margin-top: 12px; color: var(--color-text-light); font-size: 14px; }
 .project-card strong { color: var(--color-text); }
 
+.home-intro {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-left: 4px solid var(--color-accent-purple);
+  background: var(--color-accent-purple-bg);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--color-text);
+}
+
+.home-section h2 {
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+
+.home-section p + p {
+  margin-top: 10px;
+}
+
+.home-section__intro,
+.home-note {
+  margin-top: 14px;
+  color: var(--color-text-light);
+  font-size: 14px;
+}
+
+.home-table-wrap {
+  overflow-x: auto;
+}
+
+.home-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.home-table th,
+.home-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.home-table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-text-muted);
+}
+
+.home-list {
+  padding-left: 20px;
+}
+
+.home-list li + li {
+  margin-top: 10px;
+}
+
+.home-legend-chips {
+  margin-top: 18px;
+}
+
+.home-side-list {
+  display: grid;
+  gap: 10px;
+}
+
+.home-side-item {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.home-side-item__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.home-side-item__desc {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
 /* ==========================================================================
    Tags
    ========================================================================== */
@@ -339,6 +452,81 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
   padding: 4px 12px;
   border-radius: var(--radius-pill);
   white-space: nowrap;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag__dot {
+  font-family: var(--font-emoji);
+  line-height: 1;
+}
+
+.tag__label {
+  line-height: 1.2;
+}
+
+.tag--cat-errors,
+.tag--phase-3 {
+  background: var(--cat-errors-bg);
+  color: var(--cat-errors);
+  border-color: rgba(224, 62, 62, .15);
+}
+
+.tag--cat-patterns,
+.tag--phase-5 {
+  background: var(--cat-patterns-bg);
+  color: var(--cat-patterns);
+  border-color: rgba(217, 115, 13, .15);
+}
+
+.tag--cat-tdd,
+.tag--phase-1 {
+  background: var(--cat-tdd-bg);
+  color: var(--cat-tdd);
+  border-color: rgba(203, 145, 47, .15);
+}
+
+.tag--cat-hexa,
+.tag--phase-4 {
+  background: var(--cat-hexa-bg);
+  color: var(--cat-hexa);
+  border-color: rgba(15, 123, 108, .15);
+}
+
+.tag--cat-front {
+  background: var(--cat-front-bg);
+  color: var(--cat-front);
+  border-color: rgba(11, 110, 153, .15);
+}
+
+.tag--cat-typing,
+.tag--phase-2,
+.tag--phase-6 {
+  background: var(--cat-typing-bg);
+  color: var(--cat-typing);
+  border-color: rgba(105, 64, 165, .15);
+}
+
+.tag--cat-ddd {
+  background: var(--cat-ddd-bg);
+  color: var(--cat-ddd);
+  border-color: rgba(100, 71, 58, .15);
+}
+
+.tag--cat-ops,
+.tag--phase-0,
+.tag--phase-7 {
+  background: var(--cat-ops-bg);
+  color: var(--cat-ops);
+  border-color: rgba(79, 79, 79, .15);
+}
+
+.tag--cat-refactor {
+  background: var(--cat-refactor-bg);
+  color: var(--cat-refactor);
+  border-color: rgba(173, 26, 114, .15);
 }
 
 /* ==========================================================================
@@ -350,13 +538,21 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
 .timeline-item .duration { font-weight: 700; font-size: 15px; }
 .timeline-item .label { font-size: 12px; color: var(--color-text-muted); margin-top: 2px; }
 .tl-0 .duration { color: var(--phase-0); }
+.tl-0 .label { color: var(--phase-0); }
 .tl-1 .duration { color: var(--phase-1); }
+.tl-1 .label { color: var(--phase-1); }
 .tl-2 .duration { color: var(--phase-2); }
+.tl-2 .label { color: var(--phase-2); }
 .tl-3 .duration { color: var(--phase-3); }
+.tl-3 .label { color: var(--phase-3); }
 .tl-4 .duration { color: var(--phase-4); }
+.tl-4 .label { color: var(--phase-4); }
 .tl-5 .duration { color: var(--phase-5); }
+.tl-5 .label { color: var(--phase-5); }
 .tl-6 .duration { color: var(--phase-6); }
+.tl-6 .label { color: var(--phase-6); }
 .tl-7 .duration { color: var(--phase-7); }
+.tl-7 .label { color: var(--phase-7); }
 
 /* ==========================================================================
    Phase Cards (accordion)
@@ -507,6 +703,10 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
     margin-top: 6px;
   }
 
+  .home-intro {
+    padding: 14px 16px;
+  }
+
   .timeline {
     flex-wrap: wrap;
     gap: 12px 0;
@@ -583,6 +783,12 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
 .ref-item:hover { background: var(--color-border-tag); text-decoration: none; }
 .ref-item .ref-title { font-weight: 600; }
 .ref-item .ref-desc { font-size: 12px; color: var(--color-text-muted); margin-top: 2px; }
+.ref-item--static {
+  cursor: default;
+}
+.ref-item--static:hover {
+  background: var(--color-bg);
+}
 
 @media (max-width: 600px) {
   .ref-grid { grid-template-columns: 1fr; }
