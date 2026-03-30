@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checklist sécurité · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Checklist sécurité</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#securite">Sécurité</a>
+          <ul class="toc__list--sub">
+            <li><a href="#auth">Auth &amp; secrets</a></li>
+            <li><a href="#reseau">Réseau &amp; API</a></li>
+            <li><a href="#headers">Headers HTTP</a></li>
+            <li><a href="#code">Code &amp; données</a></li>
+            <li><a href="#infra-secu">Infrastructure</a></li>
+            <li><a href="#owasp">OWASP Top 10</a></li>
+          </ul>
+        </li>
+        <li><a href="#performances">Performances</a>
+          <ul class="toc__list--sub">
+            <li><a href="#db">Base de données</a></li>
+            <li><a href="#cache">Cache &amp; timeouts</a></li>
+            <li><a href="#frontend">Frontend</a></li>
+            <li><a href="#infra-perf">Infrastructure</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence — Pré-prod</span>
+      <h1 class="guide-header__title">Checklist sécurité &amp; performances</h1>
+      <p class="guide-header__intro">À valider avant chaque déploiement en production. Les explications sont dans les guides de phase correspondants — cette page est uniquement la checklist finale.</p>
+    </div>
+
+    <!-- SÉCURITÉ -->
+    <section id="securite">
+      <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 16px; color: var(--color-accent-red);">Sécurité</h2>
+
+      <section class="checklist" id="auth">
+        <h2 class="checklist__title">🔑 Authentification &amp; secrets</h2>
+        <ul>
+          <li><input type="checkbox"> JWT secret ≥ 256 bits, injecté depuis variable d'env uniquement</li>
+          <li><input type="checkbox"> BCrypt pour tous les mots de passe — jamais stocké en clair</li>
+          <li><input type="checkbox"> <code>.env</code> ignoré par git — <code>.env.example</code> commité</li>
+          <li><input type="checkbox"> Aucun secret dans les logs (mot de passe, token, clé API)</li>
+          <li><input type="checkbox"> GitHub Secrets configurés pour la CI</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="reseau">
+        <h2 class="checklist__title">🌐 Réseau &amp; API</h2>
+        <ul>
+          <li><input type="checkbox"> CORS configuré avec liste blanche d'origines (jamais <code>*</code>)</li>
+          <li><input type="checkbox"> HTTPS uniquement en prod</li>
+          <li><input type="checkbox"> Rate limiting actif sur <code>POST /auth/login</code> — 5 tentatives/min par IP (Bucket4j)</li>
+          <li><input type="checkbox"> Toutes les routes protégées sauf <code>/auth/**</code> et <code>/actuator/health</code></li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="headers">
+        <h2 class="checklist__title">📋 Headers HTTP (phase 6)</h2>
+        <ul>
+          <li><input type="checkbox"> <code>Content-Security-Policy</code> dans Spring Security</li>
+          <li><input type="checkbox"> <code>X-Frame-Options: DENY</code> actif</li>
+          <li><input type="checkbox"> <code>Strict-Transport-Security</code> actif</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="code">
+        <h2 class="checklist__title">💻 Code &amp; données</h2>
+        <ul>
+          <li><input type="checkbox"> Zéro concaténation de String dans les requêtes SQL — JPA uniquement</li>
+          <li><input type="checkbox"> Stack trace jamais exposé en prod — <code>@ControllerAdvice</code> retourne un message générique</li>
+          <li><input type="checkbox"> <code>InvalidCredentialsException</code> générique (même message pour email inconnu et mauvais mdp)</li>
+          <li><input type="checkbox"> Type guards côté front — toute donnée externe validée avant utilisation</li>
+          <li><input type="checkbox"> Données sensibles jamais loggées (token JWT, mot de passe)</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="infra-secu">
+        <h2 class="checklist__title">🐳 Infrastructure (phase 7)</h2>
+        <ul>
+          <li><input type="checkbox"> Container Docker lancé en utilisateur non-root (<code>USER 1001</code>)</li>
+          <li><input type="checkbox"> Scan Trivy sur l'image Docker — zéro CVE critique</li>
+          <li><input type="checkbox"> Procédure de rotation des secrets documentée</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="owasp">
+        <h2 class="checklist__title">🛡 OWASP Top 10</h2>
+        <ul>
+          <li><input type="checkbox"> A01 Broken Access Control → JWT + routes protégées ✓</li>
+          <li><input type="checkbox"> A02 Cryptographic Failures → BCrypt + secrets en env ✓</li>
+          <li><input type="checkbox"> A03 Injection → JPA + requêtes préparées ✓</li>
+          <li><input type="checkbox"> A05 Security Misconfiguration → headers HTTP + CORS strict ✓</li>
+          <li><input type="checkbox"> A07 Authentication Failures → rate limiting + credentials génériques ✓</li>
+        </ul>
+      </section>
+    </section>
+
+    <!-- PERFORMANCES -->
+    <section id="performances" style="margin-top: 16px;">
+      <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 16px; color: var(--color-accent-green);">Performances</h2>
+
+      <section class="checklist" id="db">
+        <h2 class="checklist__title">🗄 Base de données</h2>
+        <ul>
+          <li><input type="checkbox"> Index SQL sur toutes les colonnes filtrées (<code>difficulty</code>, <code>language</code>, <code>user_id</code>, <code>email</code>)</li>
+          <li><input type="checkbox"> Zéro N+1 query détecté avec <code>show-sql: true</code></li>
+          <li><input type="checkbox"> Toutes les listes paginées — zéro endpoint sans <code>Pageable</code></li>
+          <li><input type="checkbox"> Projections DTO là où les entités complètes ne sont pas nécessaires</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="cache">
+        <h2 class="checklist__title">⚡ Cache &amp; timeouts</h2>
+        <ul>
+          <li><input type="checkbox"> Cache Redis actif sur les données stables (<code>@Cacheable</code>)</li>
+          <li><input type="checkbox"> <code>@CacheEvict</code> configuré quand les données changent</li>
+          <li><input type="checkbox"> Timeout 30s sur Claude API et Piston API</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="frontend">
+        <h2 class="checklist__title">🖥 Frontend</h2>
+        <ul>
+          <li><input type="checkbox"> Bundle analysé avec <code>rollup-plugin-visualizer</code> — objectif &lt; 200KB</li>
+          <li><input type="checkbox"> <code>defineAsyncComponent</code> sur les routes non critiques</li>
+          <li><input type="checkbox"> <code>shallowRef</code> là où la réactivité profonde n'est pas nécessaire</li>
+        </ul>
+      </section>
+
+      <section class="checklist" id="infra-perf">
+        <h2 class="checklist__title">🚀 Infrastructure</h2>
+        <ul>
+          <li><input type="checkbox"> JVM tuning : <code>-Xmx512m</code> adapté au plan Fly.io</li>
+          <li><input type="checkbox"> Docker image &lt; 200MB (multi-stage JDK → JRE)</li>
+          <li><input type="checkbox"> Graceful shutdown configuré</li>
+          <li><input type="checkbox"> <code>/actuator/metrics</code> — identifier les endpoints P95 &gt; 200ms</li>
+          <li><input type="checkbox"> Sentry configuré en prod</li>
+        </ul>
+      </section>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Checklist sécurité &amp; performances</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+</body>
+</html>

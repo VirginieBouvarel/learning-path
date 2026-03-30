@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ubiquitous Language — ADR 000 · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Ubiquitous Language — ADR 000</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#termes-metiers">Termes métiers</a></li>
+        <li><a href="#termes-techniques">Termes techniques</a></li>
+        <li><a href="#dans-le-code">Dans le code</a></li>
+        <li><a href="#dans-les-commits">Dans les commits</a></li>
+        <li><a href="#dans-lUI">Dans l'UI</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence — ADR 000</span>
+      <h1 class="guide-header__title">Ubiquitous Language</h1>
+      <p class="guide-header__intro">Vocabulaire métier de KataSensei. Ces termes s'utilisent dans le code, les commits, l'UI et les conversations.</p>
+    </div>
+
+    <section class="guide-step" id="termes-metiers">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">FR</div>
+        <h2 class="guide-step__title">Termes métiers — en français dans le code</h2>
+      </div>
+
+      <div class="callout--info"><strong>ℹ️ Règle</strong> Les noms de fichiers, variables et classes n'ont pas d'accents — le français s'écrit sans accents dans le code.</div>
+
+      <table>
+        <thead><tr><th>Terme (sans accent)</th><th>Signification</th><th>À éviter</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kata</strong></td><td>Exercice de code à réaliser</td><td>Exercise, Challenge</td></tr>
+          <tr><td><strong>Tentative</strong></td><td>Une session de travail sur un kata — début, indices demandés, score final</td><td>Session, Run, Attempt</td></tr>
+          <tr><td><strong>Indice</strong></td><td>Aide fournie par l'IA Sensei</td><td>Hint, Help, Suggestion</td></tr>
+          <tr><td><strong>Niveau</strong></td><td>Degré de difficulté d'un kata : FACILE, MOYEN, DIFFICILE</td><td>Difficulty, Level</td></tr>
+          <tr><td><strong>Progression</strong></td><td>Avancée globale de l'apprenant sur la plateforme</td><td>Progress, Advancement</td></tr>
+          <tr><td><strong>Apprenant</strong></td><td>Rôle métier de l'utilisateur sur la plateforme</td><td>Student, User (au sens domaine)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout--tip"><strong>💡 Apprenant vs User</strong> <code>User</code> est l'entité technique (email, mot de passe, JWT). <code>Apprenant</code> est le rôle métier — la même personne peut être <code>User</code> côté auth et <code>Apprenant</code> côté domaine.</div>
+    </section>
+
+    <section class="guide-step" id="termes-techniques">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">EN</div>
+        <h2 class="guide-step__title">Termes techniques — en anglais dans le code</h2>
+      </div>
+
+      <table>
+        <thead><tr><th>Terme anglais</th><th>Pourquoi en anglais</th></tr></thead>
+        <tbody>
+          <tr><td><code>KataId</code>, <code>TentativeId</code>, <code>UserId</code></td><td>Identifiants techniques, convention universelle</td></tr>
+          <tr><td><code>Repository</code>, <code>Service</code>, <code>Controller</code></td><td>Patterns techniques standards Spring/Java</td></tr>
+          <tr><td><code>UseCase</code>, <code>Port</code>, <code>Adapter</code></td><td>Vocabulaire archi hexagonale</td></tr>
+          <tr><td><code>DomainException</code>, <code>ValueObject</code></td><td>Vocabulaire DDD technique</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout--info"><strong>ℹ️ Règle pratique</strong> Le nom de la classe métier est en français. Le suffixe technique (Repository, UseCase, Service, Controller, Id, Event) reste en anglais.</div>
+    </section>
+
+    <section class="guide-step" id="dans-le-code">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">{ }</div>
+        <h2 class="guide-step__title">Dans le code</h2>
+      </div>
+
+      <p>✅ <strong>Correct</strong></p>
+      <pre><code class="language-java">// Termes métiers en français sans accents
+type Niveau = 'FACILE' | 'MOYEN' | 'DIFFICILE';
+interface Indice { contenu: string; numero: number }
+public class Tentative { private KataId kataId; private int indicesUtilises; }
+public class RequestIndiceUseCase { ... }
+public class Apprenant { private UserId userId; private Progression progression; }</code></pre>
+
+      <p style="margin-top: 20px;">❌ <strong>Incorrect</strong></p>
+      <pre><code class="language-java">// NON — terme métier traduit en anglais — trahit le domaine
+public class Difficulty { EASY, MEDIUM, HARD }
+// utiliser Niveau { FACILE, MOYEN, DIFFICILE }
+
+// NON — terme métier anglais pour un concept utilisateur
+public class Hint { private String content; }
+// utiliser Indice { private String contenu; }
+
+// NON — Session est ambigu (session HTTP ? session de kata ?)
+public class Session { ... }
+// utiliser Tentative pour une session de travail sur un kata
+
+// NON — Difficulty au lieu de Niveau
+type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
+// type Niveau = 'FACILE' | 'MOYEN' | 'DIFFICILE'
+
+// NON — Student au lieu d'Apprenant
+interface Student { userId: string }
+// interface Apprenant { userId: UserId; progression: Progression }</code></pre>
+    </section>
+
+    <section class="guide-step" id="dans-les-commits">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">git</div>
+        <h2 class="guide-step__title">Dans les commits</h2>
+      </div>
+
+      <pre><code class="language-bash">feat(Kata): ajout de l'endpoint GET /katas
+feat(Indice): streaming SSE de l'indice IA
+refactor(Niveau): extraction en Value Object</code></pre>
+    </section>
+
+    <section class="guide-step" id="dans-lUI">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">UI</div>
+        <h2 class="guide-step__title">Dans les messages utilisateur (UI)</h2>
+      </div>
+
+      <p>Les messages affichés à l'utilisateur utilisent le vocabulaire métier :</p>
+      <ul>
+        <li>« Commencer un kata » et pas « Start session »</li>
+        <li>« Demander un indice » et pas « Get a hint »</li>
+        <li>« Voir ma progression » et pas « View my stats »</li>
+      </ul>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · ADR 000 — Ubiquitous Language</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

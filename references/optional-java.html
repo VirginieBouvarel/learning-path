@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optional en Java · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Optional en Java</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#dans-katasensei">Dans KataSensei</a></li>
+        <li><a href="#methodes">Méthodes utilisées</a></li>
+        <li><a href="#regle">Règle importante</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence — Java</span>
+      <h1 class="guide-header__title">Optional en Java</h1>
+      <p class="guide-header__intro"><code>Optional&lt;T&gt;</code> représente une valeur qui peut être présente ou absente — sans utiliser <code>null</code>. C'est l'équivalent de <code>T | undefined</code> en TypeScript, mais explicite dans le type de retour.</p>
+    </div>
+
+    <section class="guide-step" id="dans-katasensei">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">ex</div>
+        <h2 class="guide-step__title">Dans KataSensei</h2>
+      </div>
+
+      <p>Spring Data JPA retourne automatiquement <code>Optional&lt;Kata&gt;</code> sur <code>findById()</code>. Tu n'en crées pas manuellement — tu les consommes.</p>
+      <pre><code class="language-java">// KataService.java — exemple concret KataSensei
+public KataDto findById(KataId id) {
+    return kataRepository.findById(id.value())
+        .map(this::toDto)                               // transforme si présent
+        .orElseThrow(() -> new KataNotFoundException(id)); // lève une exception si absent
+}</code></pre>
+    </section>
+
+    <section class="guide-step" id="methodes">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">API</div>
+        <h2 class="guide-step__title">Méthodes utilisées dans le projet</h2>
+      </div>
+
+      <table>
+        <thead><tr><th>Méthode</th><th>Usage</th><th>Équivalent TS</th></tr></thead>
+        <tbody>
+          <tr><td><code>.map(fn)</code></td><td>Transforme la valeur si présente</td><td><code>.map()</code> sur un tableau d'un élément</td></tr>
+          <tr><td><code>.orElseThrow(supplier)</code></td><td>Retourne la valeur ou lève une exception</td><td><code>value ?? throw new Error()</code></td></tr>
+          <tr><td><code>.isPresent()</code></td><td>Vrai si une valeur existe</td><td><code>value !== undefined</code></td></tr>
+          <tr><td><code>.isEmpty()</code></td><td>Vrai si aucune valeur</td><td><code>value === undefined</code></td></tr>
+          <tr><td><code>.orElse(defaut)</code></td><td>Retourne la valeur ou une valeur par défaut</td><td><code>value ?? defaut</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="guide-step" id="regle">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">⚠</div>
+        <h2 class="guide-step__title">Règle importante</h2>
+      </div>
+
+      <div class="callout--warning"><strong>⚠️ Ne jamais appeler .get()</strong> sans avoir vérifié <code>.isPresent()</code> avant — ça plante si la valeur est absente. Utilise toujours <code>orElse</code> ou <code>orElseThrow</code>.</div>
+      <p style="margin-top: 16px;">Documentation complète : <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" target="_blank" rel="noopener">docs.oracle.com — Optional</a></p>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Optional en Java</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+</body>
+</html>

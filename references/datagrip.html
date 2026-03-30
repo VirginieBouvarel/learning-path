@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataGrip · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>DataGrip</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#ouvrir">Ouvrir le panneau</a></li>
+        <li><a href="#connecter">Connecter PostgreSQL</a></li>
+        <li><a href="#usages">Usages dans KataSensei</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence</span>
+      <h1 class="guide-header__title">Utiliser DataGrip dans le projet</h1>
+      <p class="guide-header__intro">DataGrip est intégré directement dans IntelliJ Ultimate via le panneau <strong>Database</strong> (à droite). Pas besoin d'installer une application séparée.</p>
+    </div>
+
+    <section class="guide-step" id="ouvrir">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">🗄</div>
+        <h2 class="guide-step__title">Ouvrir le panneau Database</h2>
+      </div>
+      <p>Dans IntelliJ : <code>View → Tool Windows → Database</code> ou icône cylindre à droite.</p>
+    </section>
+
+    <section class="guide-step" id="connecter">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">+</div>
+        <h2 class="guide-step__title">Connecter PostgreSQL local</h2>
+      </div>
+
+      <ol>
+        <li>Clic <code>+</code> → <code>Data Source</code> → <code>PostgreSQL</code></li>
+        <li>Remplis les champs depuis ton <code>.env</code> :
+          <ul>
+            <li>Host : <code>localhost</code></li>
+            <li>Port : <code>5432</code></li>
+            <li>Database : <code>katasensei</code></li>
+            <li>User : <code>katasensei</code></li>
+            <li>Password : valeur de <code>DB_PASSWORD</code></li>
+          </ul>
+        </li>
+        <li>Clique <strong>Test Connection</strong> — doit afficher ✅</li>
+        <li>Clique <strong>OK</strong></li>
+      </ol>
+      <div class="callout--warning"><strong>⚠️ Prérequis</strong> <code>docker-compose up -d</code> doit être lancé avant.</div>
+    </section>
+
+    <section class="guide-step" id="usages">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">SQL</div>
+        <h2 class="guide-step__title">Ce qu'on fait avec DataGrip dans KataSensei</h2>
+      </div>
+
+      <h3>Vérifier les tables créées par Flyway</h3>
+      <p>Après chaque migration, ouvre la connexion → <code>katasensei</code> → <code>public</code> → <code>Tables</code>. Tu dois voir les tables que tu as écrites dans tes fichiers <code>V1__...sql</code>, <code>V2__...sql</code>, etc.</p>
+
+      <h3>Lancer une requête SQL manuelle</h3>
+      <p>Clic droit sur la connexion → <code>New → Query Console</code> :</p>
+      <pre><code class="language-sql">-- Vérifier les katas insérés par la migration
+SELECT * FROM kata;
+
+-- Vérifier les migrations Flyway exécutées
+SELECT * FROM flyway_schema_history ORDER BY installed_rank;
+
+-- Vérifier un utilisateur créé via l'API
+SELECT id, email, created_at FROM app_user;</code></pre>
+
+      <h3>Inspecter les données de test</h3>
+      <p>Double-clic sur une table → affiche toutes les lignes. Tu peux filtrer, trier, et modifier directement (utile pour les tests manuels).</p>
+
+      <p style="margin-top: 16px;">Documentation officielle : <a href="https://www.jetbrains.com/help/datagrip/" target="_blank" rel="noopener">jetbrains.com/help/datagrip</a></p>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · DataGrip</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+</body>
+</html>

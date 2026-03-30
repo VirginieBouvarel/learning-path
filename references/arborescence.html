@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arborescence et testabilité · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Arborescence et testabilité</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#regle-couches">Règle par couche</a></li>
+        <li><a href="#structure-tests">Structure des tests</a></li>
+        <li><a href="#front">katasensei-front/</a></li>
+        <li><a href="#tests-back">Tests back (Maven)</a></li>
+        <li><a href="#back">katasensei-back/</a></li>
+        <li><a href="#strategie">Stratégie de tests</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence</span>
+      <h1 class="guide-header__title">Arborescence et testabilité</h1>
+      <p class="guide-header__intro">Structure cible à la fin de la phase 7. Elle évolue progressivement — ne pas tout créer dès le départ.</p>
+    </div>
+
+    <div style="background: var(--color-bg-card); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card);">
+      <img src="../assets/images/arborescence.png" alt="Arborescence KataSensei" style="width: 100%; height: auto; border-radius: var(--radius-md);">
+    </div>
+
+    <section class="guide-step" id="regle-couches">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">≡</div>
+        <h2 class="guide-step__title">Règle de testabilité par couche</h2>
+      </div>
+
+      <table>
+        <thead><tr><th>Couche</th><th>Dépendances</th><th>Comment tester</th></tr></thead>
+        <tbody>
+          <tr><td><code>domain/usecases/</code></td><td>Zéro import Vue, zéro Pinia</td><td>Vitest pur — le plus rapide</td></tr>
+          <tr><td><code>domain/types/</code> · <code>mappers/</code></td><td>Fonctions pures</td><td>Vitest pur</td></tr>
+          <tr><td><code>infrastructure/composables/</code></td><td><code>ref</code>, <code>watch</code> — pas de cycle de vie</td><td>Vitest + <code>@vue/test-utils</code> minimal</td></tr>
+          <tr><td><code>stores/</code></td><td>Pinia — appelle les use cases</td><td>Vitest + <code>createPinia()</code></td></tr>
+          <tr><td><code>ui/composables/</code></td><td><code>onMounted</code>, <code>useRouter</code>, stores</td><td>Vitest + <code>@vue/test-utils</code> complet</td></tr>
+          <tr><td><code>ui/components/</code></td><td>Composants Vue</td><td><code>@vue/test-utils</code> · Playwright</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout--info" style="margin-top: 16px;"><strong>ℹ️ Règle générale</strong> Pousser la logique le plus bas possible dans la hiérarchie. Tout ce qui peut rester dans le domaine y reste. Ce qui a besoin du cycle de vie Vue monte dans <code>ui/composables/</code> uniquement.</div>
+    </section>
+
+    <section class="guide-step" id="structure-tests">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">tests/</div>
+        <h2 class="guide-step__title">Structure des tests</h2>
+      </div>
+
+      <p>Les tests sont dans un dossier <code>tests/</code> à côté de <code>src/</code>, reproduisant la même arborescence. Exemple : <code>tests/domain/usecases/GetKatasUseCase.test.ts</code> teste <code>src/domain/usecases/GetKatasUseCase.ts</code>.</p>
+    </section>
+
+    <section class="guide-step" id="front">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">Vue</div>
+        <h2 class="guide-step__title">katasensei-front/</h2>
+      </div>
+
+      <pre><code class="language-bash">src/
+│
+├── domain/                          ← Zéro import Vue, zéro Pinia
+│   ├── types/
+│   │   ├── branded.ts               [Branded types] KataId, UserId, SessionId
+│   │   ├── result.ts                [Result pattern] Ok / Err
+│   │   ├── async.ts                 [Discriminated union] AsyncState&lt;T&gt;
+│   │   ├── session.ts               [Discriminated union] SessionState
+│   │   ├── errors.ts                [AppError union] NetworkError | NotFoundError...
+│   │   └── guards.ts                [Type guards] isNetworkError, isAppError...
+│   │
+│   ├── ports/                       ← Interfaces (ports sortants) [Archi hexagonale]
+│   │   ├── KataRepository.ts
+│   │   ├── SessionRepository.ts
+│   │   └── LogPort.ts
+│   │
+│   └── usecases/                    ← Logique pure [Archi hexagonale] [TDD Vitest pur]
+│       ├── GetKatasUseCase.ts        Reçoit KataRepository via constructeur
+│       ├── StartSessionUseCase.ts
+│       └── RequestHintUseCase.ts
+│
+├── infrastructure/                  ← Adapters [Archi hexagonale]
+│   ├── api/
+│   │   ├── ApiKataRepository.ts     Implémente KataRepository [Adapter sortant]
+│   │   ├── ApiSessionRepository.ts
+│   │   └── mappers/                 ← Anti-Corruption Layer [ACL]
+│   │       ├── KataMapper.ts        ApiKataDto → Kata [TDD Vitest pur]
+│   │       └── SessionMapper.ts
+│   │
+│   ├── logging/
+│   │   ├── ConsoleLogger.ts         Implémente LogPort
+│   │   └── SilentLogger.ts          Pour les tests — jamais de mock console
+│   │
+│   └── composables/                 ← ref/watch ok — pas de onMounted ni router
+│       ├── useAsync.ts              [Headless composable] [TDD @vue/test-utils minimal]
+│       └── useHintStream.ts         [Headless composable] SSE streaming
+│
+├── stores/                          ← Pinia — état seul [Store pattern]
+│   │                                  Appellent les use cases. Jamais fetch directement.
+│   ├── useKataStore.ts              [TDD createPinia()]
+│   ├── useSessionStore.ts
+│   └── useAuthStore.ts
+│
+└── ui/                              ← Composants Vue uniquement
+    ├── composables/                 ← onMounted, useRouter, stores Pinia
+    │   ├── useKataList.ts           [TDD @vue/test-utils complet]
+    │   └── useSession.ts
+    │
+    ├── components/
+    │   ├── ui/                      [shadcn-vue — composants copiés dans le projet]
+    │   │   ├── button.vue
+    │   │   ├── card.vue
+    │   │   └── badge.vue
+    │   ├── KataCard.vue             [Compound Component] [style scoped + BEM]
+    │   └── HintPanel.vue            [style scoped + BEM]
+    │
+    └── views/
+        ├── KataListView.vue         [style scoped + BEM]
+        ├── KataSessionView.vue
+        └── ProgressionView.vue
+
+tests/                               [même arborescence que src/]
+├── domain/
+│   ├── types/
+│   └── usecases/
+│       ├── GetKatasUseCase.test.ts
+│       └── StartSessionUseCase.test.ts
+├── infrastructure/
+│   └── api/
+│       └── mappers/
+│           ├── KataMapper.test.ts
+│           └── SessionMapper.test.ts
+├── stores/
+│   └── useKataStore.test.ts
+└── ui/
+    ├── components/
+    │   ├── KataCard.test.ts
+    │   └── HintPanel.test.ts
+    ├── composables/
+    │   └── useKataList.test.ts
+    └── views/
+        └── KataListView.test.ts</code></pre>
+    </section>
+
+    <section class="guide-step" id="tests-back">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">Maven</div>
+        <h2 class="guide-step__title">Structure des tests back</h2>
+      </div>
+
+      <p>Les tests Spring Boot suivent la convention Maven standard — un dossier <code>src/test/java/</code> reproduit l'arborescence de <code>src/main/java/</code>.</p>
+      <pre><code class="language-bash">src/
+  main/java/dev/katasensei/
+    kata/domain/...
+    kata/application/...
+    kata/infrastructure/...
+  test/java/dev/katasensei/
+    kata/domain/
+      KataTest.java                    [JUnit pur — Value Objects]
+    kata/application/
+      GetKatasServiceTest.java         [JUnit pur — FakeRepository]
+    kata/infrastructure/
+      KataControllerTest.java          [@WebMvcTest]
+      JpaKataRepositoryTest.java       [@DataJpaTest + Testcontainers]
+    auth/application/
+      AuthServiceTest.java             [JUnit pur]
+    auth/infrastructure/
+      AuthControllerTest.java          [@WebMvcTest]
+      JwtServiceTest.java              [JUnit pur]
+  test/resources/
+    application-test.yml               [Config de test — DB Testcontainers]</code></pre>
+      <div class="callout--info"><strong>ℹ️ Convention Maven</strong> <code>src/test/</code> est le dossier de test standard. Maven et Spring Boot le trouvent automatiquement — pas de configuration supplémentaire.</div>
+    </section>
+
+    <section class="guide-step" id="back">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">Java</div>
+        <h2 class="guide-step__title">katasensei-back/</h2>
+      </div>
+
+      <pre><code class="language-bash">src/main/java/dev/katasensei/
+│
+├── kata/                            ← Bounded context [DDD tactique]
+│   ├── domain/                      ← Zéro import Spring [Archi hexagonale]
+│   │   ├── Kata.java
+│   │   ├── KataId.java              [Value Object]
+│   │   ├── Difficulty.java          [Enum métier] avec applyTo(score)
+│   │   └── port/
+│   │       ├── in/                  ← Ports entrants [Archi hexagonale]
+│   │       │   └── GetKatasUseCase.java
+│   │       └── out/                 ← Ports sortants
+│   │           └── KataRepository.java
+│   │
+│   ├── application/                 ← Use cases [TDD JUnit pur]
+│   │   └── GetKatasService.java     Implémente GetKatasUseCase
+│   │
+│   └── infrastructure/              ← Adapters [Archi hexagonale]
+│       ├── KataController.java      [TDD @WebMvcTest]
+│       └── JpaKataRepository.java   Implémente KataRepository
+│
+├── session/                         ← Bounded context
+│   ├── domain/
+│   │   ├── KataSession.java         [Aggregate Root] [DDD]
+│   │   ├── SessionId.java           [Value Object]
+│   │   └── KataCompleted.java       [Domain Event]
+│   ├── application/
+│   │   └── SolveKataService.java    [TDD JUnit pur]
+│   └── infrastructure/
+│       └── SessionController.java   [TDD @WebMvcTest]
+│
+├── auth/
+│   ├── domain/
+│   │   ├── UserId.java              [Value Object]
+│   │   └── Email.java               [Value Object + validation compact constructor]
+│   ├── application/
+│   │   └── AuthService.java         [TDD JUnit pur]
+│   └── infrastructure/
+│       ├── AuthController.java
+│       ├── JwtService.java          [Sécurité] [TDD]
+│       └── SecurityConfig.java      [Spring Security] [Sécurité]
+│
+├── ai/
+│   ├── domain/port/out/
+│   │   ├── AiSensei.java            [Strategy port] [Design pattern]
+│   │   └── CodeExecutor.java
+│   └── infrastructure/
+│       ├── ClaudeAiSensei.java      [Adapter sortant]
+│       └── PistonCodeExecutor.java  [Adapter sortant]
+│
+└── shared/
+    ├── DomainException.java
+    ├── GlobalExceptionHandler.java  [Problem Details RFC 7807] [Sécurité]
+    ├── CorsConfig.java              [CORS strict] [Sécurité]
+    └── RateLimitConfig.java         [Bucket4j] [Sécurité]</code></pre>
+    </section>
+
+    <section class="guide-step" id="strategie">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">△</div>
+        <h2 class="guide-step__title">Stratégie de tests complète</h2>
+      </div>
+
+      <h3>Côté front</h3>
+      <table>
+        <thead><tr><th>Ce qu'on teste</th><th>Outil</th><th>Vitesse</th></tr></thead>
+        <tbody>
+          <tr><td>Use cases</td><td>Vitest pur</td><td>&lt; 10ms</td></tr>
+          <tr><td>Mappers</td><td>Vitest pur</td><td>&lt; 10ms</td></tr>
+          <tr><td>Type guards</td><td>Vitest pur</td><td>&lt; 10ms</td></tr>
+          <tr><td>Composables headless (<code>useAsync</code>)</td><td>Vitest + <code>@vue/test-utils</code> minimal</td><td>&lt; 50ms</td></tr>
+          <tr><td>Stores Pinia</td><td>Vitest + <code>createPinia()</code></td><td>&lt; 50ms</td></tr>
+          <tr><td>Composables UI (<code>useKataList</code>)</td><td>Vitest + <code>@vue/test-utils</code> complet</td><td>&lt; 100ms</td></tr>
+          <tr><td>Composants Vue</td><td><code>@vue/test-utils</code></td><td>&lt; 200ms</td></tr>
+          <tr><td>Parcours utilisateur</td><td>Playwright e2e</td><td>quelques secondes</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top: 20px;">Côté back</h3>
+      <table>
+        <thead><tr><th>Ce qu'on teste</th><th>Outil</th><th>Vitesse</th></tr></thead>
+        <tbody>
+          <tr><td>Domain (use cases, value objects)</td><td>JUnit 5 pur — FakeRepository</td><td>&lt; 10ms</td></tr>
+          <tr><td>Contrôleurs</td><td><code>@WebMvcTest</code> — use case mocké</td><td>&lt; 200ms</td></tr>
+          <tr><td>Intégration (repository + DB)</td><td><code>@SpringBootTest</code> · Testcontainers</td><td>quelques secondes</td></tr>
+          <tr><td>Parcours complets</td><td>Playwright e2e</td><td>quelques secondes</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout--info" style="margin-top: 16px;"><strong>ℹ️ Pyramide de tests</strong> Beaucoup de tests unitaires rapides, quelques tests d'intégration, peu de tests e2e. Les e2e valident les chemins critiques — pas tout le comportement.</div>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Arborescence et testabilité</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

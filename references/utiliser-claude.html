@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utiliser Claude · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Utiliser Claude</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#claude-ai">1 — Claude.ai</a></li>
+        <li><a href="#claude-code">2 — Claude Code CLI</a></li>
+        <li><a href="#extension">3 — Extension IntelliJ</a></li>
+        <li><a href="#tableau">Tableau récap</a></li>
+        <li><a href="#regle-20">Règle des 20 min</a></li>
+        <li><a href="#ce-quon-ne-fait-pas">Ce qu'on ne fait pas</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence</span>
+      <h1 class="guide-header__title">Comment utiliser Claude pendant le parcours</h1>
+      <p class="guide-header__intro">Trois outils différents, trois usages différents. Comprendre lequel utiliser selon la situation évite de se battre contre ses outils.</p>
+    </div>
+
+    <section class="guide-step" id="claude-ai">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--color-accent-purple);">1</div>
+        <h2 class="guide-step__title">Claude.ai (l'interface web)</h2>
+      </div>
+
+      <p><strong>Ce que c'est :</strong> Le site <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> ou l'app mobile. Une conversation avec Claude, comme un chat.</p>
+      <p><strong>Ce qu'il peut faire :</strong> répondre à des questions, expliquer des concepts, écrire dans ton Notion, générer du contenu, analyser du code que tu lui colles.</p>
+      <p><strong>Ce qu'il ne peut pas faire :</strong> lire tes fichiers directement, voir ton projet, lancer des commandes.</p>
+      <p><strong>Quand l'utiliser pendant KataSensei :</strong></p>
+      <ul>
+        <li>Clarifier un concept avant de coder (<em>« c'est quoi la différence entre @WebMvcTest et @SpringBootTest »</em>)</li>
+        <li>Débloquer un raisonnement (<em>« mon test passe mais je ne comprends pas pourquoi »</em>)</li>
+        <li>Revue de code — tu colles un extrait, on en parle</li>
+        <li>Mettre à jour le Notion</li>
+        <li>Questions d'architecture (<em>« est-ce que je devrais mettre ça dans le domaine ou dans l'infra »</em>)</li>
+      </ul>
+    </section>
+
+    <section class="guide-step" id="claude-code">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--color-accent-purple);">2</div>
+        <h2 class="guide-step__title">Claude Code CLI (dans le terminal)</h2>
+      </div>
+
+      <p><strong>Ce que c'est :</strong> un agent qui tourne dans ton terminal, dans ton projet. Il lit tes fichiers, modifie du code, voit tes erreurs de compilation en temps réel.</p>
+      <p><strong>Installation :</strong></p>
+      <pre><code class="language-bash">npm install -g @anthropic-ai/claude-code</code></pre>
+      <p>Lance-le depuis le terminal intégré d'IntelliJ, à la racine de ton projet :</p>
+      <pre><code class="language-bash">claude</code></pre>
+
+      <p><strong>Ce qu'il peut faire :</strong></p>
+      <ul>
+        <li>Lire tout ton projet (<em>« lis mon KataController et dis-moi si SOLID est respecté »</em>)</li>
+        <li>Modifier des fichiers directement</li>
+        <li>Voir les erreurs Maven ou Vitest en temps réel</li>
+        <li>Lancer des commandes (<code>mvn test</code>, <code>npm run lint</code>)</li>
+        <li>Refactoring guidé sur plusieurs fichiers</li>
+      </ul>
+
+      <p><strong>Quand l'utiliser pendant KataSensei :</strong></p>
+      <ul>
+        <li>Sessions de refactoring (phases 2, 3, 4)</li>
+        <li>Debugging d'erreurs complexes — il voit le stack trace ET le code</li>
+        <li>Vérification que SOLID est respecté dans un fichier existant</li>
+        <li>Génération de boilerplate (migrations Flyway, tests JUnit)</li>
+      </ul>
+
+      <p><strong>Exemple de session :</strong></p>
+      <pre><code class="language-bash">toi : regarde mon GlobalExceptionHandler, est-ce qu'il gère bien tous les cas ?
+claude code : [lit le fichier] Il manque le cas UnauthorizedException — voilà ce que j'ajouterais...</code></pre>
+    </section>
+
+    <section class="guide-step" id="extension">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--color-accent-purple);">3</div>
+        <h2 class="guide-step__title">Extension Claude dans IntelliJ</h2>
+      </div>
+
+      <p><strong>Ce que c'est :</strong> un plugin JetBrains qui intègre Claude dans l'éditeur.</p>
+      <p><strong>Installation :</strong> Settings → Plugins → Marketplace → cherche <strong>Claude</strong> → installe → connecte ton compte Anthropic.</p>
+      <p><strong>Ce qu'il peut faire :</strong></p>
+      <ul>
+        <li>Sélectionner du code → clic droit → Claude → Ask / Explain / Refactor</li>
+        <li>Inline suggestions pendant que tu codes</li>
+        <li>Questions rapides sans sortir de l'éditeur</li>
+      </ul>
+      <p><strong>Quand l'utiliser pendant KataSensei :</strong></p>
+      <ul>
+        <li><em>« Explique-moi ce que fait cette annotation @Transactional »</em></li>
+        <li><em>« Refactore cette méthode pour qu'elle soit plus lisible »</em></li>
+        <li><em>« Qu'est-ce que ce stack trace veut dire »</em></li>
+      </ul>
+    </section>
+
+    <section class="guide-step" id="tableau">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">≡</div>
+        <h2 class="guide-step__title">Tableau récapitulatif</h2>
+      </div>
+
+      <table>
+        <thead><tr><th>Situation</th><th>Outil recommandé</th></tr></thead>
+        <tbody>
+          <tr><td>Comprendre un concept avant de coder</td><td>Claude.ai</td></tr>
+          <tr><td>Question d'architecture</td><td>Claude.ai</td></tr>
+          <tr><td>Revue de code (tu colles un extrait)</td><td>Claude.ai</td></tr>
+          <tr><td>Mettre à jour le Notion</td><td>Claude.ai</td></tr>
+          <tr><td>Debugging d'une erreur complexe</td><td>Claude Code CLI</td></tr>
+          <tr><td>Refactoring sur plusieurs fichiers</td><td>Claude Code CLI</td></tr>
+          <tr><td>Vérifier SOLID sur un fichier</td><td>Claude Code CLI</td></tr>
+          <tr><td>Question rapide pendant que tu codes</td><td>Extension IntelliJ</td></tr>
+          <tr><td>Comprendre une annotation Java</td><td>Extension IntelliJ</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="guide-step" id="regle-20">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">20'</div>
+        <h2 class="guide-step__title">La règle des 20 minutes</h2>
+      </div>
+
+      <div class="callout--tip"><strong>💡 Règle</strong> Essaie pendant 20 minutes. Si tu es toujours bloquée, alors demande.</div>
+      <p>Le blocage fait partie de l'apprentissage. Les 20 minutes où tu cherches activement ancrent la solution bien mieux que de l'avoir tout de suite. Mais passé ce seuil, continuer à se battre seule n'a plus de valeur pédagogique — c'est de la frustration inutile.</p>
+    </section>
+
+    <section class="guide-step" id="ce-quon-ne-fait-pas">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">✗</div>
+        <h2 class="guide-step__title">Ce qu'on ne fait pas</h2>
+      </div>
+
+      <ul>
+        <li>On ne demande pas la solution avant d'avoir essayé</li>
+        <li>On n'ouvre pas le toggle de solution avant 20 min d'effort sincère</li>
+        <li>On ne copie-colle pas du code sans l'avoir lu et compris ligne par ligne</li>
+      </ul>
+      <div class="callout--warning"><strong>⚠️ Important</strong> Si tu colles du code que tu ne comprends pas dans ton projet, tu construis sur du sable. Le compilateur Java et TypeScript te le feront payer plus tard.</div>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Utiliser Claude</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

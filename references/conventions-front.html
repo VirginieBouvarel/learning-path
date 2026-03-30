@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conventions front — ADR 003 · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Conventions front — ADR 003</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#contexte">Contexte</a></li>
+        <li><a href="#css">1. CSS — scoped + BEM</a></li>
+        <li><a href="#composants">2. Composants — shadcn-vue</a></li>
+        <li><a href="#sfc">3. SFC entiers</a></li>
+        <li><a href="#tests">4. Structure tests/</a></li>
+        <li><a href="#stylelint">5. Stylelint</a></li>
+        <li><a href="#alternatives">Alternatives rejetées</a></li>
+        <li><a href="#consequences">Conséquences</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence — ADR 003</span>
+      <h1 class="guide-header__title">Conventions front (CSS, composants, structure)</h1>
+      <p class="guide-header__intro">Décisions techniques structurantes pour le front KataSensei. Écrit une fois, stable.</p>
+    </div>
+
+    <section class="guide-step" id="contexte">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">?</div>
+        <h2 class="guide-step__title">Contexte</h2>
+      </div>
+      <p>Le front Vue 3 de KataSensei nécessite des choix explicites sur le CSS, les composants, et la structure des fichiers de test. Ces choix affectent chaque composant du projet — ils doivent être décidés avant d'écrire le premier composant.</p>
+    </section>
+
+    <section class="guide-step" id="css">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">1</div>
+        <h2 class="guide-step__title">CSS — <code>&lt;style scoped&gt;</code> + BEM</h2>
+      </div>
+
+      <p>Chaque SFC utilise <code>&lt;style scoped&gt;</code> pour l'isolation des styles. La convention de nommage des classes suit BEM (Block Element Modifier).</p>
+      <pre><code class="language-css">/* Block */
+.kata-card { ... }
+
+/* Element */
+.kata-card__titre { ... }
+.kata-card__niveau { ... }
+
+/* Modifier */
+.kata-card--selectionne { ... }
+.kata-card__niveau--difficile { ... }</code></pre>
+
+      <div class="callout--info"><strong>ℹ️ Pourquoi scoped et pas CSS Modules ?</strong> CSS Modules nécessite <code>class="$style.titre"</code> dans les templates — plus verbeux sans gain réel en SFC. <code>scoped</code> est transparent et c'est la convention Vue standard.</div>
+      <div class="callout--info"><strong>ℹ️ Pourquoi BEM et pas Tailwind ?</strong> Tailwind surcharge les templates avec 10–15 classes par élément — lisibilité réduite et friction avec l'archi hexagonale front. BEM garde le template propre et le CSS explicite.</div>
+    </section>
+
+    <section class="guide-step" id="composants">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">2</div>
+        <h2 class="guide-step__title">Composants — shadcn-vue</h2>
+      </div>
+
+      <p>On utilise <a href="https://www.shadcn-vue.com/" target="_blank" rel="noopener">shadcn-vue</a> comme source de composants. Les composants sont copiés dans le projet (pas une dépendance externe) — on en est propriétaire, on les lit, on les comprend.</p>
+      <div class="callout--info"><strong>ℹ️ Pourquoi pas Vuetify ?</strong> Vuetify impose un design system opinionnaire difficile à personnaliser. shadcn-vue est non-opinionnaire — tu amènes le CSS, tu gardes le contrôle.</div>
+    </section>
+
+    <section class="guide-step" id="sfc">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">3</div>
+        <h2 class="guide-step__title">SFC entiers — pas de découpage</h2>
+      </div>
+
+      <p>Chaque composant Vue est un fichier <code>.vue</code> unique contenant <code>&lt;template&gt;</code>, <code>&lt;script setup&gt;</code>, et <code>&lt;style scoped&gt;</code>. Pas de découpage en fichiers <code>.html</code> + <code>.css</code> + <code>.ts</code> séparés.</p>
+      <div class="callout--info"><strong>ℹ️ Pourquoi ?</strong> Vite, Volar et Vitest sont optimisés pour les SFC monofichiers. Le découpage à la Angular ajoute de la complexité de navigation sans bénéfice dans l'écosystème Vue.</div>
+    </section>
+
+    <section class="guide-step" id="tests">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">4</div>
+        <h2 class="guide-step__title">Structure des tests — dossier <code>tests/</code> séparé</h2>
+      </div>
+
+      <p>Les tests sont dans un dossier <code>tests/</code> à côté de <code>src/</code>, reproduisant la même arborescence.</p>
+      <pre><code class="language-bash">katasensei-front/
+  src/
+    domain/
+      usecases/
+        GetKatasUseCase.ts
+    ui/
+      components/
+        KataCard.vue
+  tests/
+    domain/
+      usecases/
+        GetKatasUseCase.test.ts
+    ui/
+      components/
+        KataCard.test.ts</code></pre>
+      <div class="callout--info"><strong>ℹ️ Pourquoi pas de dossier par composant ?</strong> Un dossier <code>KataCard/</code> contenant <code>KataCard.vue</code> + <code>KataCard.test.ts</code> crée une navigation plus lourde pour seulement 2 fichiers. Le dossier <code>tests/</code> séparé donne une vue claire de ce qui est testé.</div>
+    </section>
+
+    <section class="guide-step" id="stylelint">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">5</div>
+        <h2 class="guide-step__title">Linter CSS — Stylelint</h2>
+      </div>
+
+      <p>Stylelint avec <code>stylelint-config-recommended-vue</code> lint les styles dans les SFC. Configuré pour s'exécuter on save dans IntelliJ, et dans le pre-commit hook Husky.</p>
+    </section>
+
+    <section class="guide-step" id="alternatives">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">✗</div>
+        <h2 class="guide-step__title">Alternatives rejetées</h2>
+      </div>
+
+      <table>
+        <thead><tr><th>Alternative</th><th>Raison du rejet</th></tr></thead>
+        <tbody>
+          <tr><td>Tailwind CSS</td><td>Templates illisibles, friction avec l'archi hexagonale</td></tr>
+          <tr><td>Vuetify 3</td><td>Design system opinionnaire, lock-in fort</td></tr>
+          <tr><td>CSS Modules</td><td>Plus verbeux que <code>scoped</code> sans gain réel en SFC</td></tr>
+          <tr><td>Dossier par composant</td><td>Navigation lourde pour 2 fichiers par composant</td></tr>
+          <tr><td>Colocalization tests</td><td>Mélange code source et tests dans le même dossier</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="guide-step" id="consequences">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">→</div>
+        <h2 class="guide-step__title">Conséquences</h2>
+      </div>
+
+      <ul>
+        <li>Tous les SFC utilisent <code>&lt;style scoped&gt;</code> avec BEM</li>
+        <li>shadcn-vue est installé en phase 0, utilisé dès la phase 1</li>
+        <li>Stylelint est configuré en phase 0 avec ESLint et Prettier</li>
+        <li>Les tests vivent dans <code>tests/</code> avec la même arborescence que <code>src/</code></li>
+        <li>La convention BEM est documentée ici — pas répétée dans chaque guide de phase</li>
+      </ul>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · ADR 003 — Conventions front</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

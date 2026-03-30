@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workflow GitLab · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="/perso/learning-path/index.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Workflow GitLab</span>
+</nav>
+
+<div class="layout layout--guide">
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans cette page</p>
+      <ul class="toc__list">
+        <li><a href="#branches">Nommage des branches</a></li>
+        <li><a href="#cycle">Cycle de vie d'un ticket</a></li>
+        <li><a href="#workflow">Workflow pas à pas</a></li>
+        <li><a href="#template-mr">Template de MR</a></li>
+        <li><a href="#claude-reviewer">Claude comme reviewer</a></li>
+        <li><a href="#ci">Pipeline GitLab CI</a></li>
+        <li><a href="#protection">Protéger main</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+
+    <div class="guide-header">
+      <span class="guide-header__phase-badge">Référence</span>
+      <h1 class="guide-header__title">Workflow GitLab</h1>
+      <p class="guide-header__intro">Toutes les conventions de travail avec GitLab pour le projet KataSensei.</p>
+    </div>
+
+    <section class="guide-step" id="branches">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">⎇</div>
+        <h2 class="guide-step__title">Convention de nommage des branches</h2>
+      </div>
+      <pre><code class="language-bash">phase1-KS001-titre-de-mon-ticket</code></pre>
+    </section>
+
+    <section class="guide-step" id="cycle">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">→</div>
+        <h2 class="guide-step__title">Cycle de vie d'un ticket</h2>
+      </div>
+
+      <pre><code class="language-bash">Backlog → À faire → En cours → En review (MR ouverte) → Terminé</code></pre>
+
+      <table>
+        <thead><tr><th>Statut</th><th>Signification</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Backlog</strong></td><td>Idée ou tâche future, pas encore planifiée</td></tr>
+          <tr><td><strong>À faire</strong></td><td>Planifiée pour la session en cours</td></tr>
+          <tr><td><strong>En cours</strong></td><td>Branche créée, travail actif</td></tr>
+          <tr><td><strong>En review</strong></td><td>MR ouverte, Claude fait la revue</td></tr>
+          <tr><td><strong>Terminé</strong></td><td>MR mergée sur <code>main</code>, ticket clos</td></tr>
+        </tbody>
+      </table>
+      <div class="callout--info"><strong>ℹ️ En review</strong> = tu as ouvert une MR sur GitLab et tu demandes à Claude de relire le code avant de merger.</div>
+    </section>
+
+    <section class="guide-step" id="workflow">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">git</div>
+        <h2 class="guide-step__title">Workflow pas à pas</h2>
+      </div>
+
+      <pre><code class="language-bash"># 1. Toujours partir d'un main à jour
+git checkout main
+git pull origin main
+
+# 2. Créer une branche
+git switch -c feat/kata-get-endpoint
+
+# 3. Travailler, committer au fur et à mesure
+# (un commit = une intention, voir Conventional Commits)
+git add .
+git commit -m "feat(kata): ajout endpoint GET /katas"
+
+# 4. Push et ouvrir la MR
+git push origin feat/kata-get-endpoint
+# GitLab affiche un lien direct pour créer la MR</code></pre>
+    </section>
+
+    <section class="guide-step" id="template-mr">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">MR</div>
+        <h2 class="guide-step__title">Template de Merge Request</h2>
+      </div>
+
+      <p>Settings → General → Merge request templates → template <code>Default</code> :</p>
+      <pre><code class="language-markdown">## Description
+&lt;!-- Que fait cette MR ? Pourquoi ? --&gt;
+
+## Ticket
+PHASE [N°]
+KS-XXX — [Titre du ticket]
+
+## Tests
+- [ ] Testé manuellement
+- [ ] Tests unitaires ajoutés / mis à jour
+
+## Checklist
+- [ ] Les tests passent (`mvn test` ou `npm run test:unit`)
+- [ ] Le lint est propre
+- [ ] `npm run type-check` passe sans erreur
+- [ ] Si décision architecturale : ADR écrit et inclus dans `docs/adr/`
+- [ ] Si nouvelle route API : OpenAPI mis à jour
+- [ ] Pas de secret dans le code
+- [ ] CI verte
+
+## Points d'attention pour la review</code></pre>
+    </section>
+
+    <section class="guide-step" id="claude-reviewer">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--color-accent-purple);">AI</div>
+        <h2 class="guide-step__title">Claude comme reviewer</h2>
+      </div>
+
+      <p>Dans le terminal IntelliJ à la racine du projet :</p>
+      <pre><code class="language-bash">claude</code></pre>
+      <p>Demandes utiles avant de merger :</p>
+      <ul>
+        <li><em>« Relis mes changements dans <code>kata/domain/</code> et dis-moi si SOLID est respecté »</em></li>
+        <li><em>« Vérifie que mon use case ne dépend d'aucun framework »</em></li>
+        <li><em>« Y a-t-il des problèmes de sécurité dans ce contrôleur ? »</em></li>
+        <li><em>« Est-ce que ce refactoring casse l'archi hexagonale ? »</em></li>
+      </ul>
+    </section>
+
+    <section class="guide-step" id="ci">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">CI</div>
+        <h2 class="guide-step__title">Pipeline GitLab CI</h2>
+      </div>
+
+      <p>Fichier <code>.gitlab-ci.yml</code> à la racine :</p>
+      <pre><code class="language-yaml">stages:
+  - test
+
+test-back:
+  stage: test
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - cd katasensei-back && mvn test
+  only:
+    - merge_requests
+    - main
+
+test-front:
+  stage: test
+  image: node:20
+  script:
+    - cd katasensei-front
+    - npm ci
+    - npm run type-check
+    - npm run lint
+    - npm run test:unit
+  only:
+    - merge_requests
+    - main</code></pre>
+      <div class="callout--info"><strong>ℹ️ CI automatique</strong> La CI tourne automatiquement à chaque MR. On ne peut pas merger si les tests échouent.</div>
+    </section>
+
+    <section class="guide-step" id="protection">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">🔒</div>
+        <h2 class="guide-step__title">Protéger la branche main</h2>
+      </div>
+
+      <p>Settings → Repository → Protected branches :</p>
+      <ul>
+        <li>Branch : <code>main</code></li>
+        <li>Allowed to push : <strong>No one</strong></li>
+        <li>Allowed to merge : Maintainers (toi)</li>
+      </ul>
+      <div class="callout--warning"><strong>⚠️ Important</strong> Sans cette protection, le pre-commit hook est le seul garde-fou. Avec elle, même un push accidentel direct est bloqué par GitLab.</div>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Workflow GitLab</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+</html>
