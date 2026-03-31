@@ -24,11 +24,20 @@ KataSensei = plateforme d'entraînement aux katas de code. Éditeur Monaco, supe
 ## Structure du site
 
 ```
-index.html                ← page d'accueil / vue d'ensemble du parcours
-ressources.html           ← base documentaire filtrable par phase, catégorie, type
-phases/                   ← guides détaillés phases 0-3 + overview phases 4-7
-references/               ← conventions, ADR, aides transverses
-assets/                   ← CSS partagé, JS de navigation et filtres, images
+site/
+├── index.html            ← page d'accueil / vue d'ensemble du parcours
+├── ressources.html       ← base documentaire filtrable par phase, catégorie, type
+├── phases/               ← guides détaillés phases 0-3 + overview phases 4-7
+├── guides/               ← conventions, ADR, aides transverses
+└── assets/               ← CSS partagé, JS de navigation et filtres, images
+
+content/
+└── KataSensei — Learning Path/  ← export Notion d'origine conservé comme archive/source
+
+docs/
+├── PLAN.md
+├── LEARNING_PATH_SPECS.md
+└── TYPE_DD_NOTES.md
 ```
 
 Le site est servi via Live Server (VS Code).
@@ -47,7 +56,7 @@ Le site est servi via Live Server (VS Code).
 
 ## Fichiers markdown / CSV (héritage Notion)
 
-Les `.md` et `.csv` dans `KataSensei — Learning Path/` sont l'export Notion d'origine. Le contenu a largement été migré vers le site HTML, mais les exports sont conservés comme source de secours et archive locale pour Notion.
+Les `.md` et `.csv` dans `content/KataSensei — Learning Path/` sont l'export Notion d'origine. Le contenu a largement été migré vers le site HTML, mais les exports sont conservés comme source de secours et archive locale pour Notion.
 
 ## Conventions clés
 

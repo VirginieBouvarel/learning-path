@@ -1,13 +1,13 @@
 const INTERNAL_GUIDES = [
-  { id: "ubiquitous-language", title: "Ubiquitous Language — ADR 000", path: "references/ubiquitous-language.html" },
-  { id: "conventions-front", title: "Conventions front — ADR 003", path: "references/conventions-front.html" },
-  { id: "conventional-commits", title: "Conventional Commits", path: "references/conventional-commits.html" },
-  { id: "arborescence", title: "Arborescence et testabilité", path: "references/arborescence.html" },
-  { id: "workflow-gitlab", title: "Workflow GitLab", path: "references/workflow-gitlab.html" },
-  { id: "utiliser-claude", title: "Utiliser Claude", path: "references/utiliser-claude.html" },
-  { id: "optional-java", title: "Optional en Java", path: "references/optional-java.html" },
-  { id: "datagrip", title: "DataGrip", path: "references/datagrip.html" },
-  { id: "checklist-securite", title: "Checklist sécurité", path: "references/checklist-securite.html" }
+  { id: "ubiquitous-language", title: "Ubiquitous Language — ADR 000", path: "guides/ubiquitous-language.html" },
+  { id: "conventions-front", title: "Conventions front — ADR 003", path: "guides/conventions-front.html" },
+  { id: "conventional-commits", title: "Conventional Commits", path: "guides/conventional-commits.html" },
+  { id: "arborescence", title: "Arborescence et testabilité", path: "guides/arborescence.html" },
+  { id: "workflow-gitlab", title: "Workflow GitLab", path: "guides/workflow-gitlab.html" },
+  { id: "utiliser-claude", title: "Utiliser Claude", path: "guides/utiliser-claude.html" },
+  { id: "optional-java", title: "Optional en Java", path: "guides/optional-java.html" },
+  { id: "datagrip", title: "DataGrip", path: "guides/datagrip.html" },
+  { id: "checklist-securite", title: "Checklist sécurité", path: "guides/checklist-securite.html" }
 ];
 
 function getSelectedGuideId() {
@@ -24,7 +24,7 @@ function updateQueryString(id) {
 
 function rewriteReferenceUrl(url) {
   if (!url || url.startsWith("http") || url.startsWith("mailto:") || url.startsWith("#")) return url;
-  if (url.startsWith("../references/")) {
+  if (url.startsWith("../guides/")) {
     const page = url.split("/").pop().replace(".html", "");
     return `guides-internes.html?page=${page}`;
   }

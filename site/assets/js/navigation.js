@@ -9,16 +9,16 @@
 /**
  * Retourne le préfixe racine selon la profondeur de la page courante.
  * - pages à la racine (index.html, parcours.html, ressources.html) → ""
- * - pages dans un sous-dossier (phases/, references/) → "../"
+ * - pages dans un sous-dossier (phases/, guides/) → "../"
  */
 function getRootPrefix() {
   const depth = window.location.pathname.split('/').filter(Boolean).length;
   // Sous Live Server : /index.html → depth 1, /phases/phase-0.html → depth 2
   // Sous WAMP /perso/learning-path/ : index.html → depth 3, phases/ → depth 4
   // On détecte le sous-dossier en regardant si le dernier segment non-fichier
-  // est phases/ ou references/
+  // est phases/ ou guides/
   const path = window.location.pathname;
-  if (path.includes('/phases/') || path.includes('/references/')) {
+  if (path.includes('/phases/') || path.includes('/guides/')) {
     return '../';
   }
   return '';
@@ -76,7 +76,7 @@ function highlightActivePage() {
       isActive = true;
     } else if (page === 'phases' && path.includes('/phases/')) {
       isActive = true;
-    } else if (page === 'guides-internes' && (path.endsWith('guides-internes.html') || path.includes('/references/'))) {
+    } else if (page === 'guides-internes' && (path.endsWith('guides-internes.html') || path.includes('/guides/'))) {
       isActive = true;
     } else if (page === 'ressources' && path.includes('ressources.html')) {
       isActive = true;

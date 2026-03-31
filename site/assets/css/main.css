@@ -811,7 +811,7 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
 .subpage[href*="ressources.html"]::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23666662' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2.75h6l2 2V13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1.25Z'/%3E%3Cpath d='M10 2.75V5h2'/%3E%3Cpath d='M5.25 7.25h5.5M5.25 9.25h5.5M5.25 11.25h3.5'/%3E%3C/svg%3E");
 }
-.subpage[href*="references/"]::before {
+.subpage[href*="guides/"]::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23666662' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3.25h6.5A1.5 1.5 0 0 1 13 4.75v6.5a1.5 1.5 0 0 1-1.5 1.5H5.75A1.75 1.75 0 0 0 4 14.5V5a1.75 1.75 0 0 1 1-1.75Z'/%3E%3Cpath d='M6 6.25h4.75M6 8.5h4.75M6 10.75h3.25'/%3E%3Cpath d='M4 13.5c.35-.5.88-.75 1.6-.75H12.5'/%3E%3C/svg%3E");
 }
 .subpage[href*="phases/phase-"]::before,
