@@ -677,6 +677,7 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
   transition: background .15s;
 }
 .phase-header:hover { background: var(--color-bg-hover); }
+.phase-card.open .phase-header { background: var(--color-bg-hover); }
 .phase-number {
   width: 40px;
   height: 40px;
@@ -712,8 +713,15 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
   flex-shrink: 0;
 }
 .phase-card.open .phase-chevron { transform: rotate(90deg); }
-.phase-body { display: none; padding: 0 28px 28px 84px; }
+.phase-body { display: none; padding: 16px 28px 28px 84px; }
 .phase-card.open .phase-body { display: block; }
+.phase-body ul,
+.phase-body ol {
+  margin: 14px 0 0 20px;
+}
+.phase-body li + li {
+  margin-top: 6px;
+}
 
 /* ==========================================================================
    Concepts
