@@ -47,8 +47,7 @@
           </ul>
         </li>
         <li><a href="#ouvrir">Ouvrir les deux projets</a></li>
-        <li><a href="#datagrip">DataGrip intégré</a></li>
-        <li><a href="#claude">Claude dans IntelliJ</a></li>
+        <li><a href="#outils-reportes">Outils reportés</a></li>
         <li><a href="#verification">Vérification finale</a></li>
       </ul>
     </nav>
@@ -231,34 +230,19 @@ wget -qO - https://raw.githubusercontent.com/nagygergo/jetbrains-toolbox-install
       </ul>
     </section>
 
-    <!-- DataGrip -->
-    <section class="guide-step" id="datagrip">
+    <!-- Outils reportés -->
+    <section class="guide-step" id="outils-reportes">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-0);">🗄</div>
-        <h2 class="guide-step__title">DataGrip — panneau Database intégré</h2>
+        <h2 class="guide-step__title">Outils reportés aux phases utiles</h2>
       </div>
 
-      <p>DataGrip est inclus dans IntelliJ Ultimate via le panneau <strong>Database</strong> — pas besoin d'installer une application séparée.</p>
-      <p>Ouvre-le : <code>View → Tool Windows → Database</code> (ou icône cylindre à droite).</p>
-      <p>Consulte la page <a href="../guides/datagrip.html">Utiliser DataGrip dans KataSensei</a> pour la configuration complète.</p>
-      <div class="callout--info"><strong>ℹ️ Bruno</strong> Bruno s'installe en phase 1 quand on crée les premiers endpoints — pas maintenant.</div>
-    </section>
-
-    <!-- Claude dans IntelliJ -->
-    <section class="guide-step" id="claude">
-      <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--color-accent-purple);">AI</div>
-        <h2 class="guide-step__title">Claude dans IntelliJ</h2>
-      </div>
-
-      <h3>Extension Claude (questions rapides inline)</h3>
-      <p>Settings → Plugins → Marketplace → cherche <strong>Claude</strong> → Installe → connecte ton compte Anthropic.</p>
-      <p>Utilisation : sélectionne du code → clic droit → Claude → Ask / Explain / Refactor.</p>
-
-      <h3>Claude Code CLI (sessions de travail intensif)</h3>
-      <p>Dans le terminal intégré d'IntelliJ à la racine du projet :</p>
-      <pre><code class="language-bash">npm install -g @anthropic-ai/claude-code
-claude</code></pre>
+      <p>Le setup IDE de la phase 0 reste volontairement sobre. Certains outils existent déjà dans IntelliJ Ultimate, mais ne deviennent utiles qu'une fois le besoin métier apparu.</p>
+      <ul>
+        <li><strong>DataGrip / panneau Database</strong> : à utiliser en phase 1, quand tu manipules vraiment la base et les premières migrations.</li>
+        <li><strong>Bruno</strong> : à utiliser en phase 1, quand tu as de vrais endpoints à appeler.</li>
+        <li><strong>Playwright</strong> : ne s'installe pas ici ; il arrive en phase 6 avec les tests e2e.</li>
+      </ul>
     </section>
 
     <!-- Vérification finale -->
@@ -281,8 +265,7 @@ claude</code></pre>
         <li><input type="checkbox"> Les erreurs TypeScript apparaissent en rouge dans l'éditeur</li>
         <li><input type="checkbox"> Les erreurs Java apparaissent en rouge dans l'éditeur</li>
         <li><input type="checkbox"> Terminal intégré ouvre dans WSL2</li>
-        <li><input type="checkbox"> Panneau Database ouvert et fonctionnel</li>
-        <li><input type="checkbox"> Extension Claude installée</li>
+        <li><input type="checkbox"> Tu sais où activer plus tard le panneau Database si la phase 1 le demande</li>
       </ul>
     </section>
 

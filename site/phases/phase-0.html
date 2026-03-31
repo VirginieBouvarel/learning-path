@@ -36,7 +36,7 @@
         <li><a href="#etape-8">8 — GitHub Actions</a></li>
         <li><a href="#etape-9">9 — ADR 001</a></li>
         <li><a href="#etape-10">10 — Stylelint</a></li>
-        <li><a href="#etape-11">11 — shadcn-vue</a></li>
+        <li><a href="#etape-11">11 — Ce qui attend la suite</a></li>
         <li><a href="#etape-12">12 — Structure tests/</a></li>
         <li><a href="#checklist">Checklist finale</a></li>
         <li><a href="#erreurs">Erreurs fréquentes</a></li>
@@ -121,17 +121,14 @@ mvn -version
           <tr><td>Spring Web</td><td>Serveur HTTP + REST</td><td>Express.js</td></tr>
           <tr><td>Spring Data JPA</td><td>ORM pour la DB</td><td>Prisma / TypeORM</td></tr>
           <tr><td>PostgreSQL Driver</td><td>Connecteur PostgreSQL</td><td>pg (node-postgres)</td></tr>
-          <tr><td>Spring Security</td><td>Auth + protection des routes</td><td>middleware d'auth</td></tr>
-          <tr><td>Validation</td><td>Validation des DTOs</td><td>Zod / Valibot</td></tr>
           <tr><td>Spring Actuator</td><td>Health check + métriques</td><td>/healthz endpoint</td></tr>
-          <tr><td>Flyway Migration</td><td>Migrations SQL versionnées</td><td>git pour la DB</td></tr>
         </tbody>
       </table>
       <p>Clique <strong>Generate</strong>, dézippe dans ton dossier de projets.</p>
 
       <h3>2.2 — Ouvrir dans IntelliJ IDEA</h3>
-      <p>Télécharge <a href="https://www.jetbrains.com/idea/download/" target="_blank" rel="noopener">IntelliJ IDEA Community</a> (gratuit). Ouvre le dossier du projet — IntelliJ détecte Maven automatiquement et télécharge les dépendances.</p>
-      <div class="callout--info"><strong>ℹ️ Pourquoi IntelliJ et pas VS Code ?</strong> Pour Java, IntelliJ a une compréhension du langage sans comparaison. Tu peux utiliser VS Code avec l'extension Java mais tu te bats contre l'outil. IntelliJ Community est gratuit.</div>
+      <p>Télécharge <a href="https://www.jetbrains.com/idea/download/" target="_blank" rel="noopener">IntelliJ IDEA Ultimate</a>. Ouvre le dossier du projet — IntelliJ détecte Maven automatiquement et télécharge les dépendances.</p>
+      <div class="callout--info"><strong>ℹ️ Pourquoi IntelliJ et pas VS Code ?</strong> Pour Java, IntelliJ a une compréhension du langage sans comparaison. Ici on tranche pour IntelliJ Ultimate afin de garder le même IDE sur tout le parcours, front comme back.</div>
 
       <h3>2.3 — Lire le pom.xml</h3>
       <p>Ouvre <code>pom.xml</code> et lis chaque balise. Tu dois pouvoir répondre à :</p>
@@ -159,11 +156,11 @@ mvn -version
 ✔ Add Vue Router? › Yes
 ✔ Add Pinia? › Yes
 ✔ Add Vitest? › Yes
-✔ Add an End-to-End Testing Solution? › Playwright
+✔ Add an End-to-End Testing Solution? › No
 ✔ Add ESLint? › Yes
 ✔ Add Prettier? › Yes
 ✔ Add Vue DevTools? › Yes</code></pre>
-      <div class="callout--info"><strong>ℹ️ Pourquoi tout maintenant ?</strong> Installer Playwright sur un projet existant = refactoring douloureux. Partir avec tout configuré coûte rien.</div>
+      <div class="callout--info"><strong>ℹ️ Pourquoi pas Playwright maintenant ?</strong> La phase 0 pose le socle minimal. Playwright n'arrive qu'au moment où le projet a de vrais parcours utilisateur à tester, en phase 6.</div>
       <pre><code class="language-bash">cd katasensei-front
 npm install
 npm run dev
@@ -283,16 +280,6 @@ docs(adr): add ADR 001 tech choices</code></pre>
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres_data:</code></pre>
       <div class="callout--warning"><strong>⚠️ Le healthcheck est critique</strong> Sans lui, Spring Boot démarre avant que PostgreSQL soit prêt et plante avec une erreur cryptique.</div>
@@ -301,17 +288,11 @@ volumes:
       <p>Crée <code>.env</code> (ignoré par git) :</p>
       <pre><code class="language-bash">DB_PASSWORD=localpassword123
 DB_URL=jdbc:postgresql://localhost:5432/katasensei
-DB_USERNAME=katasensei
-JWT_SECRET=mon-secret-local-au-moins-256-bits-de-long
-CLAUDE_API_KEY=sk-ant-...
-PISTON_URL=https://emkc.org/api/v2/piston</code></pre>
+DB_USERNAME=katasensei</code></pre>
       <p>Crée <code>.env.example</code> (commité dans git) :</p>
       <pre><code class="language-bash">DB_PASSWORD=CHANGE_ME
 DB_URL=jdbc:postgresql://localhost:5432/katasensei
-DB_USERNAME=katasensei
-JWT_SECRET=CHANGE_ME_min_256_bits
-CLAUDE_API_KEY=CHANGE_ME
-PISTON_URL=https://emkc.org/api/v2/piston</code></pre>
+DB_USERNAME=katasensei</code></pre>
       <p>Ajoute dans <code>.gitignore</code> :</p>
       <pre><code class="language-bash">.env
 *.env.local</code></pre>
@@ -327,9 +308,6 @@ PISTON_URL=https://emkc.org/api/v2/piston</code></pre>
     hibernate:
       ddl-auto: validate
     show-sql: false
-  flyway:
-    enabled: true
-
 management:
   endpoints:
     web:
@@ -345,13 +323,11 @@ logging:
 
       <h3>5.4 — Démarrer l'infra locale</h3>
       <pre><code class="language-bash">docker-compose up -d
-# ✅ postgres démarré
-# ✅ redis démarré</code></pre>
+# ✅ postgres démarré</code></pre>
       <p>Vérification :</p>
       <pre><code class="language-bash">docker-compose ps
-# katasensei-postgres   running (healthy)
-# katasensei-redis      running (healthy)</code></pre>
-      <div class="commit-suggestion">chore(infra): ajout Docker Compose PostgreSQL Redis avec variables d'environnement</div>
+# katasensei-postgres   running (healthy)</code></pre>
+      <div class="commit-suggestion">chore(infra): ajout Docker Compose PostgreSQL avec variables d'environnement</div>
     </section>
 
     <!-- Étape 6 -->
@@ -408,8 +384,8 @@ fly launch
 # Réponds aux questions : région = cdg (Paris), PostgreSQL = non (on gère le nôtre)</code></pre>
       <p>Ajoute les secrets :</p>
       <pre><code class="language-bash">fly secrets set DB_URL="jdbc:postgresql://..."
-fly secrets set JWT_SECRET="..."
-fly secrets set CLAUDE_API_KEY="..."</code></pre>
+fly secrets set DB_USERNAME="katasensei"
+fly secrets set DB_PASSWORD="..."</code></pre>
       <pre><code class="language-bash">fly deploy</code></pre>
 
       <h3>7.4 — Vérifier que ça tourne</h3>
@@ -527,7 +503,7 @@ Sandbox externe gratuite et open source.
 
 ## Conséquences
 - Apprentissage de Maven obligatoire
-- IntelliJ IDEA recommandé (gratuit Community)
+- IntelliJ IDEA Ultimate retenu pour tout le parcours
 - Dépendance à Piston API pour l'exécution de code</code></pre>
       <div class="commit-suggestion">docs(adr): ajout ADR 001 choix technologiques</div>
     </section>
@@ -568,23 +544,18 @@ Sandbox externe gratuite et open source.
     <section class="guide-step" id="etape-11">
       <div class="guide-step__heading">
         <div class="guide-step__number">11</div>
-        <h2 class="guide-step__title">shadcn-vue</h2>
+        <h2 class="guide-step__title">Ce qui attend volontairement la suite</h2>
       </div>
 
-      <h3>11.1 — Installer shadcn-vue</h3>
-      <pre><code class="language-bash">npx shadcn-vue@latest init</code></pre>
-      <p>Réponds aux questions :</p>
-      <pre><code class="language-bash">Which style would you like to use? → Default
-Which color would you like to use as base color? → Zinc
-Where is your global CSS file? → src/assets/main.css
-Where is your tailwind.config? → tailwind.config.js
-Configure the import alias for components? → @/ui/components</code></pre>
-      <div class="callout--info"><strong>ℹ️ shadcn-vue</strong> shadcn-vue copie les composants directement dans ton projet — tu en es propriétaire. Ce ne sont pas des dépendances opaques, ce sont des fichiers que tu lis et modifies.</div>
-
-      <h3>11.2 — Ajouter le premier composant</h3>
-      <pre><code class="language-bash">npx shadcn-vue@latest add button card badge</code></pre>
-      <p>Les composants sont générés dans <code>src/ui/components/ui/</code>. Ouvre-les et lis-les avant de les utiliser.</p>
-      <div class="commit-suggestion">chore(front): installation shadcn-vue avec composants button card badge</div>
+      <p>La phase 0 ne doit pas préinstaller tout l'écosystème futur. On s'arrête volontairement au socle minimal.</p>
+      <ul>
+        <li><strong>DataGrip</strong> arrive en phase 1, quand la base devient un vrai outil de travail.</li>
+        <li><strong>shadcn-vue</strong> arrive en phase 1, au moment des premiers composants UI concrets.</li>
+        <li><strong>Redis</strong> arrive en phase 5, quand le besoin de cache existe réellement.</li>
+        <li><strong>Playwright</strong> arrive en phase 6, quand l'application a de vrais parcours utilisateur à couvrir.</li>
+        <li><strong>API IA sensei</strong> et <strong>Piston</strong> arrivent en phase 4, quand l'architecture prévoit enfin leurs ports.</li>
+      </ul>
+      <div class="callout--tip"><strong>Principe</strong> Le besoin doit faire naître l'outil. Si un outil n'apporte encore aucune valeur concrète, il n'a rien à faire dans le setup initial.</div>
     </section>
 
     <!-- Étape 12 -->
@@ -626,7 +597,7 @@ mkdir -p tests/ui/composables</code></pre>
         <li><input type="checkbox"> Structure <code>domain/infra/ui</code> créée côté front</li>
         <li><input type="checkbox"> ESLint + Prettier configurés</li>
         <li><input type="checkbox"> Pre-commit hook actif (teste avec un commit incorrect)</li>
-        <li><input type="checkbox"> <code>docker-compose up -d</code> → postgres + redis healthy</li>
+        <li><input type="checkbox"> <code>docker-compose up -d</code> → postgres healthy</li>
         <li><input type="checkbox"> <code>mvn spring-boot:run</code> → Spring démarre et se connecte à la DB</li>
         <li><input type="checkbox"> <code>curl localhost:8080/actuator/health</code> → <code>{"status":"UP"}</code></li>
         <li><input type="checkbox"> <code>.env.example</code> commité, <code>.env</code> ignoré</li>
@@ -634,7 +605,6 @@ mkdir -p tests/ui/composables</code></pre>
         <li><input type="checkbox"> Pipeline GitHub Actions vert sur le premier push</li>
         <li><input type="checkbox"> ADR 001 commité dans <code>docs/adr/</code></li>
         <li><input type="checkbox"> Stylelint installé et configuré (on save dans IntelliJ)</li>
-        <li><input type="checkbox"> shadcn-vue initialisé, composants button + card + badge ajoutés</li>
         <li><input type="checkbox"> Structure <code>tests/</code> créée et configurée dans Vitest</li>
         <li><input type="checkbox"> ADR 003 commité dans <code>docs/adr/</code></li>
       </ul>
