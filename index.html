@@ -91,27 +91,18 @@
 
     <section class="project-card home-section">
       <h2>Légende des catégories</h2>
-      <ul class="home-list">
-        <li>🟣 <strong>Typage fort</strong> — branded types, Result, discriminated unions, type guards</li>
-        <li>🟡 <strong>TDD</strong> — Red/Green/Refactor, tests unitaires, intégration, e2e</li>
-        <li>🟢 <strong>Archi hexagonale</strong> — ports &amp; adapters, domaine pur, DDD tactique</li>
-        <li>🟠 <strong>Design patterns</strong> — Strategy, Factory, Builder, Observer, Decorator, Compound Component</li>
-        <li>🩷 <strong>Refactoring guidé</strong> — dette intentionnelle, refacto pas-à-pas</li>
-        <li>⚫ <strong>CI/CD &amp; ops</strong> — Docker, GitHub Actions, Fly.io, secrets</li>
-        <li>🔴 <strong>Gestion des erreurs</strong> — centralisée, exhaustive, front et back</li>
+      <ul class="home-list home-list--legend">
+        <li><span class="home-list__marker" style="color: var(--cat-typing);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Typage fort</strong> — branded types, Result, discriminated unions, type guards</span><span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-tdd);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>TDD</strong> — Red/Green/Refactor, tests unitaires, intégration, e2e</span><span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-hexa);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Archi hexagonale</strong> — ports &amp; adapters, domaine pur, DDD tactique</span><span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Hexagonale</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-patterns);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Design patterns</strong> — Strategy, Factory, Builder, Observer, Decorator, Compound Component</span><span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Patterns</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-front);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Front / UI</strong> — composants Vue, composables, structure visuelle et ergonomie du produit</span><span class="tag tag--cat-front"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Front / UI</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-ddd);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Domaine / DDD</strong> — ubiquitous language, aggregates, invariants métier, events nommés</span><span class="tag tag--cat-ddd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Domaine / DDD</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-refactor);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Refactoring guidé</strong> — dette intentionnelle, refacto pas-à-pas</span><span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-ops);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>CI/CD &amp; ops</strong> — Docker, GitHub Actions, Fly.io, secrets</span><span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; Ops</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-errors);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Gestion des erreurs</strong> — centralisée, exhaustive, front et back</span><span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Erreurs</span></span></div></li>
       </ul>
       <p class="home-note">Ce code couleur doit rester cohérent dans tout le site : phases, guides, timeline, chips, références visuelles et supports associés.</p>
-      <div class="tags home-legend-chips">
-        <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true">🔴</span><span class="tag__label">Erreurs</span></span>
-        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Patterns</span></span>
-        <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
-        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Hexagonale</span></span>
-        <span class="tag tag--cat-front"><span class="tag__dot" aria-hidden="true">🔵</span><span class="tag__label">Front / UI</span></span>
-        <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
-        <span class="tag tag--cat-ddd"><span class="tag__dot" aria-hidden="true">🟤</span><span class="tag__label">Domaine / DDD</span></span>
-        <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; Ops</span></span>
-        <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
-      </div>
     </section>
 
     <div class="footer">
@@ -136,14 +127,26 @@
     <div class="notion-card">
       <div class="notion-card__title">Accès rapide</div>
       <a href="parcours.html" class="notion-card__link">
-        <span class="notion-card__link-icon">🗺️</span>
+        <span class="notion-card__link-icon notion-card__link-icon--parcours" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M4 4.5h9.5l2.5 2.5V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>
+            <path d="M13.5 4.5V7H16"/>
+            <path d="M7 9.25h5.75M7 12h3.5"/>
+          </svg>
+        </span>
         <div>
           <div>Parcours</div>
           <div class="notion-card__link-desc">Timeline et phases détaillées</div>
         </div>
       </a>
       <a href="ressources.html" class="notion-card__link">
-        <span class="notion-card__link-icon">📖</span>
+        <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
+            <path d="M12 4.5V7.5h3"/>
+            <path d="M7 10h6M7 12.75h6M7 15.5h4"/>
+          </svg>
+        </span>
         <div>
           <div>Ressources</div>
           <div class="notion-card__link-desc">Références filtrables par phase</div>

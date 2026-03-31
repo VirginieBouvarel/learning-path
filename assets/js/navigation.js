@@ -59,6 +59,7 @@ function buildNavHTML(r) {
       </ul>
     </li>
     <li><a href="${r}ressources.html" class="site-nav__link" data-page="ressources">Ressources</a></li>
+    <li class="site-nav__item--push"><a href="${r}parcours-v2.html" class="site-nav__link" data-page="parcours-v2">Parcours V2</a></li>
   </ul>
 </nav>
 `;
@@ -83,6 +84,8 @@ function highlightActivePage() {
     const page = link.dataset.page;
     let isActive = false;
     if (page === 'parcours' && path.endsWith('parcours.html')) {
+      isActive = true;
+    } else if (page === 'parcours-v2' && path.endsWith('parcours-v2.html')) {
       isActive = true;
     } else if (page === 'phases' && path.includes('/phases/')) {
       isActive = true;
