@@ -97,17 +97,130 @@ function escapeHTML(value) {
     .replaceAll('"', "&quot;");
 }
 
+function getLearningCategory(resource) {
+  const title = normalize(resource.title);
+  const description = normalize(resource.description);
+  const sourceCategory = normalize(resource.category);
+  const text = `${title} ${description} ${sourceCategory} ${normalize(resource.type)}`;
+
+  if (
+    text.includes("problem details")
+    || text.includes("erreur")
+    || text.includes("sentry")
+    || text.includes("owasp")
+    || text.includes("trivy")
+    || text.includes("vulnerabil")
+    || sourceCategory === "securite"
+  ) {
+    return "Erreurs";
+  }
+
+  if (
+    text.includes("tdd")
+    || sourceCategory === "katas"
+    || ["assertj", "junit 5", "mockito", "vitest", "@vue/test-utils", "playwright", "testcontainers"].some(keyword => title.includes(keyword))
+  ) {
+    return "TDD";
+  }
+
+  if (
+    text.includes("hexagonal")
+    || text.includes("clean architecture")
+    || text.includes("ports & adapters")
+  ) {
+    return "Archi hexagonale";
+  }
+
+  if (
+    text.includes("ddd")
+    || text.includes("ubiquitous")
+    || text.includes("aggregate")
+    || text.includes("domain-driven")
+  ) {
+    return "Domaine / DDD";
+  }
+
+  if (
+    text.includes("pattern")
+    || text.includes("observer")
+    || text.includes("decorator")
+    || text.includes("strategy")
+    || text.includes("factory")
+    || text.includes("builder")
+  ) {
+    return "Design patterns";
+  }
+
+  if (
+    title.includes("clean code")
+    || title.includes("refactoring guru")
+    || title.includes("philosophy of software design")
+  ) {
+    return "Refactoring";
+  }
+
+  if (
+    title.includes("typescript")
+    || title.includes("optional")
+    || title.includes("lydia hallie")
+    || title.includes("theo")
+    || title.includes("total typescript")
+  ) {
+    return "Typage fort";
+  }
+
+  if (
+    sourceCategory === "infrastructure"
+    || sourceCategory === "outils"
+    || title.includes("docker")
+    || title.includes("github actions")
+    || title.includes("gitlab")
+    || title.includes("fly.io")
+    || title.includes("sdkman")
+    || title.includes("wsl2")
+    || title.includes("powerlevel10k")
+    || title.includes("datagrip")
+    || title.includes("intellij")
+    || title.includes("conventional commits")
+  ) {
+    return "CI/CD & Ops";
+  }
+
+  if (
+    sourceCategory === "frontend"
+    || text.includes("vue")
+    || text.includes("pinia")
+    || text.includes("vite")
+    || text.includes("router")
+    || text.includes("shadcn")
+    || text.includes("stylelint")
+  ) {
+    return "Front / UI";
+  }
+
+  if (sourceCategory === "architecture") {
+    return "Archi hexagonale";
+  }
+
+  if (sourceCategory === "backend" || sourceCategory === "api externe") {
+    return "Archi hexagonale";
+  }
+
+  return "CI/CD & Ops";
+}
+
 function buildResourceCard(resource) {
   const isExternal = resource.href.startsWith("http");
   const phaseClass = `resource-badge--phase-${slugify(resource.phase)}`;
+  const learningCategory = getLearningCategory(resource);
   const action = resource.href
     ? `<a class="resource-card__link" href="${escapeHTML(resource.href)}"${isExternal ? ' target="_blank" rel="noopener"' : ""}>${isExternal ? "Ouvrir la ressource" : "Ouvrir la page du site"}</a>`
     : '<span class="resource-card__link resource-card__link--disabled">Lien à ajouter</span>';
 
   return `
-    <article class="resource-card" data-resource-card data-category="${slugify(resource.category)}" data-phase="${slugify(resource.phase)}" data-type="${slugify(resource.type)}" data-search="${escapeHTML(normalize(`${resource.title} ${resource.description} ${resource.category} ${resource.phase} ${resource.type}`))}">
+    <article class="resource-card" data-resource-card data-category="${slugify(learningCategory)}" data-phase="${slugify(resource.phase)}" data-type="${slugify(resource.type)}" data-search="${escapeHTML(normalize(resource.title))}">
       <div class="resource-card__meta">
-        <span class="resource-badge resource-badge--category">${escapeHTML(resource.category)}</span>
+        <span class="resource-badge resource-badge--category">${escapeHTML(learningCategory)}</span>
         <span class="resource-badge resource-badge--phase ${phaseClass}">${escapeHTML(resource.phase)}</span>
         <span class="resource-badge resource-badge--type">${escapeHTML(resource.type)}</span>
       </div>
