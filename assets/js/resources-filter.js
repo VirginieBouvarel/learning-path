@@ -121,27 +121,42 @@ function buildResourceCard(resource) {
 function updateQueryString(filters) {
   const params = new URLSearchParams();
   if (filters.search) params.set("q", filters.search);
-  if (filters.category !== "all") params.set("category", filters.category);
-  if (filters.phase !== "all") params.set("phase", filters.phase);
-  if (filters.type !== "all") params.set("type", filters.type);
+  if (filters.kind === "category") params.set("category", filters.value);
+  if (filters.kind === "phase") params.set("phase", filters.value);
+  if (filters.kind === "type") params.set("type", filters.value);
   const next = params.toString();
   const target = next ? `?${next}` : window.location.pathname.split("/").pop();
   window.history.replaceState({}, "", target);
 }
 
+function matchesFilter(card, filter) {
+  if (filter.kind === "all") return true;
+  if (filter.kind === "category") return card.dataset.category === slugify(filter.value);
+  if (filter.kind === "phase") return card.dataset.phase === slugify(filter.value);
+  if (filter.kind === "type") return card.dataset.type === slugify(filter.value);
+  return true;
+}
+
+function labelFromParams(params) {
+  if (params.get("phase")) return { kind: "phase", value: params.get("phase"), label: `Ressources — ${params.get("phase")}` };
+  if (params.get("category")) {
+    const raw = params.get("category");
+    return { kind: "category", value: raw, label: `Ressources — ${raw === "Securite" ? "Sécurité" : raw}` };
+  }
+  if (params.get("type")) {
+    const raw = params.get("type");
+    return { kind: "type", value: raw, label: raw === "Guide KS" ? "Ressources — Guides internes" : `Ressources — ${raw}` };
+  }
+  return { kind: "all", value: "all", label: "Toutes les ressources" };
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("resources-search");
-  const categorySelect = document.getElementById("resources-category");
-  const phaseSelect = document.getElementById("resources-phase");
-  const typeSelect = document.getElementById("resources-type");
-  const resetButton = document.getElementById("resources-reset");
+  const filterButtons = Array.from(document.querySelectorAll("[data-filter-kind]"));
   const grid = document.getElementById("resources-grid");
   const count = document.getElementById("resources-count");
+  const catalogTitle = document.getElementById("resources-catalog-title");
   const empty = document.getElementById("resources-empty");
-  const statsTotal = document.getElementById("resources-stat-total");
-  const statsCategories = document.getElementById("resources-stat-categories");
-  const statsPhases = document.getElementById("resources-stat-phases");
-  const statsTypes = document.getElementById("resources-stat-types");
 
   if (!grid) return;
 
@@ -149,64 +164,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const cards = Array.from(grid.querySelectorAll("[data-resource-card]"));
   const params = new URLSearchParams(window.location.search);
-
-  statsTotal.textContent = String(resources.length);
-  statsCategories.textContent = String(new Set(resources.map(resource => resource.category)).size);
-  statsPhases.textContent = String(new Set(resources.map(resource => resource.phase)).size);
-  statsTypes.textContent = String(new Set(resources.map(resource => resource.type)).size);
-
-  const initialCategory = params.get("category");
-  const initialPhase = params.get("phase");
-  const initialType = params.get("type");
   const initialSearch = params.get("q");
 
-  if (initialCategory) categorySelect.value = initialCategory;
-  if (initialPhase) phaseSelect.value = initialPhase;
-  if (initialType) typeSelect.value = initialType;
-  if (initialSearch) searchInput.value = initialSearch;
+  if (searchInput && initialSearch) searchInput.value = initialSearch;
+
+  let activeFilter = labelFromParams(params);
+
+  function syncActiveButton() {
+    filterButtons.forEach(button => {
+      const isActive = button.dataset.filterKind === activeFilter.kind && button.dataset.filterValue === activeFilter.value;
+      button.classList.toggle("is-active", isActive);
+    });
+  }
 
   function applyFilters() {
-    const filters = {
-      search: normalize(searchInput.value.trim()),
-      category: categorySelect.value,
-      phase: phaseSelect.value,
-      type: typeSelect.value
-    };
+    const searchValue = searchInput ? searchInput.value.trim() : "";
+    const search = normalize(searchValue);
 
     let visibleCount = 0;
 
     cards.forEach(card => {
-      const categoryMatch = filters.category === "all" || card.dataset.category === slugify(filters.category);
-      const phaseMatch = filters.phase === "all" || card.dataset.phase === slugify(filters.phase);
-      const typeMatch = filters.type === "all" || card.dataset.type === slugify(filters.type);
-      const searchMatch = !filters.search || card.dataset.search.includes(filters.search);
-      const isVisible = categoryMatch && phaseMatch && typeMatch && searchMatch;
+      const filterMatch = matchesFilter(card, activeFilter);
+      const searchMatch = !search || card.dataset.search.includes(search);
+      const isVisible = filterMatch && searchMatch;
 
       card.hidden = !isVisible;
       if (isVisible) visibleCount += 1;
     });
 
-    count.textContent = `${visibleCount} ressource${visibleCount > 1 ? "s" : ""} affichée${visibleCount > 1 ? "s" : ""}`;
+    catalogTitle.textContent = activeFilter.label;
+    count.textContent = `${visibleCount} ressource${visibleCount > 1 ? "s" : ""}`;
     empty.classList.toggle("visible", visibleCount === 0);
     updateQueryString({
-      search: searchInput.value.trim(),
-      category: categorySelect.value,
-      phase: phaseSelect.value,
-      type: typeSelect.value
+      search: searchValue,
+      kind: activeFilter.kind,
+      value: activeFilter.value
     });
+    syncActiveButton();
   }
 
-  [searchInput, categorySelect, phaseSelect, typeSelect].forEach(control => {
-    control.addEventListener(control.tagName === "INPUT" ? "input" : "change", applyFilters);
+  if (searchInput) {
+    searchInput.addEventListener("input", applyFilters);
+  }
+
+  filterButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      activeFilter = {
+        kind: button.dataset.filterKind,
+        value: button.dataset.filterValue,
+        label: button.dataset.filterLabel
+      };
+      applyFilters();
+    });
   });
 
-  resetButton.addEventListener("click", () => {
-    searchInput.value = "";
-    categorySelect.value = "all";
-    phaseSelect.value = "all";
-    typeSelect.value = "all";
-    applyFilters();
-  });
+  const selectedButton = filterButtons.find(button =>
+    button.dataset.filterKind === activeFilter.kind && button.dataset.filterValue === activeFilter.value
+  );
+  if (selectedButton) {
+    activeFilter.label = selectedButton.dataset.filterLabel;
+  } else {
+    activeFilter = { kind: "all", value: "all", label: "Toutes les ressources" };
+  }
 
   applyFilters();
 });
