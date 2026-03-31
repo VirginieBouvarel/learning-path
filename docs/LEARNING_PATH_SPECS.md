@@ -30,10 +30,14 @@ Ce fichier sert de mémo interne pour écrire les guides détaillés sans laisse
 
 ## Phase 7
 
-- Configurer `Renovate` ou `Dependabot` sur :
+- Configurer `Renovate` sur :
   - npm
   - Maven
-  - GitHub Actions
+  - GitLab CI/CD
 - Garder une stratégie simple de regroupement des PRs auto
 - Poser une règle claire dans le guide :
   - aucune PR automatique n'est mergée si la chaîne complète n'est pas verte
+
+## À prévoir
+
+- Créer une skill `/review-sensei` fullstack adaptée au projet KataSensei, sur le modèle de `/review`, pour relire le projet Vue + TypeScript + Java
