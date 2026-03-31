@@ -39,14 +39,14 @@
       <p class="guide-header__meta">Durée estimée : ~10h réparties sur 2 semaines</p>
       <p class="guide-header__intro">La phase 5 rend KataSensei vivant. Les événements métier déclenchent des réactions découplées, le hint IA devient progressif grâce au streaming, les lectures répétitives passent par Redis et le front protège son domaine via une anti-corruption layer claire.</p>
       <div class="tags">
-        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
-        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
-        <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
+        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
+        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Archi hexagonale</span></span>
+        <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span>
       </div>
       <div class="subpages" style="margin-top: 16px;">
-        <a href="../ressources.html?phase=Phase%205" class="subpage">📖 Ressources phase 5</a>
-        <a href="../references/arborescence.html" class="subpage">📄 Arborescence cible</a>
-        <a href="../references/checklist-securite.html" class="subpage">📄 Checklist sécurité</a>
+        <a href="../ressources.html?phase=Phase%205" class="subpage">Ressources phase 5</a>
+        <a href="../references/arborescence.html" class="subpage">Arborescence cible</a>
+        <a href="../references/checklist-securite.html" class="subpage">Checklist sécurité</a>
       </div>
     </div>
 
@@ -67,6 +67,7 @@
           <tr><td>SSE</td><td>Hint IA streamé côté front</td><td>Perception de rapidité et feedback progressif</td></tr>
           <tr><td>Redis</td><td>Cache sur les lectures stables</td><td>Réduction du coût DB</td></tr>
           <tr><td>ACL front</td><td>Mapping API → domaine local</td><td>Front plus robuste aux variations du backend</td></tr>
+          <tr><td>Correlation ID</td><td>Même identifiant à travers HTTP, listeners et streaming</td><td>Diagnostic possible quand un flux temps réel déraille</td></tr>
         </tbody>
       </table>
     </section>
@@ -88,6 +89,9 @@
 
       <h3>2.4 — Anti-Corruption Layer front</h3>
       <p>Formaliser les mappers d’API dans l’infrastructure front pour que le domaine ne parle jamais le dialecte du backend ni des APIs externes.</p>
+
+      <h3>2.5 — Traces corrélées dans les flux asynchrones</h3>
+      <p>Introduire un <code>correlationId</code> généré à l’entrée HTTP et propagé dans les logs utiles, les listeners et le flux SSE. Cette phase est le bon moment : c’est ici que le système devient assez asynchrone pour qu’un bug ne soit plus reproductible juste “à l’œil”.</p>
     </section>
 
     <section class="guide-step" id="ordre">
@@ -100,6 +104,7 @@
         <li>Commencer par les Domain Events pour clarifier les responsabilités métier.</li>
         <li>Brancher les listeners les plus simples, puis valider leurs tests indépendants.</li>
         <li>Ajouter ensuite le streaming SSE de bout en bout avec un seul flux de hints.</li>
+        <li>Introduire le <code>correlationId</code> au moment où HTTP, listeners et SSE coexistent, pour garder une trace unique d’un parcours.</li>
         <li>Introduire Redis sur une lecture stable et tracer précisément les invalidations.</li>
         <li>Finir par l’ACL front pour consolider les contrats manipulés côté Vue.</li>
       </ol>
@@ -119,10 +124,6 @@
         <li><a href="../references/checklist-securite.html">Checklist sécurité</a> pour cadrer les points de vigilance réseau, cache et exposition d’erreurs.</li>
       </ul>
 
-      <div class="callout callout-warning">
-        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
-        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 5 sera rédigé avant l’implémentation complète.</p>
-      </div>
     </section>
 
     <section class="checklist" id="checklist">
@@ -133,6 +134,7 @@
         <li><input type="checkbox">Le hint stream fonctionne de bout en bout via SSE.</li>
         <li><input type="checkbox">Le cache Redis couvre un vrai cas d’usage et ses invalidations.</li>
         <li><input type="checkbox">Le front mappe les DTOs API vers des objets domaine internes.</li>
+        <li><input type="checkbox">Un même <code>correlationId</code> permet de relier requête HTTP, listeners déclenchés et flux SSE associé.</li>
       </ul>
     </section>
 

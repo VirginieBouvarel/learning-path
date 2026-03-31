@@ -38,6 +38,15 @@ katasensei-back/
 
 Tests unitaires domaine < 50ms. Pas de DB, pas de réseau, pas de Spring.
 
+### 🧱 Garde-fous d'architecture — ArchUnit et dependency-cruiser
+
+*≈ les tests qui vérifient la forme du code, pas seulement son comportement*
+
+- `ArchUnit` côté Java : le domaine n'importe ni Spring, ni JPA, ni l'infrastructure.
+- `dependency-cruiser` côté TypeScript : `src/domain` n'importe ni Vue, ni `src/ui`, ni des adapters concrets.
+
+L'architecture cesse d'être une intention orale. Si l'hexagone se perce, le build casse.
+
 ### 🔸 Hexagonale front — miroir du back
 
 *≈ archi hexa côté Vue*
@@ -102,6 +111,8 @@ L'IA entre en scène. L'utilisateur choisit un kata, écrit du code dans Monaco,
 - [ ]  Compound Component `KataCard`
 - [ ]  `POST /sessions/{id}/run` (Piston API)
 - [ ]  `POST /sessions/{id}/hint` (Claude API)
+- [ ]  Règles `ArchUnit` sur les dépendances backend
+- [ ]  Règles `dependency-cruiser` sur les imports frontend
 - [ ]  Grand refactoring terminé, tous les tests verts
 - [ ]  ADR 003 écrit
 
@@ -109,16 +120,4 @@ L'IA entre en scène. L'utilisateur choisit un kata, écrit du code dans Monaco,
 
 ## Livrable technique
 
-Hexa front + back opérationnels. `POST /sessions/{id}/run` + `/hint`. Tests domaine < 50ms. Design patterns documentés.
-
----
-
-## Mes notes
-
-*(Ajoute ici tes blocages, questions, liens utiles, découvertes)*
-
----
-
-## Ce que j'ai appris dans cette phase
-
-*(Complète après avoir terminé la phase)*
+Hexa front + back opérationnels. `POST /sessions/{id}/run` + `/hint`. Tests domaine < 50ms. Règles d'architecture automatisées. Design patterns documentés.

@@ -39,16 +39,16 @@
       <p class="guide-header__meta">Durée estimée : ~14h réparties sur 3 semaines</p>
       <p class="guide-header__intro">La phase 4 est le grand basculement du projet : tu prends le code utile mais encore naïf des phases 1 à 3 et tu le restructures pour que le domaine soit testable, lisible et autonome des frameworks. C’est aussi l’entrée réelle de l’IA dans KataSensei avec les adapters Piston et Claude.</p>
       <div class="tags">
-        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
-        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
-        <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
-        <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
+        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Archi hexagonale</span></span>
+        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
+        <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span>
+        <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
       </div>
       <div class="subpages" style="margin-top: 16px;">
-        <a href="../ressources.html?phase=Phase%204" class="subpage">📖 Ressources phase 4</a>
-        <a href="../references/arborescence.html" class="subpage">📄 Arborescence cible</a>
-        <a href="../references/ubiquitous-language.html" class="subpage">📄 Ubiquitous Language</a>
-        <a href="../references/conventions-front.html" class="subpage">📄 Conventions front</a>
+        <a href="../ressources.html?phase=Phase%204" class="subpage">Ressources phase 4</a>
+        <a href="../references/arborescence.html" class="subpage">Arborescence cible</a>
+        <a href="../references/ubiquitous-language.html" class="subpage">Ubiquitous Language</a>
+        <a href="../references/conventions-front.html" class="subpage">Conventions front</a>
       </div>
     </div>
 
@@ -69,6 +69,7 @@
           <tr><td>Frontend</td><td>Types et services mieux structurés mais encore proches de l’API</td><td>Domaine front autonome, mapping et UI découplés</td></tr>
           <tr><td>Modélisation</td><td>Services centrés sur des opérations</td><td>Aggregate <code>KataSession</code>, événements métier et invariants</td></tr>
           <tr><td>Intégrations</td><td>Appels externes difficiles à tester</td><td>Ports sortants pour Piston et l’AI sensei</td></tr>
+          <tr><td>Garde-fous d’architecture</td><td>Découpage basé sur la discipline de l’équipe</td><td>Règles ArchUnit et dependency-cruiser qui cassent le build si l’hexagone se perce</td></tr>
         </tbody>
       </table>
 
@@ -92,6 +93,9 @@
 
       <h3>2.4 — Adapters externes</h3>
       <p>Introduire proprement l’exécution de code via Piston et les hints IA via Claude. Le domaine doit exprimer une intention, pas connaître la forme des APIs externes.</p>
+
+      <h3>2.5 — Règles d’architecture automatisées</h3>
+      <p>Ajouter <code>ArchUnit</code> côté Java et <code>dependency-cruiser</code> côté TypeScript. Le but est d’écrire les règles explicites du parcours : le domaine n’importe ni Spring ni JPA, <code>src/domain</code> n’importe ni Vue ni <code>src/ui</code>, et les adapters ne se branchent qu’aux bons ports.</p>
     </section>
 
     <section class="guide-step" id="ordre">
@@ -106,6 +110,7 @@
         <li>Extraire les ports entrants et sortants, puis rebrancher les adapters Spring/JPA.</li>
         <li>Faire le même travail côté frontend avec les repositories API et les composants Vue.</li>
         <li>Introduire <code>KataSession</code>, puis brancher Piston et Claude derrière des ports dédiés.</li>
+        <li>Figer la nouvelle architecture avec ArchUnit et dependency-cruiser avant les finitions.</li>
         <li>Finir par les patterns utiles et l’ADR qui explique les choix faits.</li>
       </ol>
 
@@ -125,10 +130,6 @@
         <li><a href="../references/ubiquitous-language.html">Ubiquitous Language</a> pour nommer correctement aggregates, events et use cases.</li>
       </ul>
 
-      <div class="callout callout-warning">
-        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
-        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 4 sera rédigé avant l’implémentation complète.</p>
-      </div>
     </section>
 
     <section class="checklist" id="checklist">
@@ -139,6 +140,8 @@
         <li><input type="checkbox"><code>KataSession</code> porte les invariants métier importants.</li>
         <li><input type="checkbox">Piston et Claude sont branchés via des ports sortants testables.</li>
         <li><input type="checkbox">Les tests domaine back restent rapides et n’ont ni DB ni réseau.</li>
+        <li><input type="checkbox">ArchUnit casse le build si le domaine back dépend de Spring, JPA ou de l’infrastructure.</li>
+        <li><input type="checkbox">dependency-cruiser casse le build si <code>src/domain</code> dépend de <code>src/ui</code> ou de Vue.</li>
         <li><input type="checkbox">L’ADR de la phase explique les choix et leurs conséquences.</li>
       </ul>
     </section>

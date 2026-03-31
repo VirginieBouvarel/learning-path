@@ -61,6 +61,12 @@ function toKata(apiResponse: ApiKataDto): Kata {
 
 Le domaine front ne parle jamais le langage de l'API externe.
 
+### 🧵 Correlation ID — suivre un flux de bout en bout
+
+*≈ un identifiant de trace partagé entre front, back et streaming*
+
+Une même demande de hint doit pouvoir être suivie depuis la requête HTTP initiale, jusqu'aux listeners déclenchés et au flux SSE retourné. Le `correlationId` devient la couture visible entre les morceaux asynchrones du système.
+
 ---
 
 ## Refactoring guidé
@@ -84,22 +90,11 @@ Dashboard de progression (katas complétés, streak, niveau préféré). Le hint
 - [ ]  Cache Redis sur `GET /katas`
 - [ ]  Anti-Corruption Layer front en place
 - [ ]  `GET /users/me/progress` avec stats JPQL
+- [ ]  `correlationId` propagé entre HTTP, listeners et SSE
 - [ ]  Refactoring listeners terminé
 
 ---
 
 ## Livrable technique
 
-`GET /users/me/progress`. SSE `/hint/stream`. Events découplés. Cache Redis. ACL front. Tests des listeners.
-
----
-
-## Mes notes
-
-*(Ajoute ici tes blocages, questions, liens utiles, découvertes)*
-
----
-
-## Ce que j'ai appris dans cette phase
-
-*(Complète après avoir terminé la phase)*
+`GET /users/me/progress`. SSE `/hint/stream`. Events découplés. Cache Redis. ACL front. Correlation ID sur les flux temps réel. Tests des listeners.

@@ -62,6 +62,12 @@ public class LoggedKataRepository implements KataRepository {
 
 Vrai PostgreSQL + Redis dans Docker pendant les tests d'intégration. Fini les mocks de DB qui ne ressemblent pas à la prod. Les migrations Flyway s'exécutent, les index aussi.
 
+### 🪵 Structured logging — logs lisibles par machine et par humain
+
+*≈ console.log structuré mais exploitable en prod*
+
+Les logs importants ne sont plus des phrases bricolées. Ils portent des champs stables comme `context`, `correlationId`, `userId`, `operation` ou `durationMs`. Le but est de pouvoir relier un incident à un flux réel sans parser du texte à la main.
+
 ### 🎭 Playwright — tests e2e bout en bout
 
 ```tsx
@@ -73,9 +79,15 @@ test('utilisateur peut compléter un kata', async ({ page }) => {
 })
 ```
 
+### ⚡ Lazy loading Vue Router — charger l'UI au bon moment
+
+*≈ code splitting par page*
+
+Les routes importantes passent en `() => import(...)`. Le bundle initial reste léger et l'application finale se rapproche d'un vrai front de prod au lieu d'un prototype qui charge tout dès le départ.
+
 ### 📚 Documentation finale — ADR archivés
 
-Tous les ADR en place. README `deploy-in-2-commands`. OpenAPI auto-généré. Storybook léger si le temps le permet.
+Tous les ADR en place. README `deploy-in-2-commands`. OpenAPI auto-généré.
 
 ---
 
@@ -99,6 +111,8 @@ KataSensei a un contrat d'API vérifié en CI. Les tests d'intégration tournent
 - [ ]  `LoggedKataRepository` Decorator
 - [ ]  `LoggedAiSensei` Decorator
 - [ ]  Testcontainers verts en CI
+- [ ]  Logs structurés avec `correlationId` visible sur un flux métier clé
+- [ ]  Routes Vue principales en lazy loading
 - [ ]  2–3 scénarios Playwright
 - [ ]  Sentry configuré en prod
 - [ ]  Tous les ADR archivés
@@ -108,16 +122,4 @@ KataSensei a un contrat d'API vérifié en CI. Les tests d'intégration tournent
 
 ## Livrable technique
 
-Client TS + ACL. Testcontainers verts. Playwright. Sentry. ADR archivés. README final.
-
----
-
-## Mes notes
-
-*(Ajoute ici tes blocages, questions, liens utiles, découvertes)*
-
----
-
-## Ce que j'ai appris dans cette phase
-
-*(Complète après avoir terminé la phase)*
+Client TS + ACL. Testcontainers verts. Logs structurés. Lazy loading des routes. Playwright. Sentry. ADR archivés. README final.

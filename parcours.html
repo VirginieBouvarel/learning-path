@@ -46,14 +46,14 @@
     </div>
 
     <!-- PHASE 0 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--0">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-0">0</div>
         <div class="phase-info">
           <div class="phase-title">Setup — environnement, config, prod day 1</div>
           <div class="phase-subtitle">On installe chaque outil en comprenant pourquoi il est là</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
+            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; ops</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -89,24 +89,24 @@
           <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 001 committé.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-0.html" class="subpage">📖 Guide pas-à-pas — Phase 0</a>
-          <a href="phases/phase-0-ide.html" class="subpage">📄 IDE — IntelliJ IDEA</a>
-          <a href="phases/phase-0-structure.html" class="subpage">📄 Structure de dossiers</a>
-          <a href="phases/phase-0-wsl2.html" class="subpage">📄 WSL2 + ZSH + Terminal</a>
+          <a href="phases/phase-0.html" class="subpage">Guide pas-à-pas — Phase 0</a>
+          <a href="phases/phase-0-ide.html" class="subpage">IDE — IntelliJ IDEA</a>
+          <a href="phases/phase-0-structure.html" class="subpage">Structure de dossiers</a>
+          <a href="phases/phase-0-wsl2.html" class="subpage">WSL2 + ZSH + Terminal</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 1 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--1">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-1">1</div>
         <div class="phase-info">
           <div class="phase-title">HTTP, REST, persistance naïve + gestion des erreurs</div>
           <div class="phase-subtitle">Code simple et imparfait — la douleur justifiera l'archi hexagonale en phase 4</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
-            <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true">🔴</span><span class="tag__label">Gestion des erreurs</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Gestion des erreurs</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -138,22 +138,22 @@
           <p>CRUD Kata en TDD. @ControllerAdvice global. Problem Details RFC 7807. CI enrichie avec les nouveaux tests.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-1.html" class="subpage">📖 Guide pas-à-pas — Phase 1</a>
+          <a href="phases/phase-1.html" class="subpage">Guide pas-à-pas — Phase 1</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 2 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--2">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-2">2</div>
         <div class="phase-info">
           <div class="phase-title">Typage fort TS + LogService + useAsync + archi hexa front</div>
           <div class="phase-subtitle">Le TypeScript qui protège vraiment. Premiers patterns headless. Première archi hexa front.</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
-            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
-            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
+            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Archi hexagonale</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -193,24 +193,24 @@
           <p>Branded types + Result + useAsync. Refactoring front phase 1. Tests Vitest des type guards. Archi domain/infra/ui en place.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-2.html" class="subpage">📖 Guide pas-à-pas — Phase 2</a>
+          <a href="phases/phase-2.html" class="subpage">Guide pas-à-pas — Phase 2</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 3 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--3">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-3">3</div>
         <div class="phase-info">
           <div class="phase-title">Auth JWT, SOLID, Value Objects + erreurs exhaustives</div>
           <div class="phase-subtitle">Spring Security + typage fort Java + 5 principes SOLID dans le vrai code</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
-            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
-            <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true">🔴</span><span class="tag__label">Gestion des erreurs</span></span>
-            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
-            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
+            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Gestion des erreurs</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -242,23 +242,23 @@
           <p>Auth complète en TDD. AppError union. Refactoring back phase 1. ADR 002 écrit.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-3.html" class="subpage">📖 Guide pas-à-pas — Phase 3</a>
+          <a href="phases/phase-3.html" class="subpage">Guide pas-à-pas — Phase 3</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 4 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--4">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-4">4</div>
         <div class="phase-info">
           <div class="phase-title">Architecture hexagonale complète + DDD + patterns front</div>
           <div class="phase-subtitle">L'IA entre en scène — grand refactoring phases 1–3 en hexagonal</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
-            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
-            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
-            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Archi hexagonale</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -284,6 +284,10 @@
           <div class="concept-header"><span class="concept-icon">🧩</span><span class="concept-title">Compound Component + Provider pattern</span><span class="concept-analogy">≈ composition Vue avancée</span></div>
           <p>&lt;KataCard&gt; &lt;KataCard.Header /&gt; &lt;KataCard.Body /&gt; &lt;/KataCard&gt;. provide/inject = miroir exact du DI Java.</p>
         </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧱</span><span class="concept-title">ArchUnit + dependency-cruiser</span><span class="concept-analogy">≈ garde-fous d'architecture automatisés</span></div>
+          <p>Le domaine back n'importe ni Spring ni JPA. Le domain front n'importe ni Vue ni ui/. Si l'hexagone se perce, le build casse au lieu de compter sur la mémoire de l'équipe.</p>
+        </div>
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
@@ -291,29 +295,25 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Hexa front + back opérationnels. POST /sessions/{id}/run + /hint. Tests domaine &lt; 50ms. Design patterns documentés. ADR 003.</p>
+          <p>Hexa front + back opérationnels. POST /sessions/{id}/run + /hint. Tests domaine &lt; 50ms. Règles ArchUnit et dependency-cruiser. Design patterns documentés. ADR 003.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-4.html" class="subpage">📄 Vue d'ensemble Phase 4</a>
-        </div>
-        <div class="callout callout-warning" style="margin-top:12px">
-          <div class="callout-title">GUIDE À VENIR</div>
-          <p>Le guide pas-à-pas détaillé de cette phase sera rédigé avant de la commencer.</p>
+          <a href="phases/phase-4.html" class="subpage">Vue d'ensemble Phase 4</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 5 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--5">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-5">5</div>
         <div class="phase-info">
           <div class="phase-title">Events, SSE streaming, cache Redis + ACL front</div>
           <div class="phase-subtitle">Observer pattern, streaming IA token par token, dashboard de progression</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
-            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Archi hexagonale</span></span>
-            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true">🩷</span><span class="tag__label">Refactoring</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Archi hexagonale</span></span>
+            <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -335,6 +335,10 @@
           <div class="concept-header"><span class="concept-icon">🛡️</span><span class="concept-title">Anti-Corruption Layer front</span><span class="concept-analogy">≈ mapper domaine / API</span></div>
           <p>Dans infrastructure/ — jamais dans domain/. Le domaine front ne parle jamais le langage de l'API externe. Mapping ApiKataDto → Kata.</p>
         </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧵</span><span class="concept-title">Correlation ID sur les flux asynchrones</span><span class="concept-analogy">≈ trace unique de bout en bout</span></div>
+          <p>Une même demande de hint doit pouvoir être suivie depuis la requête HTTP jusqu'aux listeners et au flux SSE. C'est le moment où le système devient assez vivant pour exiger une vraie corrélation.</p>
+        </div>
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
@@ -342,30 +346,26 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>GET /users/me/progress. SSE /hint/stream. Events découplés. Cache Redis. ACL front. Tests des listeners.</p>
+          <p>GET /users/me/progress. SSE /hint/stream. Events découplés. Cache Redis. ACL front. Correlation ID traversant HTTP, listeners et streaming.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-5.html" class="subpage">📄 Vue d'ensemble Phase 5</a>
-        </div>
-        <div class="callout callout-warning" style="margin-top:12px">
-          <div class="callout-title">GUIDE À VENIR</div>
-          <p>Le guide pas-à-pas détaillé de cette phase sera rédigé avant de la commencer.</p>
+          <a href="phases/phase-5.html" class="subpage">Vue d'ensemble Phase 5</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 6 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--6">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-6">6</div>
         <div class="phase-info">
           <div class="phase-title">Contrat OpenAPI, tests avancés, Decorator</div>
           <div class="phase-subtitle">Contract-first, Testcontainers, Playwright e2e, documentation complète</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
-            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
-            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
-            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
+            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; ops</span></span>
+            <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span>
+            <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
+            <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -387,6 +387,10 @@
           <div class="concept-header"><span class="concept-icon">🎭</span><span class="concept-title">Playwright — tests e2e bout en bout</span><span class="concept-analogy">≈ tests utilisateur réels</span></div>
           <p>L'utilisateur peut compléter un kata : navigation, écriture de code, exécution, vérification du résultat. Scénarios bout en bout.</p>
         </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🪵</span><span class="concept-title">Structured logging + lazy loading</span><span class="concept-analogy">≈ observabilité et front de prod</span></div>
+          <p>Logs structurés avec correlationId sur les flux clés. Routes Vue Router en import différé pour ne pas charger tout le front dès le premier écran.</p>
+        </div>
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
@@ -394,27 +398,23 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Client TS + ACL. Testcontainers verts. Playwright. Sentry. ADR archivés. README final.</p>
+          <p>Client TS + ACL. Testcontainers verts. Logs structurés. Lazy loading des routes. Playwright. Sentry. ADR archivés. README final.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-6.html" class="subpage">📄 Vue d'ensemble Phase 6</a>
-        </div>
-        <div class="callout callout-warning" style="margin-top:12px">
-          <div class="callout-title">GUIDE À VENIR</div>
-          <p>Le guide pas-à-pas détaillé de cette phase sera rédigé avant de la commencer.</p>
+          <a href="phases/phase-6.html" class="subpage">Vue d'ensemble Phase 6</a>
         </div>
       </div>
     </div>
 
     <!-- PHASE 7 -->
-    <div class="phase-card">
+    <div class="phase-card phase-card--7">
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-7">7</div>
         <div class="phase-info">
           <div class="phase-title">CI/CD complète, Docker multi-stage, mise en prod</div>
           <div class="phase-subtitle">Le pipeline minimal de la phase 0 devient complet — KataSensei tourne pour de vrais utilisateurs</div>
           <div class="tags phase-tags">
-            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
+            <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; ops</span></span>
           </div>
         </div>
         <div class="phase-chevron">›</div>
@@ -436,6 +436,10 @@
           <div class="concept-header"><span class="concept-icon">🔐</span><span class="concept-title">Secrets management prod</span><span class="concept-analogy">≈ .env sécurisé en CI</span></div>
           <p>Jamais de clé API dans le code. GitHub Secrets injectés en CI. Spring profiles : application-prod.yml avec des références aux variables d'environnement.</p>
         </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🔄</span><span class="concept-title">Renovate / Dependabot</span><span class="concept-analogy">≈ entretien continu des dépendances</span></div>
+          <p>Des PRs automatiques petites et régulières sur npm, Maven et GitHub Actions repassent par la chaîne CI complète. On entretient le projet dans la durée, on ne rattrape pas six mois d'écart d'un coup.</p>
+        </div>
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
@@ -443,58 +447,11 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Pipeline CI/CD complet vert. Docker multi-stage. KataSensei déployé. README 2 commandes.</p>
+          <p>Pipeline CI/CD complet vert. Docker multi-stage. KataSensei déployé. Dépendances entretenues automatiquement. README 2 commandes.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-7.html" class="subpage">📄 Vue d'ensemble Phase 7</a>
+          <a href="phases/phase-7.html" class="subpage">Vue d'ensemble Phase 7</a>
         </div>
-        <div class="callout callout-warning" style="margin-top:12px">
-          <div class="callout-title">GUIDE À VENIR</div>
-          <p>Le guide pas-à-pas détaillé de cette phase sera rédigé avant de la commencer.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Références -->
-    <div class="refs">
-      <h2>📚 Références et conventions</h2>
-      <div class="ref-grid">
-        <a href="references/ubiquitous-language.html" class="ref-item">
-          <div class="ref-title">Ubiquitous Language — ADR 000</div>
-          <div class="ref-desc">Termes métier FR / techniques EN</div>
-        </a>
-        <a href="references/conventions-front.html" class="ref-item">
-          <div class="ref-title">ADR 003 — Conventions front</div>
-          <div class="ref-desc">CSS scoped + BEM, shadcn-vue, SFC</div>
-        </a>
-        <a href="references/conventional-commits.html" class="ref-item">
-          <div class="ref-title">Conventional Commits</div>
-          <div class="ref-desc">type(contexte): description en français</div>
-        </a>
-        <a href="references/arborescence.html" class="ref-item">
-          <div class="ref-title">Arborescence et testabilité</div>
-          <div class="ref-desc">Structure cible front + back + matrice</div>
-        </a>
-        <a href="references/workflow-gitlab.html" class="ref-item">
-          <div class="ref-title">Workflow GitLab</div>
-          <div class="ref-desc">Branches, MR, CI/CD</div>
-        </a>
-        <a href="references/checklist-securite.html" class="ref-item">
-          <div class="ref-title">Checklist sécurité &amp; perf</div>
-          <div class="ref-desc">Checklist pré-prod OWASP</div>
-        </a>
-        <a href="references/utiliser-claude.html" class="ref-item">
-          <div class="ref-title">Comment utiliser Claude</div>
-          <div class="ref-desc">claude.ai vs Claude Code vs extension</div>
-        </a>
-        <a href="references/optional-java.html" class="ref-item">
-          <div class="ref-title">Optional en Java</div>
-          <div class="ref-desc">Référence rapide Optional</div>
-        </a>
-        <a href="references/datagrip.html" class="ref-item">
-          <div class="ref-title">Utiliser DataGrip</div>
-          <div class="ref-desc">Connexion PostgreSQL + requêtes utiles</div>
-        </a>
       </div>
     </div>
 
@@ -509,14 +466,26 @@
     <div class="notion-card">
       <div class="notion-card__title">Notion — Pilotage</div>
       <a href="https://www.notion.so" target="_blank" rel="noopener" class="notion-card__link">
-        <span class="notion-card__link-icon">📋</span>
+        <span class="notion-card__link-icon notion-card__link-icon--backlog" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <rect x="4.5" y="5.5" width="11" height="10.5" rx="1.5"/>
+            <path d="M7.25 4h5.5M8.25 9h3.75M8.25 12h4.5"/>
+            <path d="M6.5 8.75h0M6.5 11.75h0"/>
+          </svg>
+        </span>
         <div>
           <div>Backlog KataSensei</div>
           <div class="notion-card__link-desc">Tickets &amp; exercices par phase</div>
         </div>
       </a>
       <a href="https://www.notion.so" target="_blank" rel="noopener" class="notion-card__link">
-        <span class="notion-card__link-icon">📈</span>
+        <span class="notion-card__link-icon notion-card__link-icon--progress" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M4.5 15.5h11"/>
+            <path d="M6.25 13.5V10.5M10 13.5V8M13.75 13.5V5.5"/>
+            <path d="M5.5 8.5 9 6l2.5 1.5L15 4.75"/>
+          </svg>
+        </span>
         <div>
           <div>Suivi de progression</div>
           <div class="notion-card__link-desc">Compétences à valider par phase</div>
@@ -526,7 +495,13 @@
     <div class="notion-card">
       <div class="notion-card__title">Ressources</div>
       <a href="ressources.html" class="notion-card__link">
-        <span class="notion-card__link-icon">📖</span>
+        <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
+            <path d="M12 4.5V7.5h3"/>
+            <path d="M7 10h6M7 12.75h6M7 15.5h4"/>
+          </svg>
+        </span>
         <div>
           <div>Docs &amp; liens</div>
           <div class="notion-card__link-desc">78 ressources filtrables par phase</div>

@@ -39,15 +39,15 @@
       <p class="guide-header__meta">Durée estimée : ~10h réparties sur 2 semaines</p>
       <p class="guide-header__intro">La phase 6 transforme le projet en produit techniquement crédible : contrat API vérifiable, client TypeScript généré, vraies intégrations testées avec infra réelle, parcours utilisateur validés par Playwright et instrumentation orientée prod.</p>
       <div class="tags">
-        <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
-        <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
-        <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true">🟡</span><span class="tag__label">TDD</span></span>
-        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">Design patterns</span></span>
+        <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; ops</span></span>
+        <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span>
+        <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
+        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
       </div>
       <div class="subpages" style="margin-top: 16px;">
-        <a href="../ressources.html?phase=Phase%206" class="subpage">📖 Ressources phase 6</a>
-        <a href="../references/arborescence.html" class="subpage">📄 Arborescence cible</a>
-        <a href="../references/checklist-securite.html" class="subpage">📄 Checklist sécurité</a>
+        <a href="../ressources.html?phase=Phase%206" class="subpage">Ressources phase 6</a>
+        <a href="../references/arborescence.html" class="subpage">Arborescence cible</a>
+        <a href="../references/checklist-securite.html" class="subpage">Checklist sécurité</a>
       </div>
     </div>
 
@@ -68,6 +68,7 @@
           <tr><td>Decorators</td><td>Ajouter logs et métriques sans polluer le domaine</td><td>Les comportements observables s’ajoutent par composition</td></tr>
           <tr><td>Testcontainers</td><td>Tester contre de vraies dépendances</td><td>Les migrations et comportements infra sont réellement exercés</td></tr>
           <tr><td>Playwright</td><td>Valider les parcours clés</td><td>Un utilisateur peut aller au bout d’un scénario métier complet</td></tr>
+          <tr><td>Observabilité front et back</td><td>Logs structurés, route splitting et erreurs corrélées</td><td>On comprend un comportement réel sans relire tout le code ni charger tout le front d’un coup</td></tr>
         </tbody>
       </table>
     </section>
@@ -89,6 +90,9 @@
 
       <h3>2.4 — Playwright + observabilité</h3>
       <p>Couvrir les parcours critiques côté navigateur et brancher Sentry côté prod pour sortir du simple “ça marche sur ma machine”.</p>
+
+      <h3>2.5 — Structured logging et lazy loading</h3>
+      <p>Standardiser les logs utiles sous forme structurée côté back et côté front, avec des champs stables comme <code>context</code>, <code>correlationId</code> et <code>userId</code> quand ils existent. En parallèle, passer les pages Vue Router en chargement différé pour que l’app finale ne livre pas toute son interface au premier écran.</p>
     </section>
 
     <section class="guide-step" id="ordre">
@@ -102,6 +106,8 @@
         <li>Faire consommer le client généré au front et stabiliser l’ACL.</li>
         <li>Mettre les decorators autour des points où les logs et métriques apportent vraiment de la lisibilité.</li>
         <li>Introduire Testcontainers, puis corriger les hypothèses cassées par la vraie infra.</li>
+        <li>Passer ensuite les logs utiles au format structuré et vérifier que le <code>correlationId</code> de la phase 5 reste visible.</li>
+        <li>Appliquer le lazy loading sur les routes Vue avant de figer les scénarios utilisateur finaux.</li>
         <li>Terminer par 2 ou 3 scénarios Playwright représentatifs et le branchement Sentry.</li>
       </ol>
 
@@ -120,10 +126,6 @@
         <li><a href="../references/checklist-securite.html">Checklist sécurité</a> pour cadrer logs, monitoring, erreurs et exposition d’informations.</li>
       </ul>
 
-      <div class="callout callout-warning">
-        <div class="callout-title">GUIDE DÉTAILLÉ À VENIR</div>
-        <p>Cette page sert d’overview opérationnelle. Le guide pas-à-pas détaillé de la phase 6 sera rédigé avant l’implémentation complète.</p>
-      </div>
     </section>
 
     <section class="checklist" id="checklist">
@@ -133,6 +135,8 @@
         <li><input type="checkbox">Le front consomme un client généré plutôt que des appels à la main.</li>
         <li><input type="checkbox">Les decorators ajoutent des comportements transverses sans modifier le domaine.</li>
         <li><input type="checkbox">Les tests d’intégration tournent contre de vrais conteneurs.</li>
+        <li><input type="checkbox">Les logs utiles sont structurés et réexploitables, au lieu d’être de simples chaînes console.</li>
+        <li><input type="checkbox">Les routes Vue principales sont chargées en lazy loading.</li>
         <li><input type="checkbox">2 à 3 scénarios Playwright couvrent les parcours à forte valeur.</li>
         <li><input type="checkbox">Sentry ou un équivalent capte les erreurs de prod.</li>
       </ul>

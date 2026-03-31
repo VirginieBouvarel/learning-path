@@ -57,6 +57,10 @@ Si une étape échoue, le déploiement ne part pas.
 
 Jamais de clé API dans le code. GitHub Secrets injectés en CI. Spring profiles : `application-prod.yml` avec des références aux variables d'environnement. Le même artefact Docker tourne partout.
 
+### 🔄 Maintenance continue — Renovate ou Dependabot
+
+PRs automatiques de mise à jour sur npm, Maven et GitHub Actions. L'objectif n'est pas l'automatisation aveugle : c'est de garder les dépendances vivantes avec de petites revues régulières qui repassent par toute la chaîne CI.
+
 ---
 
 ## KataSensei à cette étape
@@ -74,6 +78,7 @@ KataSensei est en prod. Un push sur `main` déclenche le pipeline complet. En ca
 - [ ]  `/actuator/health` expose DB + Redis + Claude
 - [ ]  Graceful shutdown configuré
 - [ ]  Secrets dans GitHub Secrets (pas dans le code)
+- [ ]  Renovate ou Dependabot configuré sur npm, Maven et GitHub Actions
 - [ ]  CHANGELOG généré automatiquement
 - [ ]  README : démarrage en 2 commandes
 - [ ]  KataSensei accessible publiquement
@@ -82,16 +87,4 @@ KataSensei est en prod. Un push sur `main` déclenche le pipeline complet. En ca
 
 ## Livrable technique
 
-Pipeline CI/CD complet vert. Docker multi-stage. KataSensei déployé. README 2 commandes.
-
----
-
-## Mes notes
-
-*(Ajoute ici tes blocages, questions, liens utiles, découvertes)*
-
----
-
-## Ce que j'ai appris dans cette phase
-
-*(Complète après avoir terminé la phase)*
+Pipeline CI/CD complet vert. Docker multi-stage. KataSensei déployé. Dépendances entretenues automatiquement. README 2 commandes.
