@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KataSensei — Parcours V2</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<div class="layout">
+  <main class="layout__main">
+    <div class="project-card">
+      <div>
+        <span class="project-badge">Mémo de construction</span>
+        <h1>Parcours V2</h1>
+      </div>
+      <p>Cette page n'est pas encore un vrai parcours publié. Elle sert d'aide-mémoire pour les sujets avancés à traiter après validation du parcours principal. L'objectif est de stocker les idées V2 sans injecter de bruit dans la V1.</p>
+      <div class="tags">
+        <span class="tag">Après parcours V1</span>
+        <span class="tag">Industrialisation avancée</span>
+        <span class="tag">Qualité &amp; plateforme</span>
+        <span class="tag">Sujets optionnels</span>
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-number pn-6">V2</div>
+        <div class="phase-info">
+          <div class="phase-title">Ce que cette V2 doit contenir</div>
+          <div class="phase-subtitle">Des sujets avancés utiles une fois les bases V1 solides</div>
+        </div>
+      </div>
+      <div class="phase-body" style="display: block;">
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🚦</span><span class="concept-title">Sonar quality gate CI</span><span class="concept-analogy">≈ contrôle qualité centralisé</span></div>
+          <p>Ajouter SonarQube ou SonarCloud comme barrière de qualité bloquante dans la CI, une fois le projet assez dense pour que les métriques et les alertes aient un vrai signal.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🤝</span><span class="concept-title">Pact / contract testing avancé</span><span class="concept-analogy">≈ contrat API côté consommateurs</span></div>
+          <p>Introduire les tests de contrat consommateurs/producteurs si le projet évolue vers plusieurs clients, plusieurs services ou des besoins de synchronisation d'équipes plus forts.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧬</span><span class="concept-title">Mutation testing PIT</span><span class="concept-analogy">≈ vérifier que les tests attrapent vraiment les bugs</span></div>
+          <p>Mesurer la robustesse réelle des tests backend en introduisant des mutations automatiques du code et en observant si la suite les détecte.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">📱</span><span class="concept-title">Service Worker / PWA</span><span class="concept-analogy">≈ couche offline et cache navigateur</span></div>
+          <p>Explorer le hors-ligne, le cache applicatif et les comportements réseau avancés quand le produit lui-même justifiera cet investissement.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">♿</span><span class="concept-title">Accessibilité automatisée</span><span class="concept-analogy">≈ garde-fous UX dans les tests</span></div>
+          <p>Ajouter des contrôles automatiques plus poussés, par exemple en e2e, quand l'interface sera plus stable et qu'un vrai travail d'accessibilité pourra être suivi dans la durée.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧠</span><span class="concept-title">TypeDD explicite</span><span class="concept-analogy">≈ conception davantage guidée par les types</span></div>
+          <p>Faire du TypeDD un vrai sujet V2, pas un prérequis caché de la V1. L'idée est de partir d'une base déjà saine en TypeScript strict et typage fort pragmatique, puis de montrer comment pousser la modélisation plus loin sur un module ciblé.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧪</span><span class="concept-title">Pistes d'introduction du TypeDD</span><span class="concept-analogy">≈ nouvelles features ou refactorings ciblés</span></div>
+          <p>Deux voies naturelles : l'introduire sur une nouvelle fonctionnalité V2 comme un moteur de progression ou un workflow de feedback IA, ou refactorer une zone existante bien comprise, par exemple les états de session ou la modélisation des erreurs, pour comparer avant/après.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧭</span><span class="concept-title">Comment l'introduire concrètement</span><span class="concept-analogy">≈ progression V2 par module</span></div>
+          <p>La V2 peut montrer une montée en puissance progressive : d'abord une feature V1 correcte mais simplement typée, puis une version enrichie où les états deviennent des unions fermées, les transitions illégales deviennent impossibles à représenter, et certaines fonctions n'acceptent plus que des formes déjà validées.</p>
+        </div>
+        <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🔬</span><span class="concept-title">Exemples de sujets V2 compatibles TypeDD</span><span class="concept-analogy">≈ bons terrains d'expérimentation</span></div>
+          <p>Très bons candidats : moteur de progression avec badges et règles, états de session de kata plus riches, workflow de feedback IA par étapes, modélisation d'erreurs plus fine, ou formulaires multi-étapes où tous les états ne sont pas légalement accessibles depuis n'importe où.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-number pn-7">?</div>
+        <div class="phase-info">
+          <div class="phase-title">Règle de construction</div>
+          <div class="phase-subtitle">Cette page est volontairement incomplète</div>
+        </div>
+      </div>
+      <div class="phase-body" style="display: block;">
+        <div class="callout callout-warning">
+          <div class="callout-title">MÉMO INTERNE</div>
+          <p>Chaque nouveau sujet V2 ajouté ici doit répondre à une question simple : “pourquoi ce sujet serait-il du bruit en V1 mais utile après un premier parcours complet ?” Si la réponse n'est pas claire, le sujet ne mérite pas encore sa place.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/navigation.js"></script>
+</body>
+</html>

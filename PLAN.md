@@ -50,7 +50,7 @@ learning-path/
 │   └── images/
 │       └── arborescence.png
 │
-├── CLAUDE.md
+├── AGENTS.md
 └── PLAN.md                           ← ce fichier
 ```
 
@@ -166,7 +166,7 @@ learning-path/
 - [x] Cross-linking (phases ↔ références ↔ ressources)
 - [x] Responsive (test 768px)
 - [x] Supprimer `overview.html` (remplacé par `index.html`)
-- [x] Mettre à jour `CLAUDE.md`
+- [x] Mettre à jour `AGENTS.md`
 - [ ] Ajouter les vraies URLs Notion dans `index.html`
 
 ---

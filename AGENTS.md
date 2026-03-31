@@ -31,7 +31,7 @@ references/               ← conventions, ADR, aides transverses
 assets/                   ← CSS partagé, JS de navigation et filtres, images
 ```
 
-Le site est servi via Live Server (VS Code) ou WAMP.
+Le site est servi via Live Server (VS Code).
 
 **Total parcours : ~76h · ~5 mois**
 
@@ -57,12 +57,13 @@ Les `.md` et `.csv` dans `KataSensei — Learning Path/` sont l'export Notion d'
 - **CSS** : `<style scoped>` + BEM (pas Tailwind, pas CSS Modules)
 - **Tests** : dossier `tests/` miroir de `src/`
 
-## Règles de travail pour Claude
+## Règles de travail pour l'agent
 
 1. **Ne jamais explorer massivement.** Lire ce fichier + le(s) fichier(s) ciblé(s), c'est tout.
 2. **Scope limité.** 1-2 fichiers par session maximum. Virginie donne le scope en début de session.
 3. **Planifier avant d'éditer.** Proposer les changements, obtenir validation, puis éditer.
 4. **Git diff = revue.** Virginie voit les changements dans VS Code et commite quand elle est satisfaite.
+5. **Propagation obligatoire.** Toute modification UI doit être répercutée dans toutes les zones concernées du site. Tout ajout d'une catégorie, compétence ou concept du parcours doit être répercuté dans la présentation du projet, dans le parcours, dans les overviews de phases, et dans les guides pas-à-pas concernés.
 
 ## Lacunes connues
 
