@@ -48,7 +48,7 @@ const resources = [
   {"title": "SDKMAN", "category": "Infrastructure", "description": "Gestionnaire de versions Java", "href": "https://sdkman.io/", "phase": "Phase 0", "type": "Documentation"},
   {"title": "Sentry (Spring Boot)", "category": "Backend", "description": "Monitoring et suivi d erreurs en production", "href": "https://docs.sentry.io/platforms/java/guides/spring-boot/", "phase": "Phase 6", "type": "Documentation"},
   {"title": "Server-Sent Events (MDN)", "category": "Backend", "description": "Reference MDN sur les SSE", "href": "https://developer.mozilla.org/fr/docs/Web/API/Server-sent_events", "phase": "Phase 5", "type": "Documentation"},
-  {"title": "shadcn-vue", "category": "Frontend", "description": "Composants Vue non-opinionnaires copiables dans le projet", "href": "https://www.shadcn-vue.com/", "phase": "Phase 0", "type": "Documentation"},
+  {"title": "shadcn-vue", "category": "Frontend", "description": "Composants Vue non-opinionnaires copiables dans le projet", "href": "https://www.shadcn-vue.com/", "phase": "Phase 1", "type": "Documentation"},
   {"title": "Software Crafters Lyon", "category": "Guide interne", "description": "Communaute Software Crafters Lyon", "href": "https://www.softwarecrafters.org/", "phase": "Toutes", "type": "Ressource"},
   {"title": "Spring Actuator docs", "category": "Backend", "description": "Metriques et health checks Spring Boot", "href": "https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html", "phase": "Phase 7", "type": "Documentation"},
   {"title": "Spring Boot 3", "category": "Backend", "description": "Documentation officielle Spring Boot", "href": "https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/", "phase": "Phase 0", "type": "Documentation"},

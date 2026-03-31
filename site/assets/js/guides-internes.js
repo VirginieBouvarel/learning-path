@@ -4,7 +4,6 @@ const INTERNAL_GUIDES = [
   { id: "conventional-commits", title: "Conventional Commits", path: "guides/conventional-commits.html" },
   { id: "arborescence", title: "Arborescence et testabilité", path: "guides/arborescence.html" },
   { id: "workflow-gitlab", title: "Workflow GitLab", path: "guides/workflow-gitlab.html" },
-  { id: "utiliser-claude", title: "Utiliser Claude", path: "guides/utiliser-claude.html" },
   { id: "optional-java", title: "Optional en Java", path: "guides/optional-java.html" },
   { id: "datagrip", title: "DataGrip", path: "guides/datagrip.html" },
   { id: "checklist-securite", title: "Checklist sécurité", path: "guides/checklist-securite.html" }

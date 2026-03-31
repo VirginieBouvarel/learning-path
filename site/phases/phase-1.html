@@ -52,6 +52,10 @@
       </div>
     </div>
 
+    <div class="callout--info">
+      <strong>Nouveaux outils qui deviennent utiles ici</strong> : <code>Bruno</code> pour appeler les premiers endpoints, <code>DataGrip</code> pour inspecter la base et les migrations, et <code>shadcn-vue</code> pour les premiers composants UI concrets. Ils n'étaient pas installés en phase 0 exprès.
+    </div>
+
     <div class="callout--warning">
       <strong>⚠️ Règle d'or</strong> Tu n'écris pas une ligne de code métier sans avoir d'abord écrit le test qui échoue. Si tu es tentée de coder avant de tester, relis cette règle.
     </div>
@@ -756,7 +760,7 @@ public class CorsConfig {
         <p>Ajoute un bloc <code>&lt;style scoped&gt;</code> avec BEM.</p>
         <ul>
           <li>Block : <code>.kata-list</code> | Element : <code>.kata-list__titre</code>, <code>.kata-list__item</code> | Modifier : <code>.kata-list__item--selectionne</code></li>
-          <li>Utilise les composants shadcn-vue <code>Card</code> et <code>Badge</code> pour les katas</li>
+          <li>Installe maintenant <code>shadcn-vue</code>, puis utilise les composants <code>Card</code> et <code>Badge</code> pour les katas</li>
           <li>Badge de difficulté coloré (EASY = vert, MEDIUM = orange, HARD = rouge)</li>
           <li><code>&lt;style scoped&gt;</code> uniquement — pas de styles globaux</li>
           <li>Classes en français sans accents (BEM) sur les éléments spécifiques à KataSensei</li>
@@ -826,9 +830,13 @@ public class CorsConfig {
         &lt;/execution&gt;
     &lt;/executions&gt;
 &lt;/plugin&gt;</code></pre>
-            <pre><code class="language-yaml"># Dans ci.yml
-- name: Run tests with coverage check
-  run: mvn test jacoco:check</code></pre>
+            <pre><code class="language-yaml"># Dans .gitlab-ci.yml
+test-back:
+  stage: test
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - cd katasensei-back
+    - mvn test jacoco:check</code></pre>
           </div>
         </details>
       </div>

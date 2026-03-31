@@ -28,7 +28,6 @@
         <li><a href="#cycle">Cycle de vie d'un ticket</a></li>
         <li><a href="#workflow">Workflow pas à pas</a></li>
         <li><a href="#template-mr">Template de MR</a></li>
-        <li><a href="#claude-reviewer">Claude comme reviewer</a></li>
         <li><a href="#ci">Pipeline GitLab CI</a></li>
         <li><a href="#protection">Protéger main</a></li>
       </ul>
@@ -65,11 +64,11 @@
           <tr><td><strong>Backlog</strong></td><td>Idée ou tâche future, pas encore planifiée</td></tr>
           <tr><td><strong>À faire</strong></td><td>Planifiée pour la session en cours</td></tr>
           <tr><td><strong>En cours</strong></td><td>Branche créée, travail actif</td></tr>
-          <tr><td><strong>En review</strong></td><td>MR ouverte, Claude fait la revue</td></tr>
+          <tr><td><strong>En review</strong></td><td>MR ouverte, relecture locale et checklist terminées</td></tr>
           <tr><td><strong>Terminé</strong></td><td>MR mergée sur <code>main</code>, ticket clos</td></tr>
         </tbody>
       </table>
-      <div class="callout--info"><strong>ℹ️ En review</strong> = tu as ouvert une MR sur GitLab et tu demandes à Claude de relire le code avant de merger.</div>
+      <div class="callout--info"><strong>ℹ️ En review</strong> = tu as ouvert une MR sur GitLab après avoir passé ta checklist locale, tes tests et ta relecture assistée si tu choisis d’en faire une.</div>
     </section>
 
     <section class="guide-step" id="workflow">
@@ -123,23 +122,6 @@ KS-XXX — [Titre du ticket]
 - [ ] CI verte
 
 ## Points d'attention pour la review</code></pre>
-    </section>
-
-    <section class="guide-step" id="claude-reviewer">
-      <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--color-accent-purple);">AI</div>
-        <h2 class="guide-step__title">Claude comme reviewer</h2>
-      </div>
-
-      <p>Dans le terminal IntelliJ à la racine du projet :</p>
-      <pre><code class="language-bash">claude</code></pre>
-      <p>Demandes utiles avant de merger :</p>
-      <ul>
-        <li><em>« Relis mes changements dans <code>kata/domain/</code> et dis-moi si SOLID est respecté »</em></li>
-        <li><em>« Vérifie que mon use case ne dépend d'aucun framework »</em></li>
-        <li><em>« Y a-t-il des problèmes de sécurité dans ce contrôleur ? »</em></li>
-        <li><em>« Est-ce que ce refactoring casse l'archi hexagonale ? »</em></li>
-      </ul>
     </section>
 
     <section class="guide-step" id="ci">
