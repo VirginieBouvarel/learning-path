@@ -44,20 +44,7 @@ function buildNavHTML(r) {
         <li><a href="${r}phases/phase-7.html">Phase 7 — CI/CD + Prod</a></li>
       </ul>
     </li>
-    <li class="site-nav__dropdown" id="dropdown-refs">
-      <a class="site-nav__link site-nav__dropdown-trigger" data-page="references">Références</a>
-      <ul class="site-nav__dropdown-menu">
-        <li><a href="${r}references/ubiquitous-language.html">Ubiquitous Language — ADR 000</a></li>
-        <li><a href="${r}references/conventions-front.html">Conventions front — ADR 003</a></li>
-        <li><a href="${r}references/conventional-commits.html">Conventional Commits</a></li>
-        <li><a href="${r}references/arborescence.html">Arborescence et testabilité</a></li>
-        <li><a href="${r}references/workflow-gitlab.html">Workflow GitLab</a></li>
-        <li><a href="${r}references/utiliser-claude.html">Utiliser Claude</a></li>
-        <li><a href="${r}references/optional-java.html">Optional en Java</a></li>
-        <li><a href="${r}references/datagrip.html">DataGrip</a></li>
-        <li><a href="${r}references/checklist-securite.html">Checklist sécurité</a></li>
-      </ul>
-    </li>
+    <li><a href="${r}guides-internes.html" class="site-nav__link" data-page="guides-internes">Guides internes</a></li>
     <li><a href="${r}ressources.html" class="site-nav__link" data-page="ressources">Ressources</a></li>
     <li class="site-nav__item--push"><a href="${r}parcours-v2.html" class="site-nav__link" data-page="parcours-v2">Parcours V2</a></li>
   </ul>
@@ -89,7 +76,7 @@ function highlightActivePage() {
       isActive = true;
     } else if (page === 'phases' && path.includes('/phases/')) {
       isActive = true;
-    } else if (page === 'references' && path.includes('/references/')) {
+    } else if (page === 'guides-internes' && (path.endsWith('guides-internes.html') || path.includes('/references/'))) {
       isActive = true;
     } else if (page === 'ressources' && path.includes('ressources.html')) {
       isActive = true;

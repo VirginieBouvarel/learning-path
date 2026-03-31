@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guides internes — KataSensei</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/guide.css">
+  <link rel="stylesheet" href="assets/css/guides-internes.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="parcours.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Guides internes</span>
+</nav>
+
+<div class="layout guides-layout">
+  <aside class="guides-sidebar">
+    <div class="notion-card">
+      <div class="notion-card__title">Guides internes</div>
+      <nav class="guides-nav" id="guides-nav" aria-label="Liste des guides"></nav>
+    </div>
+  </aside>
+
+  <main class="layout__main guides-main">
+    <div class="guides-content-card" id="guides-content">
+      <div class="guides-content__loading">Chargement du guide…</div>
+    </div>
+  </main>
+
+  <aside class="guides-toc">
+    <div class="notion-card">
+      <div class="notion-card__title">Sommaire</div>
+      <nav class="toc" id="guides-toc">
+        <p class="toc__title">Dans cette page</p>
+        <ul class="toc__list" id="guides-toc-list"></ul>
+      </nav>
+    </div>
+  </aside>
+</div>
+
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/guides-internes.js"></script>
+</body>
+</html>
