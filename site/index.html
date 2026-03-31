@@ -23,7 +23,7 @@
     <section class="project-card home-section">
       <h2>Le projet fil rouge</h2>
       <p><strong>KataSensei</strong> est une plateforme d'entraînement aux katas de code pour les profils en reconversion (bootcamp, formation courte).</p>
-      <p>Éditeur Monaco embarqué, supervision IA socratique (Claude API), exécution sécurisée (Piston API), compte utilisateur et suivi de progression.</p>
+      <p>Éditeur Monaco embarqué, supervision IA socratique (OpenAI API, modèle par défaut : <code>gpt-5.4-mini</code>), exécution sécurisée (Piston API), compte utilisateur et suivi de progression.</p>
       <p><strong>Tu construis KataSensei pendant que tu apprends à le construire.</strong></p>
     </section>
 
@@ -52,11 +52,11 @@
             </tr>
             <tr>
               <td>Infra</td>
-              <td>PostgreSQL, Redis, Docker, GitHub Actions, Fly.io</td>
+              <td>PostgreSQL, Redis, Docker, GitLab CI/CD, Fly.io</td>
             </tr>
             <tr>
               <td>API externes</td>
-              <td>Claude API (IA sensei), Piston API (exécution code)</td>
+              <td>OpenAI API (<code>gpt-5.4-mini</code>), Piston API (exécution code)</td>
             </tr>
           </tbody>
         </table>
@@ -99,7 +99,7 @@
         <li><span class="home-list__marker" style="color: var(--cat-front);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Front / UI</strong> — composants Vue, composables, structure visuelle et ergonomie du produit</span><span class="tag tag--cat-front"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Front / UI</span></span></div></li>
         <li><span class="home-list__marker" style="color: var(--cat-ddd);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Domaine / DDD</strong> — ubiquitous language, aggregates, invariants métier, events nommés</span><span class="tag tag--cat-ddd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Domaine / DDD</span></span></div></li>
         <li><span class="home-list__marker" style="color: var(--cat-refactor);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Refactoring guidé</strong> — dette intentionnelle, refacto pas-à-pas</span><span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span></div></li>
-        <li><span class="home-list__marker" style="color: var(--cat-ops);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>CI/CD &amp; ops</strong> — Docker, GitHub Actions, Fly.io, secrets</span><span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; Ops</span></span></div></li>
+        <li><span class="home-list__marker" style="color: var(--cat-ops);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>CI/CD &amp; ops</strong> — Docker, GitLab CI/CD, Fly.io, secrets</span><span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; Ops</span></span></div></li>
         <li><span class="home-list__marker" style="color: var(--cat-errors);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Gestion des erreurs</strong> — centralisée, exhaustive, front et back</span><span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Erreurs</span></span></div></li>
       </ul>
       <p class="home-note">Ce code couleur doit rester cohérent dans tout le site : phases, guides, timeline, chips, références visuelles et supports associés.</p>

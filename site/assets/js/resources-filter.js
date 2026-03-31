@@ -5,7 +5,7 @@ const resources = [
   {"title": "Baeldung", "category": "Backend", "description": "Tutoriels Java et Spring de qualite", "href": "https://www.baeldung.com/", "phase": "Toutes", "type": "Documentation"},
   {"title": "Bruno", "category": "Outils", "description": "Client HTTP open source", "href": "https://docs.usebruno.com/", "phase": "Phase 1", "type": "Documentation"},
   {"title": "Bucket4j", "category": "Backend", "description": "Rate limiting Java", "href": "https://bucket4j.com/", "phase": "Phase 3", "type": "Documentation"},
-  {"title": "Claude API (Anthropic)", "category": "API externe", "description": "API IA pour les indices socratiques", "href": "https://docs.anthropic.com/", "phase": "Phase 4", "type": "Documentation"},
+  {"title": "OpenAI Responses API", "category": "API externe", "description": "OpenAI API utilisee pour l'implementation par defaut du sensei avec gpt-5.4-mini", "href": "https://platform.openai.com/docs/api-reference/responses", "phase": "Phase 4", "type": "Documentation"},
   {"title": "Clean Code — Robert C. Martin", "category": "Architecture", "description": "SOLID et bonnes pratiques de code", "href": "", "phase": "Toutes", "type": "Livre"},
   {"title": "Coding Dojo", "category": "Katas", "description": "Catalogue de katas classiques", "href": "https://codingdojo.org/kata/", "phase": "Toutes", "type": "Ressource"},
   {"title": "Dave Farley’s Weblog", "category": "Infrastructure", "description": "Articles et retours d experience sur continuous delivery et software engineering", "href": "https://www.davefarley.net/", "phase": "Toutes", "type": "Ressource"},

@@ -26,7 +26,7 @@
         <span class="tag">Java 21 + Spring Boot 3</span>
         <span class="tag">PostgreSQL + Flyway</span>
         <span class="tag">Piston API (exécution)</span>
-        <span class="tag">Claude API (IA sensei)</span>
+        <span class="tag">OpenAI API</span>
         <span class="tag">JWT Auth</span>
         <span class="tag">Architecture hexagonale</span>
         <span class="tag">Docker + CI</span>
@@ -325,7 +325,7 @@
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🌊</span><span class="concept-title">SSE streaming — useHintStream headless</span><span class="concept-analogy">≈ EventSource côté Vue</span></div>
-          <p>Plutôt qu'attendre 4–5s la réponse de Claude complète, tu streames token par token. SseEmitter Java + EventSource Vue. Composable headless réutilisable.</p>
+          <p>Plutôt qu'attendre 4–5s la réponse complète d’OpenAI, tu streames token par token. SseEmitter Java + EventSource Vue. Composable headless réutilisable.</p>
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🔄</span><span class="concept-title">Redis cache @Cacheable</span><span class="concept-analogy">≈ computed Vue</span></div>
@@ -430,7 +430,7 @@
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🏥</span><span class="concept-title">Health checks + Actuator + graceful shutdown</span><span class="concept-analogy">≈ DevTools Vue en prod</span></div>
-          <p>/actuator/health expose l'état de la DB, Redis, Claude API. Graceful shutdown : les requêtes en cours finissent avant l'arrêt du container.</p>
+          <p>/actuator/health expose l'état de la DB, Redis et d’OpenAI. Graceful shutdown : les requêtes en cours finissent avant l'arrêt du container.</p>
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🔐</span><span class="concept-title">Secrets management prod</span><span class="concept-analogy">≈ .env sécurisé en CI</span></div>

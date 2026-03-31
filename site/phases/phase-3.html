@@ -281,7 +281,7 @@ public int calculateScore(Kata kata, int baseScore) {
         <pre><code class="language-java">public interface AiSensei {
     Hint generateHint(KataId kataId, String code, int hintsAlreadyUsed);
 }</code></pre>
-        <p><strong>Question :</strong> <code>ClaudeAiSensei</code> et <code>MockAiSensei</code> doivent tous les deux implémenter cette interface. Qu'est-ce que ça garantit pour le code qui appelle <code>AiSensei</code> ?</p>
+        <p><strong>Question :</strong> <code>ApiIaSensei</code> et <code>MockAiSensei</code> doivent tous les deux implémenter cette interface. Qu'est-ce que ça garantit pour le code qui appelle <code>AiSensei</code> ?</p>
 
         <h4>Interface Segregation (I)</h4>
         <pre><code class="language-java">// Mauvaise version
@@ -298,7 +298,7 @@ public interface AiService {
         <details class="solution">
           <summary>Réponses</summary>
           <div class="solution__content">
-            <p><strong>Liskov :</strong> <code>ClaudeAiSensei</code> et <code>MockAiSensei</code> sont <strong>substituables</strong> — le code qui appelle <code>AiSensei</code> n'a pas besoin de savoir lequel il utilise. En test on injecte <code>MockAiSensei</code>, en prod <code>ClaudeAiSensei</code>.</p>
+            <p><strong>Liskov :</strong> <code>ApiIaSensei</code> et <code>MockAiSensei</code> sont <strong>substituables</strong> — le code qui appelle <code>AiSensei</code> n'a pas besoin de savoir lequel il utilise. En test on injecte <code>MockAiSensei</code>, en prod <code>ApiIaSensei</code>.</p>
             <pre><code class="language-java">// Interface Segregation
 public interface AiSensei      { Hint generateHint(...); }
 public interface CodeReviewer  { CodeReview reviewCode(...); }
