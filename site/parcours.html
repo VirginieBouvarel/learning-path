@@ -73,7 +73,7 @@
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🚀</span><span class="concept-title">Prod day 1 — Fly.io + pipeline minimal</span><span class="concept-analogy">≈ toujours quelque chose en ligne</span></div>
-          <p>GET /health en prod avant la première feature. Pipeline GitHub Actions minimal (test → deploy) qui grandira à chaque phase.</p>
+          <p>GET /health en prod avant la première feature. Pipeline GitLab CI/CD minimal (test → deploy) qui grandira à chaque phase.</p>
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">📝</span><span class="concept-title">ADR 001 — première décision documentée</span><span class="concept-analogy">≈ Architecture Decision Record</span></div>
@@ -82,7 +82,7 @@
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
-          <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 001 committé. Pipeline GitHub Actions minimal vert.</p>
+          <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 001 committé. Pipeline GitLab CI/CD minimal vert.</p>
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
@@ -425,7 +425,7 @@
           <p>Stage 1 : build (JDK complet). Stage 2 : run (JRE léger, 80% plus petit). Le même Dockerfile pour dev et prod.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">⚙️</span><span class="concept-title">Pipeline GitHub Actions complet — 5 étapes</span><span class="concept-analogy">≈ CI/CD complète</span></div>
+          <div class="concept-header"><span class="concept-icon">⚙️</span><span class="concept-title">Pipeline GitLab CI/CD complet — 5 étapes</span><span class="concept-analogy">≈ CI/CD complète</span></div>
           <p>unit-tests → integration-tests → e2e-tests → build-docker → deploy. Si une étape échoue, le déploiement ne part pas.</p>
         </div>
         <div class="concept">
@@ -434,11 +434,11 @@
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🔐</span><span class="concept-title">Secrets management prod</span><span class="concept-analogy">≈ .env sécurisé en CI</span></div>
-          <p>Jamais de clé API dans le code. GitHub Secrets injectés en CI. Spring profiles : application-prod.yml avec des références aux variables d'environnement.</p>
+          <p>Jamais de clé API dans le code. Variables GitLab CI/CD injectées en pipeline. Spring profiles : application-prod.yml avec des références aux variables d'environnement.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">🔄</span><span class="concept-title">Renovate / Dependabot</span><span class="concept-analogy">≈ entretien continu des dépendances</span></div>
-          <p>Des PRs automatiques petites et régulières sur npm, Maven et GitHub Actions repassent par la chaîne CI complète. On entretient le projet dans la durée, on ne rattrape pas six mois d'écart d'un coup.</p>
+          <div class="concept-header"><span class="concept-icon">🔄</span><span class="concept-title">Renovate</span><span class="concept-analogy">≈ entretien continu des dépendances</span></div>
+          <p>Des MRs automatiques petites et régulières sur npm, Maven et la config GitLab CI/CD repassent par la chaîne CI complète. On entretient le projet dans la durée, on ne rattrape pas six mois d'écart d'un coup.</p>
         </div>
         <hr>
         <div class="callout callout-status">

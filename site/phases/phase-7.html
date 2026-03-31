@@ -65,7 +65,7 @@
           <tr><td>Pipeline complet</td><td>Unitaires, intégration, e2e, build, deploy</td><td>Déploiement de code insuffisamment validé</td></tr>
           <tr><td>Actuator et health checks</td><td>État lisible de l’app, DB, Redis, dépendances critiques</td><td>Prod opaque ou diagnostics tardifs</td></tr>
           <tr><td>Secrets management</td><td>Variables injectées hors du code</td><td>Fuite de credentials, configuration divergente</td></tr>
-          <tr><td>Mises à jour dépendances</td><td>Renovate ou Dependabot ouvre des PRs contrôlées</td><td>Dérive silencieuse des libs et correctifs de sécurité oubliés</td></tr>
+          <tr><td>Mises à jour dépendances</td><td>Renovate ouvre des MRs contrôlées</td><td>Dérive silencieuse des libs et correctifs de sécurité oubliés</td></tr>
         </tbody>
       </table>
     </section>
@@ -89,7 +89,7 @@
       <p>Externaliser la configuration sensible via les mécanismes CI et la plateforme d’hébergement. L’objectif est qu’un artefact identique puisse tourner selon son environnement.</p>
 
       <h3>2.5 — Entretien automatique des dépendances</h3>
-      <p>Configurer <code>Renovate</code> ou <code>Dependabot</code> pour proposer des mises à jour régulières sur Maven, npm et GitHub Actions. La logique pédagogique n’est pas “tout mettre à jour automatiquement”, mais apprendre à traiter de petites PRs fréquentes plutôt qu’un énorme chantier de rattrapage.</p>
+      <p>Configurer <code>Renovate</code> pour proposer des mises à jour régulières sur Maven, npm et la configuration GitLab CI/CD. La logique pédagogique n’est pas “tout mettre à jour automatiquement”, mais apprendre à traiter de petites MRs fréquentes plutôt qu’un énorme chantier de rattrapage.</p>
     </section>
 
     <section class="guide-step" id="ordre">
@@ -103,7 +103,7 @@
         <li>Assembler le pipeline en réutilisant les commandes déjà prouvées aux phases précédentes.</li>
         <li>Ajouter health checks et graceful shutdown avant le déploiement final.</li>
         <li>Brancher les secrets via la plateforme CI/hébergement et supprimer toute dépendance à des secrets locaux committés.</li>
-        <li>Configurer Renovate ou Dependabot une fois la CI fiable, pour que les PRs automatiques réutilisent la même chaîne de validation.</li>
+        <li>Configurer Renovate une fois la CI fiable, pour que les MRs automatiques réutilisent la même chaîne de validation.</li>
         <li>Terminer par une répétition générale du déploiement et une checklist de mise en service.</li>
       </ol>
 
@@ -117,7 +117,7 @@
       </div>
 
       <ul>
-        <li><a href="../ressources.html?phase=Phase%207">Ressources filtrées phase 7</a> pour Docker multi-stage, GitHub Actions, Actuator et Trivy.</li>
+        <li><a href="../ressources.html?phase=Phase%207">Ressources filtrées phase 7</a> pour Docker multi-stage, GitLab CI/CD, Actuator et Trivy.</li>
         <li><a href="../guides/workflow-gitlab.html">Workflow Git / review</a> pour garder une discipline de branche et de livraison lisible.</li>
         <li><a href="../guides/checklist-securite.html">Checklist sécurité</a> pour secrets, validation pré-prod, exposition des erreurs et contrôles finaux.</li>
       </ul>
@@ -132,7 +132,7 @@
         <li><input type="checkbox">Les health checks remontent l’état des dépendances critiques.</li>
         <li><input type="checkbox">Le graceful shutdown est configuré et testé.</li>
         <li><input type="checkbox">Aucun secret de prod n’est stocké dans le repo.</li>
-        <li><input type="checkbox">Renovate ou Dependabot ouvre des PRs de mise à jour qui repassent par la CI complète.</li>
+        <li><input type="checkbox">Renovate ouvre des MRs de mise à jour qui repassent par la CI complète.</li>
         <li><input type="checkbox">Le README final permet un démarrage et un déploiement compréhensibles.</li>
       </ul>
     </section>

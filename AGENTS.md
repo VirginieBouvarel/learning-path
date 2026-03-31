@@ -19,7 +19,7 @@ Autrice : Virginie (développeuse frontend Vue.js depuis 5 ans, objectif devenir
 
 KataSensei = plateforme d'entraînement aux katas de code. Éditeur Monaco, supervision IA socratique (Claude API), exécution sécurisée (Piston API), compte utilisateur, suivi de progression.
 
-**Stack** : Vue 3 + TS strict + Pinia | Java 21 + Spring Boot 3 + Maven | Hexagonale front+back | TDD | PostgreSQL + Redis + Docker + GitHub Actions + Fly.io
+**Stack** : Vue 3 + TS strict + Pinia | Java 21 + Spring Boot 3 + Maven | Hexagonale front+back | TDD | PostgreSQL + Redis + Docker + GitLab CI/CD + Fly.io
 
 ## Structure du site
 

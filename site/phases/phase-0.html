@@ -33,7 +33,7 @@
         <li><a href="#etape-5">5 — Docker &amp; .env</a></li>
         <li><a href="#etape-6">6 — Checkstyle</a></li>
         <li><a href="#etape-7">7 — Déploiement Fly.io</a></li>
-        <li><a href="#etape-8">8 — GitHub Actions</a></li>
+        <li><a href="#etape-8">8 — GitLab CI/CD</a></li>
         <li><a href="#etape-9">9 — ADR 001</a></li>
         <li><a href="#etape-10">10 — Stylelint</a></li>
         <li><a href="#etape-11">11 — Ce qui attend la suite</a></li>
@@ -399,59 +399,43 @@ fly secrets set DB_PASSWORD="..."</code></pre>
     <section class="guide-step" id="etape-8">
       <div class="guide-step__heading">
         <div class="guide-step__number">8</div>
-        <h2 class="guide-step__title">Pipeline GitHub Actions minimal</h2>
+        <h2 class="guide-step__title">Pipeline GitLab CI/CD minimal</h2>
       </div>
 
-      <p>Crée <code>.github/workflows/ci.yml</code> :</p>
-      <pre><code class="language-yaml">name: CI
+      <p>Crée <code>.gitlab-ci.yml</code> :</p>
+      <pre><code class="language-yaml">stages:
+  - test
+  - deploy
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+test-back:
+  stage: test
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - cd katasensei-back
+    - mvn test
 
-jobs:
-  test-back:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Run tests
-        run: mvn test
-        working-directory: katasensei-back
+test-front:
+  stage: test
+  image: node:20
+  script:
+    - cd katasensei-front
+    - npm ci
+    - npm run type-check
+    - npm run lint
+    - npm run test:unit
 
-  test-front:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-        working-directory: katasensei-front
-      - run: npm run type-check
-        working-directory: katasensei-front
-      - run: npm run lint
-        working-directory: katasensei-front
-      - run: npm run test:unit
-        working-directory: katasensei-front
-
-  deploy:
-    needs: [test-back, test-front]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: fly deploy katasensei-back
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}</code></pre>
+deploy-back:
+  stage: deploy
+  image: flyio/flyctl:latest
+  needs: [test-back, test-front]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - cd katasensei-back
+    - fly deploy --remote-only</code></pre>
       <div class="callout--info"><strong>ℹ️ Règle d'or CI</strong> Le job <code>deploy</code> ne tourne que si <code>test-back</code> et <code>test-front</code> sont verts. Les tests protègent la prod.</div>
-      <div class="commit-suggestion">chore(ci): ajout pipeline GitHub Actions test + deploy</div>
+      <div class="callout--info"><strong>ℹ️ Variables CI</strong> Ajoute <code>FLY_API_TOKEN</code> dans <code>Settings → CI/CD → Variables</code> sur GitLab avant d'activer le déploiement.</div>
+      <div class="commit-suggestion">chore(ci): ajout pipeline GitLab CI/CD test + deploy</div>
     </section>
 
     <!-- Étape 9 -->
@@ -602,7 +586,7 @@ mkdir -p tests/ui/composables</code></pre>
         <li><input type="checkbox"> <code>curl localhost:8080/actuator/health</code> → <code>{"status":"UP"}</code></li>
         <li><input type="checkbox"> <code>.env.example</code> commité, <code>.env</code> ignoré</li>
         <li><input type="checkbox"> <code>fly deploy</code> → KataSensei a une URL publique</li>
-        <li><input type="checkbox"> Pipeline GitHub Actions vert sur le premier push</li>
+        <li><input type="checkbox"> Pipeline GitLab CI/CD vert sur le premier push</li>
         <li><input type="checkbox"> ADR 001 commité dans <code>docs/adr/</code></li>
         <li><input type="checkbox"> Stylelint installé et configuré (on save dans IntelliJ)</li>
         <li><input type="checkbox"> Structure <code>tests/</code> créée et configurée dans Vitest</li>
@@ -643,8 +627,8 @@ mkdir -p tests/ui/composables</code></pre>
           </tr>
           <tr>
             <td><code>FLY_API_TOKEN</code> manquant en CI</td>
-            <td>Secret GitHub non configuré</td>
-            <td><code>fly tokens create deploy</code> puis <code>gh secret set FLY_API_TOKEN</code></td>
+            <td>Variable GitLab CI/CD non configurée</td>
+            <td><code>fly tokens create deploy</code> puis ajoute <code>FLY_API_TOKEN</code> dans <code>Settings → CI/CD → Variables</code></td>
           </tr>
         </tbody>
       </table>
@@ -663,7 +647,7 @@ mkdir -p tests/ui/composables</code></pre>
         <li>Utiliser Docker Compose pour l'infra locale</li>
         <li>Gérer les variables d'environnement proprement</li>
         <li>Déployer sur Fly.io</li>
-        <li>Écrire un pipeline GitHub Actions basique</li>
+        <li>Écrire un pipeline GitLab CI/CD basique</li>
         <li>Documenter une décision technique (ADR)</li>
       </ul>
     </section>
