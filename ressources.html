@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/resources.css">
 </head>
-<body>
+<body class="resources-page">
 
 <!-- Nav injectée par navigation.js -->
 
@@ -17,145 +17,93 @@
   <span>Ressources</span>
 </nav>
 
-<div class="layout layout--single resources-layout">
+<div class="layout resources-layout">
   <main class="layout__main">
 
     <section class="resources-hero">
       <span class="resources-hero__eyebrow">Base documentaire</span>
       <h1>Ressources de travail pour construire KataSensei</h1>
-      <p>Cette page remplace le CSV Notion pour la lecture. Tu peux filtrer par phase, catégorie ou type pour préparer un sprint, approfondir un sujet, ou retrouver rapidement une référence interne du site.</p>
-
-      <div class="resources-stats">
-        <div class="resources-stat">
-          <span class="resources-stat__value" id="resources-stat-total">78</span>
-          <span class="resources-stat__label">Ressources</span>
-        </div>
-        <div class="resources-stat">
-          <span class="resources-stat__value" id="resources-stat-categories">9</span>
-          <span class="resources-stat__label">Catégories</span>
-        </div>
-        <div class="resources-stat">
-          <span class="resources-stat__value" id="resources-stat-phases">9</span>
-          <span class="resources-stat__label">Phases couvertes</span>
-        </div>
-        <div class="resources-stat">
-          <span class="resources-stat__value" id="resources-stat-types">5</span>
-          <span class="resources-stat__label">Types de support</span>
-        </div>
-      </div>
-
-      <div class="resources-quicklinks">
-        <a href="ressources.html?phase=Phase%200" class="subpage tag--phase-0">Phase 0</a>
-        <a href="ressources.html?phase=Phase%201" class="subpage tag--phase-1">Phase 1</a>
-        <a href="ressources.html?phase=Phase%202" class="subpage tag--phase-2">Phase 2</a>
-        <a href="ressources.html?phase=Phase%203" class="subpage tag--phase-3">Phase 3</a>
-        <a href="ressources.html?phase=Phase%204" class="subpage tag--phase-4">Phase 4</a>
-        <a href="ressources.html?phase=Phase%205" class="subpage tag--phase-5">Phase 5</a>
-        <a href="ressources.html?phase=Phase%206" class="subpage tag--phase-6">Phase 6</a>
-        <a href="ressources.html?phase=Phase%207" class="subpage tag--phase-7">Phase 7</a>
-        <a href="ressources.html?type=Guide%20KS" class="subpage">Guides internes</a>
-        <a href="ressources.html?type=Livre" class="subpage">Livres</a>
-      </div>
+      <p>Tu peux naviguer par phase, catégorie ou type de support pour ouvrir directement une vue utile, puis affiner avec la recherche si tu veux retrouver une ressource précise.</p>
     </section>
 
-    <section class="resources-section">
-      <h2>Références du site</h2>
-      <p class="resources-section__intro">Les pages HTML du repo servent de base stable pour les conventions, l’architecture et les aides internes liées au parcours.</p>
-      <div class="resources-site-links">
-        <a href="references/arborescence.html" class="resource-site-link">
-          <span class="resource-site-link__title">Arborescence et testabilité</span>
-          <span class="resource-site-link__desc">Structure cible du code, découpage front/back, matrice de tests.</span>
-        </a>
-        <a href="references/ubiquitous-language.html" class="resource-site-link">
-          <span class="resource-site-link__title">Ubiquitous Language</span>
-          <span class="resource-site-link__desc">Vocabulaire métier partagé et conventions de nommage.</span>
-        </a>
-        <a href="references/checklist-securite.html" class="resource-site-link">
-          <span class="resource-site-link__title">Checklist sécurité</span>
-          <span class="resource-site-link__desc">Pré-prod, OWASP, secrets, validations, erreurs et observabilité.</span>
-        </a>
-        <a href="references/conventional-commits.html" class="resource-site-link">
-          <span class="resource-site-link__title">Conventional Commits</span>
-          <span class="resource-site-link__desc">Format des commits du parcours et exemples alignés avec KataSensei.</span>
-        </a>
-        <a href="references/optional-java.html" class="resource-site-link">
-          <span class="resource-site-link__title">Optional en Java</span>
-          <span class="resource-site-link__desc">Aide-mémoire pour les méthodes vraiment utilisées dans le projet.</span>
-        </a>
-        <a href="references/datagrip.html" class="resource-site-link">
-          <span class="resource-site-link__title">DataGrip</span>
-          <span class="resource-site-link__desc">Connexion à PostgreSQL, requêtes utiles et réflexes de diagnostic.</span>
-        </a>
-      </div>
-    </section>
+    <div class="resources-shell">
+      <aside class="resources-panel">
+        <div class="resources-panel__header">
+          <div>
+            <div class="resources-panel__title">Explorer les ressources</div>
+            <div class="resources-panel__subtitle">Un seul filtre actif à la fois, plus une recherche texte pour affiner localement.</div>
+          </div>
+        </div>
 
-    <section class="resources-panel">
-      <div class="resources-panel__header">
-        <div>
-          <div class="resources-panel__title">Filtrer les ressources</div>
-          <div class="resources-panel__subtitle">Recherche plein texte sur le titre, la description, la phase, la catégorie et le type.</div>
+        <div class="resources-filter-group">
+          <div class="resources-filter-group__title">Recherche</div>
+          <div class="resources-search">
+            <div class="resources-field">
+              <input id="resources-search" type="search" placeholder="Rechercher une ressource">
+            </div>
+          </div>
         </div>
-        <div class="resources-count" id="resources-count">78 ressources affichées</div>
-      </div>
 
-      <div class="resources-filters">
-        <div class="resources-field">
-          <label for="resources-search">Recherche</label>
-          <input id="resources-search" type="search" placeholder="Ex. OpenAPI, Redis, TDD, Vue...">
+        <div class="resources-filter-group">
+          <div class="resources-filter-buttons">
+            <button class="resources-chip resources-chip--all is-active" type="button" data-filter-kind="all" data-filter-value="all" data-filter-label="Toutes les ressources">Toutes</button>
+          </div>
         </div>
-        <div class="resources-field">
-          <label for="resources-category">Catégorie</label>
-          <select id="resources-category">
-            <option value="all">Toutes</option>
-            <option value="API externe">API externe</option>
-            <option value="Architecture">Architecture</option>
-            <option value="Backend">Backend</option>
-            <option value="Frontend">Frontend</option>
-            <option value="Guide interne">Guide interne</option>
-            <option value="Infrastructure">Infrastructure</option>
-            <option value="Katas">Katas</option>
-            <option value="Outils">Outils</option>
-            <option value="Securite">Sécurité</option>
-          </select>
-        </div>
-        <div class="resources-field">
-          <label for="resources-phase">Phase</label>
-          <select id="resources-phase">
-            <option value="all">Toutes</option>
-            <option value="Phase 0">Phase 0</option>
-            <option value="Phase 1">Phase 1</option>
-            <option value="Phase 2">Phase 2</option>
-            <option value="Phase 3">Phase 3</option>
-            <option value="Phase 4">Phase 4</option>
-            <option value="Phase 5">Phase 5</option>
-            <option value="Phase 6">Phase 6</option>
-            <option value="Phase 7">Phase 7</option>
-            <option value="Toutes">Toutes phases</option>
-          </select>
-        </div>
-        <div class="resources-field">
-          <label for="resources-type">Type</label>
-          <select id="resources-type">
-            <option value="all">Tous</option>
-            <option value="Documentation">Documentation</option>
-            <option value="Guide KS">Guide KS</option>
-            <option value="Livre">Livre</option>
-            <option value="Ressource">Ressource</option>
-            <option value="Youtube">YouTube</option>
-          </select>
-        </div>
-        <button class="resources-reset" id="resources-reset" type="button">Réinitialiser</button>
-      </div>
-    </section>
 
-    <section class="resources-section">
-      <h2>Catalogue complet</h2>
-      <p class="resources-section__intro">Certains livres issus de l’export Notion n’ont pas encore de lien public associé. Ils restent visibles pour conserver l’inventaire complet des 78 références.</p>
-      <div class="resources-grid" id="resources-grid"></div>
-      <div class="resources-empty" id="resources-empty">
-        Aucun résultat pour ces filtres. Élargis la phase, retire le type, ou efface la recherche.
-      </div>
-    </section>
+        <div class="resources-filter-group">
+          <div class="resources-filter-group__title">Phases</div>
+          <div class="resources-filter-buttons">
+            <button class="resources-chip tag--phase-0" type="button" data-filter-kind="phase" data-filter-value="Phase 0" data-filter-label="Ressources — Phase 0">Phase 0</button>
+            <button class="resources-chip tag--phase-1" type="button" data-filter-kind="phase" data-filter-value="Phase 1" data-filter-label="Ressources — Phase 1">Phase 1</button>
+            <button class="resources-chip tag--phase-2" type="button" data-filter-kind="phase" data-filter-value="Phase 2" data-filter-label="Ressources — Phase 2">Phase 2</button>
+            <button class="resources-chip tag--phase-3" type="button" data-filter-kind="phase" data-filter-value="Phase 3" data-filter-label="Ressources — Phase 3">Phase 3</button>
+            <button class="resources-chip tag--phase-4" type="button" data-filter-kind="phase" data-filter-value="Phase 4" data-filter-label="Ressources — Phase 4">Phase 4</button>
+            <button class="resources-chip tag--phase-5" type="button" data-filter-kind="phase" data-filter-value="Phase 5" data-filter-label="Ressources — Phase 5">Phase 5</button>
+            <button class="resources-chip tag--phase-6" type="button" data-filter-kind="phase" data-filter-value="Phase 6" data-filter-label="Ressources — Phase 6">Phase 6</button>
+            <button class="resources-chip tag--phase-7" type="button" data-filter-kind="phase" data-filter-value="Phase 7" data-filter-label="Ressources — Phase 7">Phase 7</button>
+            <button class="resources-chip" type="button" data-filter-kind="phase" data-filter-value="Toutes" data-filter-label="Ressources — Toutes phases">Toutes phases</button>
+          </div>
+        </div>
+
+        <div class="resources-filter-group">
+          <div class="resources-filter-group__title">Catégories</div>
+          <div class="resources-filter-buttons">
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="API externe" data-filter-label="Ressources — API externe">API externe</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Architecture" data-filter-label="Ressources — Architecture">Architecture</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Backend" data-filter-label="Ressources — Backend">Backend</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Frontend" data-filter-label="Ressources — Frontend">Frontend</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Guide interne" data-filter-label="Ressources — Guides internes">Guides internes</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Infrastructure" data-filter-label="Ressources — Infrastructure">Infrastructure</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Katas" data-filter-label="Ressources — Katas">Katas</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Outils" data-filter-label="Ressources — Outils">Outils</button>
+            <button class="resources-chip" type="button" data-filter-kind="category" data-filter-value="Securite" data-filter-label="Ressources — Sécurité">Sécurité</button>
+          </div>
+        </div>
+
+        <div class="resources-filter-group">
+          <div class="resources-filter-group__title">Types de ressources</div>
+          <div class="resources-filter-buttons">
+            <button class="resources-chip" type="button" data-filter-kind="type" data-filter-value="Documentation" data-filter-label="Ressources — Documentation">Documentation</button>
+            <button class="resources-chip" type="button" data-filter-kind="type" data-filter-value="Guide KS" data-filter-label="Ressources — Guides internes">Guides internes</button>
+            <button class="resources-chip" type="button" data-filter-kind="type" data-filter-value="Livre" data-filter-label="Ressources — Livres">Livre</button>
+            <button class="resources-chip" type="button" data-filter-kind="type" data-filter-value="Ressource" data-filter-label="Ressources — Ressources externes">Ressource</button>
+            <button class="resources-chip" type="button" data-filter-kind="type" data-filter-value="Youtube" data-filter-label="Ressources — YouTube">YouTube</button>
+          </div>
+        </div>
+
+      </aside>
+
+      <section class="resources-section">
+        <div class="resources-catalog-header">
+          <h2 id="resources-catalog-title">Toutes les ressources</h2>
+          <div class="resources-count" id="resources-count">78 ressources</div>
+        </div>
+        <div class="resources-grid" id="resources-grid"></div>
+        <div class="resources-empty" id="resources-empty">
+          Aucun résultat pour cette vue. Change de filtre ou efface la recherche.
+        </div>
+      </section>
+    </div>
 
     <div class="footer">
       KataSensei Learning Path · Ressources filtrables · Navigation locale sans fetch externe
