@@ -71,13 +71,13 @@
 
       <p>Pourquoi ce cycle ? Parce qu'il force à penser à l'interface avant l'implémentation. Exactement comme écrire un type TypeScript avant de coder la fonction.</p>
 
-      <h3>Anatomie d'un test JUnit 5 — le pattern Given / When / Then</h3>
+      <h3>Anatomie d'un test JUnit 5 — le pattern Arrange / Act / Assert</h3>
 
       <pre><code class="language-java">@Test
 void should_[résultat]_when_[condition]() {
-    // GIVEN — prépare le contexte
-    // WHEN  — exécute l'action
-    // THEN  — vérifie le résultat
+    // ARRANGE — prépare le contexte
+    // ACT     — exécute l'action
+    // ASSERT  — vérifie le résultat
 }</code></pre>
 
       <div class="callout--info">
