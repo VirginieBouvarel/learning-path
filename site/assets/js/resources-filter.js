@@ -172,7 +172,6 @@ function getLearningCategory(resource) {
     sourceCategory === "infrastructure"
     || sourceCategory === "outils"
     || title.includes("docker")
-    || title.includes("github actions")
     || title.includes("gitlab")
     || title.includes("fly.io")
     || title.includes("sdkman")

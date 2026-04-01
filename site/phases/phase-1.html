@@ -101,7 +101,7 @@
     </div>
 
     <div class="callout--info">
-      <strong>Nouveaux outils qui deviennent utiles ici</strong> : <code>Bruno</code> pour appeler les premiers endpoints, <code>DataGrip</code> pour inspecter la base et les migrations, et <code>shadcn-vue</code> pour les premiers composants UI concrets. Ils n'étaient pas installés en phase 0 exprès.
+      <strong>Nouveaux outils qui deviennent utiles ici</strong> : <code>Bruno</code> pour appeler les premiers endpoints, <code>DataGrip</code> pour inspecter la base et les migrations, <code>Vitest</code> qui commence vraiment à servir pour les premiers tests front, et <code>shadcn-vue</code> pour les premiers composants UI concrets. Ils n'étaient pas tous utiles en phase 0.
     </div>
 
     <div class="callout--warning">
@@ -813,6 +813,7 @@ public class CorsConfig {
           <li><code>&lt;style scoped&gt;</code> uniquement — pas de styles globaux</li>
           <li>Classes en français sans accents (BEM) sur les éléments spécifiques à KataSensei</li>
         </ul>
+        <p>Commence ici à utiliser vraiment <code>Vitest</code> côté front. Si besoin, ajuste <code>vite.config.ts</code> pour inclure <code>tests/**/*.test.ts</code> avec <code>happy-dom</code>.</p>
         <p>Test à écrire dans <code>tests/ui/views/KataListView.test.ts</code> : vérifie que le badge de difficulté a la bonne classe selon le niveau.</p>
       </div>
 
