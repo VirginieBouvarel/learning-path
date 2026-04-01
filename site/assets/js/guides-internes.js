@@ -1,5 +1,6 @@
 const INTERNAL_GUIDES = [
-  { id: "ubiquitous-language", title: "Ubiquitous Language", menuTitle: "ADR 000 - Ubiquitous Language", path: "guides/ubiquitous-language.html", badge: { text: "Domaine / DDD", style: "background: var(--cat-ddd-bg); color: var(--cat-ddd);" }, adrCode: "ADR 000" },
+  { id: "ubiquitous-language", title: "Ubiquitous Language", menuTitle: "ADR 001 - Ubiquitous Language", path: "guides/ubiquitous-language.html", badge: { text: "Domaine / DDD", style: "background: var(--cat-ddd-bg); color: var(--cat-ddd);" }, adrCode: "ADR 001" },
+  { id: "choix-technologiques", title: "Choix technologiques", menuTitle: "ADR 002 - Choix technologiques", path: "guides/choix-technologiques.html", badge: { text: "Phase 0", style: "background: var(--phase-0-bg); color: var(--phase-0);" }, adrCode: "ADR 002" },
   { id: "conventions-front", title: "Conventions front", menuTitle: "ADR 003 - Conventions front", path: "guides/conventions-front.html", badge: { text: "Front / UI", style: "background: var(--cat-front-bg); color: var(--cat-front);" }, adrCode: "ADR 003" },
   { id: "conventional-commits", title: "Conventional Commits", menuTitle: "Conventional Commits", path: "guides/conventional-commits.html", badge: { text: "Phase 0", style: "background: var(--phase-0-bg); color: var(--phase-0);" } },
   { id: "arborescence", title: "Arborescence et testabilité", menuTitle: "Arborescence et testabilité", path: "guides/arborescence.html", badge: { text: "Phase 4-7", style: "background: var(--phase-4-bg); color: var(--phase-4);" } },

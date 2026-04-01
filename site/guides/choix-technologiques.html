@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choix technologiques — ADR 002 · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Choix technologiques — ADR 002</span>
+</nav>
+
+<div class="layout layout--guide layout--guide-reference">
+  <main class="layout__main">
+    <div class="guide-header">
+      <span class="guide-header__phase-badge" style="background: var(--phase-0-bg); color: var(--phase-0);">Phase 0</span>
+      <h1 class="guide-header__title">ADR 002 - Choix technologiques</h1>
+      <p class="guide-header__intro">Décision structurante qui fige la stack initiale de KataSensei et justifie les outils choisis au lancement du projet.</p>
+    </div>
+
+    <section class="guide-step" id="contexte">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">1</div>
+        <h2 class="guide-step__title">Contexte</h2>
+      </div>
+      <p>KataSensei est un projet d'apprentissage fullstack avec objectifs explicites : Vue 3, TypeScript strict, Java 21, architecture hexagonale, TDD et mise en prod. La stack doit rester cohérente, pédagogique et réaliste pour un projet moderne.</p>
+    </section>
+
+    <section class="guide-step" id="decision">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-0);">2</div>
+        <h2 class="guide-step__title">Décision</h2>
+      </div>
+      <pre><code class="language-markdown"># ADR 002 — Choix technologiques de KataSensei
+
+## Date
+2026-XX-XX
+
+## Statut
+Accepté
+
+## Contexte
+Premier projet fullstack personnel visant à apprendre
+l'architecture hexagonale, le TDD et le typage fort.
+
+## Décisions
+
+### Backend : Java 21 + Spring Boot 3
+Java 21 apporte les records, les sealed classes et les
+pattern matching — le système de types le plus proche
+de TypeScript côté Java.
+
+### Frontend : Vue 3 + TypeScript strict
+Stack déjà maîtrisée. TypeScript strict avec
+noUncheckedIndexedAccess dès le départ.
+
+### Architecture : Hexagonale (Ports &amp; Adapters)
+Permet de tester le domaine sans infrastructure.
+Le domaine ne dépend d'aucun framework.
+
+### Déploiement : Fly.io
+Gratuit pour les petits projets, CLI simple,
+PostgreSQL managed disponible.
+
+### Exécution de code : Piston API
+Sandbox externe gratuite et open source.
+
+## Alternatives rejetées
+- Gradle : plus puissant mais moins lisible que Maven pour débuter
+- Quarkus : excellent mais Spring a une meilleure documentation
+- Railway : Fly.io a un meilleur free tier en 2026
+
+## Conséquences
+- Apprentissage de Maven obligatoire
+- IntelliJ IDEA Ultimate retenu pour tout le parcours
+- Dépendance à Piston API pour l'exécution de code</code></pre>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · ADR 002 — Choix technologiques</p>
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+</html>
