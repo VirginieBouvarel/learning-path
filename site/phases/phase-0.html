@@ -83,8 +83,7 @@
         <li><a href="#etape-8">8 — GitLab CI/CD</a></li>
         <li><a href="#etape-9">9 — ADR 001</a></li>
         <li><a href="#etape-10">10 — Stylelint</a></li>
-        <li><a href="#etape-11">11 — Ce qui attend la suite</a></li>
-        <li><a href="#etape-12">12 — Structure tests/</a></li>
+        <li><a href="#etape-11">11 — Convention tests/</a></li>
         <li><a href="#checklist">Checklist finale</a></li>
         <li><a href="#erreurs">Erreurs fréquentes</a></li>
       </ul>
@@ -203,11 +202,10 @@ mvn -version
 ✔ Add Vue Router? › Yes
 ✔ Add Pinia? › Yes
 ✔ Add Vitest? › Yes
-✔ Add an End-to-End Testing Solution? › No
+✔ Add an End-to-End Testing Solution? › Playwright
 ✔ Add ESLint? › Yes
 ✔ Add Prettier? › Yes
 ✔ Add Vue DevTools? › Yes</code></pre>
-      <div class="callout--info"><strong>ℹ️ Pourquoi pas Playwright maintenant ?</strong> La phase 0 pose le socle minimal. Playwright n'arrive qu'au moment où le projet a de vrais parcours utilisateur à tester, en phase 6.</div>
       <pre><code class="language-bash">cd katasensei-front
 npm install
 npm run dev
@@ -575,28 +573,10 @@ Sandbox externe gratuite et open source.
     <section class="guide-step" id="etape-11">
       <div class="guide-step__heading">
         <div class="guide-step__number">11</div>
-        <h2 class="guide-step__title">Ce qui attend volontairement la suite</h2>
+        <h2 class="guide-step__title">Convention tests/</h2>
       </div>
 
-      <p>La phase 0 ne doit pas préinstaller tout l'écosystème futur. On s'arrête volontairement au socle minimal.</p>
-      <ul>
-        <li><strong>DataGrip</strong> arrive en phase 1, quand la base devient un vrai outil de travail.</li>
-        <li><strong>shadcn-vue</strong> arrive en phase 1, au moment des premiers composants UI concrets.</li>
-        <li><strong>Redis</strong> arrive en phase 5, quand le besoin de cache existe réellement.</li>
-        <li><strong>Playwright</strong> arrive en phase 6, quand l'application a de vrais parcours utilisateur à couvrir.</li>
-        <li><strong>API IA sensei</strong> et <strong>Piston</strong> arrivent en phase 4, quand l'architecture prévoit enfin leurs ports.</li>
-      </ul>
-      <div class="callout--tip"><strong>Principe</strong> Le besoin doit faire naître l'outil. Si un outil n'apporte encore aucune valeur concrète, il n'a rien à faire dans le setup initial.</div>
-    </section>
-
-    <!-- Étape 12 -->
-    <section class="guide-step" id="etape-12">
-      <div class="guide-step__heading">
-        <div class="guide-step__number">12</div>
-        <h2 class="guide-step__title">Structure tests/</h2>
-      </div>
-
-      <p>Crée le dossier <code>tests/</code> à côté de <code>src/</code> reproduisant la même arborescence :</p>
+      <p>Prépare dès maintenant le dossier <code>tests/</code> à côté de <code>src/</code> en reproduisant la même arborescence. Vitest et Playwright font partie du scaffold de départ, même si leur usage réel se construira ensuite au fil du parcours.</p>
       <pre><code class="language-bash">mkdir -p tests/domain/usecases
 mkdir -p tests/domain/types
 mkdir -p tests/infrastructure/api/mappers
@@ -604,16 +584,8 @@ mkdir -p tests/stores
 mkdir -p tests/ui/components
 mkdir -p tests/ui/views
 mkdir -p tests/ui/composables</code></pre>
-      <p>Configure Vitest pour trouver les tests dans ce dossier. Dans <code>vite.config.ts</code> :</p>
-      <pre><code class="language-typescript">export default defineConfig({
-  plugins: [vue()],
-  test: {
-    include: ['tests/**/*.test.ts'],
-    environment: 'happy-dom',
-  },
-})</code></pre>
       <div class="callout--info"><strong>ℹ️ Convention</strong> <code>tests/domain/usecases/GetKatasUseCase.test.ts</code> teste <code>src/domain/usecases/GetKatasUseCase.ts</code>. L'arborescence est identique, seul le dossier racine change.</div>
-      <div class="commit-suggestion">chore(front): création structure dossier tests/</div>
+      <div class="commit-suggestion">chore(front): préparation structure dossier tests avec scaffold complet</div>
     </section>
 
     <!-- Checklist finale -->
@@ -636,7 +608,7 @@ mkdir -p tests/ui/composables</code></pre>
         <li><input type="checkbox"> Pipeline GitLab CI/CD vert sur le premier push</li>
         <li><input type="checkbox"> ADR 001 commité dans <code>docs/adr/</code></li>
         <li><input type="checkbox"> Stylelint installé et configuré (on save dans IntelliJ)</li>
-        <li><input type="checkbox"> Structure <code>tests/</code> créée et configurée dans Vitest</li>
+        <li><input type="checkbox"> Structure <code>tests/</code> préparée selon la convention miroir de <code>src/</code></li>
         <li><input type="checkbox"> ADR 003 commité dans <code>docs/adr/</code></li>
       </ul>
     </section>

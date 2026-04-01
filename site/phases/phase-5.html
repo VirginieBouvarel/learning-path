@@ -125,6 +125,10 @@
         <h2 class="guide-step__title">Les chantiers de la phase</h2>
       </div>
 
+      <div class="callout--info">
+        <strong>Promesse test de la phase</strong> : tester les listeners indépendamment, vérifier le flux SSE sur un parcours complet, et garder une trace unique grâce au <code>correlationId</code> quand HTTP, listeners et streaming coexistent.
+      </div>
+
       <h3>2.1 — Domain Events et listeners</h3>
       <p>Créer des faits métier nommés proprement comme <code>KataCompleted</code> et les publier depuis les use cases. Chaque réaction annexe doit vivre dans son listener dédié.</p>
 

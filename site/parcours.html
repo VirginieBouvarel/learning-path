@@ -78,6 +78,10 @@
           <p>.env ignoré par git. .env.example committé. Profils dev / test / prod séparés. PostgreSQL démarre en un docker-compose up, puis le reste arrive quand le besoin métier existe.</p>
         </div>
         <div class="concept">
+          <div class="concept-header"><span class="concept-icon">🧪</span><span class="concept-title">Socle test prêt dès le départ</span><span class="concept-analogy">≈ projet scaffoldé sans dette de test</span></div>
+          <p>Scaffold front avec Vitest et Playwright, convention <code>tests/</code> posée, pipeline minimal branché dès la phase 0. Le projet démarre avec un socle testable sans attendre une refonte plus tard.</p>
+        </div>
+        <div class="concept">
           <div class="concept-header"><span class="concept-icon">🚀</span><span class="concept-title">Prod day 1 — Fly.io + pipeline minimal</span><span class="concept-analogy">≈ toujours quelque chose en ligne</span></div>
           <p>GET /health en prod avant la première feature. Pipeline GitLab CI/CD minimal (test → deploy) qui grandira à chaque phase.</p>
         </div>
@@ -196,7 +200,7 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Branded types + Result + useAsync. Refactoring front phase 1. Tests Vitest des type guards. Archi domain/infra/ui en place.</p>
+          <p>Branded types + Result + useAsync. Refactoring front phase 1. Tests Vitest sur guards, use cases, mappers, store et composables. Archi domain/infra/ui en place.</p>
         </div>
         <div class="subpages">
           <a href="phases/phase-2.html" class="subpage">Guide pas-à-pas — Phase 2</a>
@@ -245,7 +249,7 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Auth complète en TDD. AppError union. Refactoring back phase 1. ADR 002 écrit.</p>
+          <p>Auth complète en TDD. Tests JWT sur accès refusé, expiration et endpoints d'auth. AppError union. Refactoring back phase 1 sécurisé par les tests. ADR 002 écrit.</p>
         </div>
         <div class="subpages">
           <a href="phases/phase-3.html" class="subpage">Guide pas-à-pas — Phase 3</a>
@@ -352,7 +356,7 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>GET /users/me/progress. SSE /hint/stream. Events découplés. Cache Redis. ACL front. Correlation ID traversant HTTP, listeners et streaming.</p>
+          <p>GET /users/me/progress. SSE /hint/stream. Events découplés avec listeners testés séparément. Cache Redis. ACL front. Correlation ID vérifié à travers HTTP, listeners et streaming.</p>
         </div>
         <div class="subpages">
           <a href="phases/phase-5.html" class="subpage">Vue d'ensemble Phase 5</a>
@@ -432,7 +436,7 @@
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">⚙️</span><span class="concept-title">Pipeline GitLab CI/CD complet — 5 étapes</span><span class="concept-analogy">≈ CI/CD complète</span></div>
-          <p>unit-tests → integration-tests → e2e-tests → build-docker → deploy. Si une étape échoue, le déploiement ne part pas.</p>
+          <p>unit-tests → integration-tests → e2e-tests → build-docker → deploy. La phase assemble et fiabilise les suites construites progressivement depuis le début du parcours. Si une étape échoue, le déploiement ne part pas.</p>
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🏥</span><span class="concept-title">Health checks + Actuator + graceful shutdown</span><span class="concept-analogy">≈ DevTools Vue en prod</span></div>

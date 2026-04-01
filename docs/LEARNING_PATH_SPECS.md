@@ -2,6 +2,18 @@
 
 Ce fichier sert de mémo interne pour écrire les guides détaillés sans laisser ces consignes dans les pages publiques du site.
 
+## Règles transversales — tests et niveaux de détail
+
+- `Parcours` : nomme les familles de tests et leur rôle par phase, sans opérations ni commandes
+- `Overview de phase` : explique ce qu’on teste à cette phase, pourquoi, et ce que la CI exécute désormais
+- `Guide détaillé` : liste toutes les opérations, configs, commandes, tests à écrire, tests à lancer, vérifications manuelles et points de contrôle
+
+### Règle de relecture
+
+- si une opération est indispensable pour construire le projet final, elle doit apparaître dans le guide détaillé
+- si elle n’est qu’un résumé de phase, elle doit rester dans l’overview ou le parcours
+- si elle est une consigne interne de rédaction, elle doit aller dans les specs internes, jamais dans les pages publiques
+
 ## Phase 4
 
 - Faire écrire au moins 3 règles `ArchUnit` :
