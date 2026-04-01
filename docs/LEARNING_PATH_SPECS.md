@@ -33,6 +33,18 @@ Il n'existe pas de niveau intermédiaire `overview de phase`.
 - si une convention stable s'applique à plusieurs phases, elle doit être centralisée dans un guide interne unique et les phases doivent y renvoyer au lieu de la réécrire différemment
 - le document de référence pour ces règles de rédaction et de cohérence est `docs/LEARNING_PATH_EDITORIAL_RULES.md`
 
+## A prévoir dans la prochaine phase
+
+- si, pendant la réécriture d'une phase, un sujet utile est volontairement retiré, réduit ou reporté pour garder une progression pédagogique cohérente, ce report doit être noté explicitement dans cette section
+- chaque point reporté doit préciser :
+  - la phase d'origine concernée
+  - l'élément retiré ou allégé
+  - la raison du report
+  - la phase cible où il devra être repris
+  - si nécessaire, la forme attendue du traitement futur (`étape complète`, `exercice`, `ressource`, `ADR`, `guide annexe`)
+- cette section sert de garde-fou éditorial pour éviter qu'un sujet important disparaisse entre deux réécritures
+- lors du travail sur la phase suivante, cette section doit être relue avant toute proposition de structure cible
+
 ## Phase 4
 
 - Faire écrire au moins 3 règles `ArchUnit` :
