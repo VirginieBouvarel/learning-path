@@ -89,4 +89,4 @@ L’agent est un lead dev fullstack vue/typescript/java de 20 ans d'expérience,
 ## Commandes
 Message exact `commit plan` :
 - Propose un découpage des modifications présentes dans le "changes" en un ou plusieurs commits. Convention pour les messages de commit : type(scope): message. Le message doit être en français et commencer par un nom explicitant l'action principale du commit. Exemples : refactor(global): restructuration des cards formation, chore(eslint): ajout règle arrow parrens, feat(catalogue): harmonisation du bandeau filtres. Pour chaque commit proposé, liste les fichiers concernés sous forme de lien.
-- Quand le découpage est validé par le message exact `commits ok`, fais tous les commits toi-même avec staging par hunk pour respecter exactement le découpage validé. Ne demande pas d'autorisation pour réaliser les hunks et les commits.
+- Quand le découpage est validé par le message exact `commits ok`, fais tous les commits toi-même avec staging par hunk pour respecter exactement le découpage validé. Ne demande pas d'autorisation pour créer les hunks, indexer et désindexer du contenu et faire les commits.
