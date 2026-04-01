@@ -10,7 +10,11 @@
 
 <!-- Nav injectée par navigation.js -->
 
-<div class="layout">
+<nav aria-label="fil d'ariane" class="breadcrumb">
+  <span>Accueil</span>
+</nav>
+
+<div class="layout layout--sidebar-left">
   <main class="layout__main">
     <section class="project-card">
       <span class="project-badge">Learning Path</span>
@@ -102,7 +106,6 @@
         <li><span class="home-list__marker" style="color: var(--cat-ops);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>CI/CD &amp; ops</strong> — Docker, GitLab CI/CD, Fly.io, secrets</span><span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">CI/CD &amp; Ops</span></span></div></li>
         <li><span class="home-list__marker" style="color: var(--cat-errors);" aria-hidden="true"></span><div class="home-list__item"><span class="home-list__text"><strong>Gestion des erreurs</strong> — centralisée, exhaustive, front et back</span><span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Erreurs</span></span></div></li>
       </ul>
-      <p class="home-note">Ce code couleur doit rester cohérent dans tout le site : phases, guides, timeline, chips, références visuelles et supports associés.</p>
     </section>
 
     <div class="footer">
