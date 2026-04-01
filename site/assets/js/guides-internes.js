@@ -1,12 +1,12 @@
 const INTERNAL_GUIDES = [
-  { id: "ubiquitous-language", title: "Ubiquitous Language — ADR 000", path: "guides/ubiquitous-language.html" },
-  { id: "conventions-front", title: "Conventions front — ADR 003", path: "guides/conventions-front.html" },
-  { id: "conventional-commits", title: "Conventional Commits", path: "guides/conventional-commits.html" },
-  { id: "arborescence", title: "Arborescence et testabilité", path: "guides/arborescence.html" },
-  { id: "workflow-gitlab", title: "Workflow GitLab", path: "guides/workflow-gitlab.html" },
-  { id: "optional-java", title: "Optional en Java", path: "guides/optional-java.html" },
-  { id: "datagrip", title: "DataGrip", path: "guides/datagrip.html" },
-  { id: "checklist-securite", title: "Checklist sécurité", path: "guides/checklist-securite.html" }
+  { id: "ubiquitous-language", title: "Ubiquitous Language", menuTitle: "ADR 000 - Ubiquitous Language", path: "guides/ubiquitous-language.html", badge: { text: "Domaine / DDD", style: "background: var(--cat-ddd-bg); color: var(--cat-ddd);" }, adrCode: "ADR 000" },
+  { id: "conventions-front", title: "Conventions front", menuTitle: "ADR 003 - Conventions front", path: "guides/conventions-front.html", badge: { text: "Front / UI", style: "background: var(--cat-front-bg); color: var(--cat-front);" }, adrCode: "ADR 003" },
+  { id: "conventional-commits", title: "Conventional Commits", menuTitle: "Conventional Commits", path: "guides/conventional-commits.html", badge: { text: "Phase 0", style: "background: var(--phase-0-bg); color: var(--phase-0);" } },
+  { id: "arborescence", title: "Arborescence et testabilité", menuTitle: "Arborescence et testabilité", path: "guides/arborescence.html", badge: { text: "Phase 4-7", style: "background: var(--phase-4-bg); color: var(--phase-4);" } },
+  { id: "workflow-gitlab", title: "Workflow GitLab", menuTitle: "Workflow GitLab", path: "guides/workflow-gitlab.html", badge: { text: "Phase 0", style: "background: var(--phase-0-bg); color: var(--phase-0);" } },
+  { id: "optional-java", title: "Optional en Java", menuTitle: "Optional en Java", path: "guides/optional-java.html", badge: { text: "Phase 1", style: "background: var(--phase-1-bg); color: var(--phase-1);" } },
+  { id: "datagrip", title: "DataGrip", menuTitle: "DataGrip", path: "guides/datagrip.html", badge: { text: "Phase 1", style: "background: var(--phase-1-bg); color: var(--phase-1);" } },
+  { id: "checklist-securite", title: "Checklist sécurité", menuTitle: "Checklist sécurité", path: "guides/checklist-securite.html", badge: { text: "Pré-prod", style: "background: var(--cat-errors-bg); color: var(--cat-errors);" } }
 ];
 
 function getSelectedGuideId() {
@@ -38,7 +38,7 @@ function buildSidebar(selectedId) {
   if (!nav) return;
   nav.innerHTML = INTERNAL_GUIDES.map(guide => `
     <a href="guides-internes.html?page=${guide.id}" class="guides-nav__link${guide.id === selectedId ? " guides-nav__link--active" : ""}" data-guide-id="${guide.id}">
-      ${guide.title}
+      ${guide.menuTitle || guide.title}
     </a>
   `).join("");
 }
@@ -72,8 +72,23 @@ function buildToc(container) {
   `).join("");
 }
 
+function applyGuideMetadata(container, guide) {
+  const badge = container.querySelector(".guide-header__phase-badge");
+  const title = container.querySelector(".guide-header__title");
+
+  if (badge && guide.badge) {
+    badge.textContent = guide.badge.text;
+    if (guide.badge.style) badge.setAttribute("style", guide.badge.style);
+  }
+
+  if (title && guide.adrCode) {
+    title.textContent = `${guide.adrCode} - ${guide.title}`;
+  }
+}
+
 async function loadGuide(selectedId) {
   const content = document.getElementById("guides-content");
+  const headerSlot = document.getElementById("guides-header-slot");
   if (!content) return;
 
   const guide = INTERNAL_GUIDES.find(item => item.id === selectedId) || INTERNAL_GUIDES[0];
@@ -89,13 +104,23 @@ async function loadGuide(selectedId) {
     const fragment = document.createElement("div");
     fragment.innerHTML = main.innerHTML;
     rewriteLinks(fragment);
+    applyGuideMetadata(fragment, guide);
+    const header = fragment.querySelector(".guide-header");
+    if (header) header.remove();
     content.innerHTML = "";
-    content.appendChild(fragment);
+    if (headerSlot) {
+      headerSlot.innerHTML = "";
+      if (header) headerSlot.appendChild(header);
+    }
+    while (fragment.firstChild) {
+      content.appendChild(fragment.firstChild);
+    }
     buildToc(content);
     buildSidebar(guide.id);
     updateQueryString(guide.id);
     document.title = `${guide.title} — KataSensei`;
   } catch (error) {
+    if (headerSlot) headerSlot.innerHTML = "";
     content.innerHTML = `<div class="guides-content__empty">Impossible de charger ce guide interne.</div>`;
     const tocList = document.getElementById("guides-toc-list");
     if (tocList) tocList.innerHTML = "";

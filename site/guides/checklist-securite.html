@@ -6,18 +6,53 @@
   <title>Checklist sécurité · KataSensei</title>
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/guide.css">
+  <style>
+    .checklist-toc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checklist-icon {
+      width: 16px;
+      height: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: currentColor;
+    }
+
+    .checklist-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .checklist__title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
 </head>
 <body>
 
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>Checklist sécurité</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -25,20 +60,20 @@
       <ul class="toc__list">
         <li><a href="#securite">Sécurité</a>
           <ul class="toc__list--sub">
-            <li><a href="#auth">Auth &amp; secrets</a></li>
-            <li><a href="#reseau">Réseau &amp; API</a></li>
-            <li><a href="#headers">Headers HTTP</a></li>
-            <li><a href="#code">Code &amp; données</a></li>
-            <li><a href="#infra-secu">Infrastructure</a></li>
-            <li><a href="#owasp">OWASP Top 10</a></li>
+            <li><a href="#auth" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="5" y="8.5" width="10" height="7" rx="1.5"/><path d="M7 8.5V6.75A3 3 0 0 1 10 3.75a3 3 0 0 1 3 3v1.75"/></svg></span><span>Auth &amp; secrets</span></a></li>
+            <li><a href="#reseau" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3.5 10h13"/><path d="M10 3.5a9 9 0 0 1 0 13"/><path d="M10 3.5a9 9 0 0 0 0 13"/><circle cx="10" cy="10" r="6.5"/></svg></span><span>Réseau &amp; API</span></a></li>
+            <li><a href="#headers" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/><path d="M12 4.5V7.5h3"/><path d="M7 10h6M7 12.75h4.5"/></svg></span><span>Headers HTTP</span></a></li>
+            <li><a href="#code" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 7-3 3 3 3"/><path d="m13 7 3 3-3 3"/><path d="m11 5-2 10"/></svg></span><span>Code &amp; données</span></a></li>
+            <li><a href="#infra-secu" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 3.5 4.5 6.25v7.5L10 16.5l5.5-2.75v-7.5Z"/><path d="m4.5 6.25 5.5 2.75 5.5-2.75"/></svg></span><span>Infrastructure</span></a></li>
+            <li><a href="#owasp" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 3 4.5 5v4.25c0 3.45 2.1 6.6 5.5 7.75 3.4-1.15 5.5-4.3 5.5-7.75V5Z"/></svg></span><span>OWASP Top 10</span></a></li>
           </ul>
         </li>
         <li><a href="#performances">Performances</a>
           <ul class="toc__list--sub">
-            <li><a href="#db">Base de données</a></li>
-            <li><a href="#cache">Cache &amp; timeouts</a></li>
-            <li><a href="#frontend">Frontend</a></li>
-            <li><a href="#infra-perf">Infrastructure</a></li>
+            <li><a href="#db" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><ellipse cx="10" cy="5.5" rx="5.5" ry="2.5"/><path d="M4.5 5.5v6c0 1.4 2.45 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-6"/></svg></span><span>Base de données</span></a></li>
+            <li><a href="#cache" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M6.5 6.5h7v7h-7z"/><path d="M8.5 3.5h3M8.5 16.5h3M16.5 8.5v3M3.5 8.5v3"/></svg></span><span>Cache &amp; timeouts</span></a></li>
+            <li><a href="#frontend" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="3.5" y="4.5" width="13" height="9" rx="1.5"/><path d="M7.5 16h5"/></svg></span><span>Frontend</span></a></li>
+            <li><a href="#infra-perf" class="checklist-toc-link"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 4v6l4 2"/><circle cx="10" cy="10" r="6"/></svg></span><span>Infrastructure</span></a></li>
           </ul>
         </li>
       </ul>
@@ -48,7 +83,7 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence — Pré-prod</span>
+      <span class="guide-header__phase-badge" style="background: var(--cat-errors-bg); color: var(--cat-errors);">Pré-prod</span>
       <h1 class="guide-header__title">Checklist sécurité &amp; performances</h1>
       <p class="guide-header__intro">À valider avant chaque déploiement en production. Les explications sont dans les guides de phase correspondants — cette page est uniquement la checklist finale.</p>
     </div>
@@ -57,8 +92,8 @@
     <section id="securite">
       <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 16px; color: var(--color-accent-red);">Sécurité</h2>
 
-      <section class="checklist" id="auth">
-        <h2 class="checklist__title">🔑 Authentification &amp; secrets</h2>
+      <div class="checklist" id="auth">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="5" y="8.5" width="10" height="7" rx="1.5"/><path d="M7 8.5V6.75A3 3 0 0 1 10 3.75a3 3 0 0 1 3 3v1.75"/></svg></span><span>Authentification &amp; secrets</span></h2>
         <ul>
           <li><input type="checkbox"> JWT secret ≥ 256 bits, injecté depuis variable d'env uniquement</li>
           <li><input type="checkbox"> BCrypt pour tous les mots de passe — jamais stocké en clair</li>
@@ -66,29 +101,29 @@
           <li><input type="checkbox"> Aucun secret dans les logs (mot de passe, token, clé API)</li>
           <li><input type="checkbox"> Variables GitLab CI/CD configurées pour la CI</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="reseau">
-        <h2 class="checklist__title">🌐 Réseau &amp; API</h2>
+      <div class="checklist" id="reseau">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3.5 10h13"/><path d="M10 3.5a9 9 0 0 1 0 13"/><path d="M10 3.5a9 9 0 0 0 0 13"/><circle cx="10" cy="10" r="6.5"/></svg></span><span>Réseau &amp; API</span></h2>
         <ul>
           <li><input type="checkbox"> CORS configuré avec liste blanche d'origines (jamais <code>*</code>)</li>
           <li><input type="checkbox"> HTTPS uniquement en prod</li>
           <li><input type="checkbox"> Rate limiting actif sur <code>POST /auth/login</code> — 5 tentatives/min par IP (Bucket4j)</li>
           <li><input type="checkbox"> Toutes les routes protégées sauf <code>/auth/**</code> et <code>/actuator/health</code></li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="headers">
-        <h2 class="checklist__title">📋 Headers HTTP (phase 6)</h2>
+      <div class="checklist" id="headers">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/><path d="M12 4.5V7.5h3"/><path d="M7 10h6M7 12.75h4.5"/></svg></span><span>Headers HTTP (phase 6)</span></h2>
         <ul>
           <li><input type="checkbox"> <code>Content-Security-Policy</code> dans Spring Security</li>
           <li><input type="checkbox"> <code>X-Frame-Options: DENY</code> actif</li>
           <li><input type="checkbox"> <code>Strict-Transport-Security</code> actif</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="code">
-        <h2 class="checklist__title">💻 Code &amp; données</h2>
+      <div class="checklist" id="code">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m7 7-3 3 3 3"/><path d="m13 7 3 3-3 3"/><path d="m11 5-2 10"/></svg></span><span>Code &amp; données</span></h2>
         <ul>
           <li><input type="checkbox"> Zéro concaténation de String dans les requêtes SQL — JPA uniquement</li>
           <li><input type="checkbox"> Stack trace jamais exposé en prod — <code>@ControllerAdvice</code> retourne un message générique</li>
@@ -96,19 +131,19 @@
           <li><input type="checkbox"> Type guards côté front — toute donnée externe validée avant utilisation</li>
           <li><input type="checkbox"> Données sensibles jamais loggées (token JWT, mot de passe)</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="infra-secu">
-        <h2 class="checklist__title">🐳 Infrastructure (phase 7)</h2>
+      <div class="checklist" id="infra-secu">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 3.5 4.5 6.25v7.5L10 16.5l5.5-2.75v-7.5Z"/><path d="m4.5 6.25 5.5 2.75 5.5-2.75"/></svg></span><span>Infrastructure (phase 7)</span></h2>
         <ul>
           <li><input type="checkbox"> Container Docker lancé en utilisateur non-root (<code>USER 1001</code>)</li>
           <li><input type="checkbox"> Scan Trivy sur l'image Docker — zéro CVE critique</li>
           <li><input type="checkbox"> Procédure de rotation des secrets documentée</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="owasp">
-        <h2 class="checklist__title">🛡 OWASP Top 10</h2>
+      <div class="checklist" id="owasp">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 3 4.5 5v4.25c0 3.45 2.1 6.6 5.5 7.75 3.4-1.15 5.5-4.3 5.5-7.75V5Z"/></svg></span><span>OWASP Top 10</span></h2>
         <ul>
           <li><input type="checkbox"> A01 Broken Access Control → JWT + routes protégées ✓</li>
           <li><input type="checkbox"> A02 Cryptographic Failures → BCrypt + secrets en env ✓</li>
@@ -116,43 +151,43 @@
           <li><input type="checkbox"> A05 Security Misconfiguration → headers HTTP + CORS strict ✓</li>
           <li><input type="checkbox"> A07 Authentication Failures → rate limiting + credentials génériques ✓</li>
         </ul>
-      </section>
+      </div>
     </section>
 
     <!-- PERFORMANCES -->
     <section id="performances" style="margin-top: 16px;">
       <h2 style="font-size: 20px; font-weight: 700; margin: 0 0 16px; color: var(--color-accent-green);">Performances</h2>
 
-      <section class="checklist" id="db">
-        <h2 class="checklist__title">🗄 Base de données</h2>
+      <div class="checklist" id="db">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><ellipse cx="10" cy="5.5" rx="5.5" ry="2.5"/><path d="M4.5 5.5v6c0 1.4 2.45 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-6"/></svg></span><span>Base de données</span></h2>
         <ul>
           <li><input type="checkbox"> Index SQL sur toutes les colonnes filtrées (<code>difficulty</code>, <code>language</code>, <code>user_id</code>, <code>email</code>)</li>
           <li><input type="checkbox"> Zéro N+1 query détecté avec <code>show-sql: true</code></li>
           <li><input type="checkbox"> Toutes les listes paginées — zéro endpoint sans <code>Pageable</code></li>
           <li><input type="checkbox"> Projections DTO là où les entités complètes ne sont pas nécessaires</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="cache">
-        <h2 class="checklist__title">⚡ Cache &amp; timeouts</h2>
+      <div class="checklist" id="cache">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M6.5 6.5h7v7h-7z"/><path d="M8.5 3.5h3M8.5 16.5h3M16.5 8.5v3M3.5 8.5v3"/></svg></span><span>Cache &amp; timeouts</span></h2>
         <ul>
           <li><input type="checkbox"> Cache Redis actif sur les données stables (<code>@Cacheable</code>)</li>
           <li><input type="checkbox"> <code>@CacheEvict</code> configuré quand les données changent</li>
           <li><input type="checkbox"> Timeout 30s sur OpenAI et Piston API</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="frontend">
-        <h2 class="checklist__title">🖥 Frontend</h2>
+      <div class="checklist" id="frontend">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="3.5" y="4.5" width="13" height="9" rx="1.5"/><path d="M7.5 16h5"/></svg></span><span>Frontend</span></h2>
         <ul>
           <li><input type="checkbox"> Bundle analysé avec <code>rollup-plugin-visualizer</code> — objectif &lt; 200KB</li>
           <li><input type="checkbox"> <code>defineAsyncComponent</code> sur les routes non critiques</li>
           <li><input type="checkbox"> <code>shallowRef</code> là où la réactivité profonde n'est pas nécessaire</li>
         </ul>
-      </section>
+      </div>
 
-      <section class="checklist" id="infra-perf">
-        <h2 class="checklist__title">🚀 Infrastructure</h2>
+      <div class="checklist" id="infra-perf">
+        <h2 class="checklist__title"><span class="checklist-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 4v6l4 2"/><circle cx="10" cy="10" r="6"/></svg></span><span>Infrastructure</span></h2>
         <ul>
           <li><input type="checkbox"> JVM tuning : <code>-Xmx512m</code> adapté au plan Fly.io</li>
           <li><input type="checkbox"> Docker image &lt; 200MB (multi-stage JDK → JRE)</li>
@@ -160,7 +195,7 @@
           <li><input type="checkbox"> <code>/actuator/metrics</code> — identifier les endpoints P95 &gt; 200ms</li>
           <li><input type="checkbox"> Sentry configuré en prod</li>
         </ul>
-      </section>
+      </div>
     </section>
 
     <p class="footer">KataSensei Learning Path · Checklist sécurité &amp; performances</p>

@@ -13,12 +13,14 @@
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>Optional en Java</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -34,14 +36,14 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence — Java</span>
+      <span class="guide-header__phase-badge" style="background: var(--phase-1-bg); color: var(--phase-1);">Phase 1</span>
       <h1 class="guide-header__title">Optional en Java</h1>
       <p class="guide-header__intro"><code>Optional&lt;T&gt;</code> représente une valeur qui peut être présente ou absente — sans utiliser <code>null</code>. C'est l'équivalent de <code>T | undefined</code> en TypeScript, mais explicite dans le type de retour.</p>
     </div>
 
     <section class="guide-step" id="dans-katasensei">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">ex</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M6 6.5h8"/><path d="M6 10h8"/><path d="M6 13.5h5"/></svg></div>
         <h2 class="guide-step__title">Dans KataSensei</h2>
       </div>
 

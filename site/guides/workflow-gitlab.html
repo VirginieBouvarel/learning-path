@@ -13,12 +13,14 @@
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>Workflow GitLab</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -37,7 +39,7 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence</span>
+      <span class="guide-header__phase-badge" style="background: var(--phase-0-bg); color: var(--phase-0);">Phase 0</span>
       <h1 class="guide-header__title">Workflow GitLab</h1>
       <p class="guide-header__intro">Toutes les conventions de travail avec GitLab pour le projet KataSensei.</p>
     </div>
@@ -47,7 +49,8 @@
         <div class="guide-step__number" style="background: var(--phase-0);">⎇</div>
         <h2 class="guide-step__title">Convention de nommage des branches</h2>
       </div>
-      <pre><code class="language-bash">phase1-KS001-titre-de-mon-ticket</code></pre>
+      <pre><code class="language-bash">KS-0-1-message</code></pre>
+      <p><code>KS-0-1-message</code> = préfixe projet-phase-ticket.</p>
     </section>
 
     <section class="guide-step" id="cycle">
@@ -82,7 +85,7 @@ git checkout main
 git pull origin main
 
 # 2. Créer une branche
-git switch -c feat/kata-get-endpoint
+git switch -c KS-0-1-message
 
 # 3. Travailler, committer au fur et à mesure
 # (un commit = une intention, voir Conventional Commits)
@@ -90,7 +93,7 @@ git add .
 git commit -m "feat(kata): ajout endpoint GET /katas"
 
 # 4. Push et ouvrir la MR
-git push origin feat/kata-get-endpoint
+git push origin KS-0-1-message
 # GitLab affiche un lien direct pour créer la MR</code></pre>
     </section>
 

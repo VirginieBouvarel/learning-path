@@ -13,12 +13,14 @@
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>DataGrip</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -34,14 +36,14 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence</span>
+      <span class="guide-header__phase-badge" style="background: var(--phase-1-bg); color: var(--phase-1);">Phase 1</span>
       <h1 class="guide-header__title">Utiliser DataGrip dans le projet</h1>
       <p class="guide-header__intro">DataGrip est intégré directement dans IntelliJ Ultimate via le panneau <strong>Database</strong> (à droite). Pas besoin d'installer une application séparée.</p>
     </div>
 
     <section class="guide-step" id="ouvrir">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">🗄</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><ellipse cx="10" cy="5.5" rx="5.5" ry="2.5"/><path d="M4.5 5.5v6c0 1.4 2.45 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-6"/></svg></div>
         <h2 class="guide-step__title">Ouvrir le panneau Database</h2>
       </div>
       <p>Dans IntelliJ : <code>View → Tool Windows → Database</code> ou icône cylindre à droite.</p>
@@ -49,7 +51,7 @@
 
     <section class="guide-step" id="connecter">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">+</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M10 5v10"/><path d="M5 10h10"/></svg></div>
         <h2 class="guide-step__title">Connecter PostgreSQL local</h2>
       </div>
 
@@ -72,7 +74,7 @@
 
     <section class="guide-step" id="usages">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">SQL</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="m7 7-3 3 3 3"/><path d="m13 7 3 3-3 3"/><path d="m11 5-2 10"/></svg></div>
         <h2 class="guide-step__title">Ce qu'on fait avec DataGrip dans KataSensei</h2>
       </div>
 

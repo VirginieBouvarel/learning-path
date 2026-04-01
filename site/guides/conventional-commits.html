@@ -13,12 +13,14 @@
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>Conventional Commits</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -35,14 +37,14 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence</span>
+      <span class="guide-header__phase-badge" style="background: var(--phase-0-bg); color: var(--phase-0);">Phase 0</span>
       <h1 class="guide-header__title">Conventional Commits</h1>
       <p class="guide-header__intro">Les messages de commit sont toujours en français. Les noms de fichiers, classes ou commandes techniques restent en anglais si nécessaire.</p>
     </div>
 
     <section class="guide-step" id="format">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">fmt</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M5 6.5h10"/><path d="M5 10h10"/><path d="M5 13.5h6"/></svg></div>
         <h2 class="guide-step__title">Format</h2>
       </div>
 
@@ -59,7 +61,7 @@
 
     <section class="guide-step" id="types">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">types</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M6.5 5.5h7"/><path d="M10 5.5v9"/><path d="M7.5 14.5h5"/></svg></div>
         <h2 class="guide-step__title">Conventions de nommage</h2>
       </div>
 
@@ -80,7 +82,7 @@
 
     <section class="guide-step" id="exemples">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">ex</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M6 6.5h8"/><path d="M6 10h8"/><path d="M6 13.5h5"/></svg></div>
         <h2 class="guide-step__title">Exemples</h2>
       </div>
 
@@ -108,7 +110,7 @@ docs: ajout de l'ADR 001 choix technologiques</code></pre>
 
     <section class="guide-step" id="quand">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">⏱</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="6"/><path d="M10 6.5v3.75L12.75 12"/></svg></div>
         <h2 class="guide-step__title">Quand committer ?</h2>
       </div>
 

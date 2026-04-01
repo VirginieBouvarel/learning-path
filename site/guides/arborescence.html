@@ -13,12 +13,14 @@
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>Arborescence et testabilité</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -37,7 +39,7 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence</span>
+      <span class="guide-header__phase-badge" style="background: var(--phase-4-bg); color: var(--phase-4);">Phase 4-7</span>
       <h1 class="guide-header__title">Arborescence et testabilité</h1>
       <p class="guide-header__intro">Structure cible à la fin de la phase 7. Elle évolue progressivement — ne pas tout créer dès le départ.</p>
     </div>
@@ -69,7 +71,7 @@
 
     <section class="guide-step" id="structure-tests">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">tests/</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M7 3.5h6"/><path d="M8 3.5v3l-3 5.5a2 2 0 0 0 1.75 3h6.5a2 2 0 0 0 1.75-3L12 6.5v-3"/></svg></div>
         <h2 class="guide-step__title">Structure des tests</h2>
       </div>
 
@@ -78,7 +80,7 @@
 
     <section class="guide-step" id="front">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-2);">Vue</div>
+        <div class="guide-step__number" style="background: var(--phase-2);"><svg viewBox="0 0 20 20"><rect x="3.5" y="4.5" width="13" height="9" rx="1.5"/><path d="M7.5 16h5"/></svg></div>
         <h2 class="guide-step__title">katasensei-front/</h2>
       </div>
 
@@ -168,7 +170,7 @@ tests/                               [même arborescence que src/]
 
     <section class="guide-step" id="tests-back">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">Maven</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M7 3.5h6"/><path d="M8 3.5v3l-3 5.5a2 2 0 0 0 1.75 3h6.5a2 2 0 0 0 1.75-3L12 6.5v-3"/><path d="M8 10h4"/></svg></div>
         <h2 class="guide-step__title">Structure des tests back</h2>
       </div>
 
@@ -198,7 +200,7 @@ tests/                               [même arborescence que src/]
 
     <section class="guide-step" id="back">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">Java</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M6 15.5h8"/><path d="M7.5 15.5v-8h5v8"/><path d="M6.5 7.5h7"/><path d="M9.5 4.5h1"/></svg></div>
         <h2 class="guide-step__title">katasensei-back/</h2>
       </div>
 

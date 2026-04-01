@@ -13,12 +13,14 @@
 <!-- Nav injectée par navigation.js -->
 
 <nav aria-label="fil d'ariane" class="breadcrumb">
-  <a href="../parcours.html">Parcours</a>
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../guides-internes.html">Guides internes</a>
   <span class="breadcrumb__separator">›</span>
   <span>Conventions front — ADR 003</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--guide layout--guide-reference">
 
   <aside class="guide-toc">
     <nav class="toc">
@@ -39,14 +41,14 @@
   <main class="layout__main">
 
     <div class="guide-header">
-      <span class="guide-header__phase-badge">Référence — ADR 003</span>
-      <h1 class="guide-header__title">Conventions front (CSS, composants, structure)</h1>
+      <span class="guide-header__phase-badge" style="background: var(--cat-front-bg); color: var(--cat-front);">Front / UI</span>
+      <h1 class="guide-header__title">ADR 003 - Conventions front (CSS, composants, structure)</h1>
       <p class="guide-header__intro">Décisions techniques structurantes pour le front KataSensei. Écrit une fois, stable.</p>
     </div>
 
     <section class="guide-step" id="contexte">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">?</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M5 5.5h10v9H5z"/><path d="M8 8.5h4M8 11.5h4"/></svg></div>
         <h2 class="guide-step__title">Contexte</h2>
       </div>
       <p>Le front Vue 3 de KataSensei nécessite des choix explicites sur le CSS, les composants, et la structure des fichiers de test. Ces choix affectent chaque composant du projet — ils doivent être décidés avant d'écrire le premier composant.</p>
@@ -130,7 +132,7 @@
 
     <section class="guide-step" id="alternatives">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">✗</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="m6 6 8 8"/><path d="m14 6-8 8"/></svg></div>
         <h2 class="guide-step__title">Alternatives rejetées</h2>
       </div>
 
@@ -148,7 +150,7 @@
 
     <section class="guide-step" id="consequences">
       <div class="guide-step__heading">
-        <div class="guide-step__number" style="background: var(--phase-0);">→</div>
+        <div class="guide-step__number" style="background: var(--phase-0);"><svg viewBox="0 0 20 20"><path d="M5 6.5h10"/><path d="M5 10h10"/><path d="M5 13.5h10"/></svg></div>
         <h2 class="guide-step__title">Conséquences</h2>
       </div>
 

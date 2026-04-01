@@ -1,21 +1,37 @@
 .guides-layout {
-  max-width: none;
-  padding-top: 16px;
+  max-width: calc(var(--content-width) + (var(--sidebar-width) * 2) + 80px);
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, var(--content-width)) var(--sidebar-width);
+  align-items: start;
 }
 
 .guides-sidebar,
 .guides-toc {
-  width: 300px;
+  width: var(--sidebar-width);
   flex-shrink: 0;
 }
 
+.guides-sidebar {
+  grid-column: 1;
+}
+
 .guides-main {
-  max-width: none;
+  grid-column: 2;
+  max-width: var(--content-width);
+  width: 100%;
   min-width: 0;
 }
 
+.guides-toc {
+  grid-column: 3;
+}
+
+#guides-header-slot {
+  margin-bottom: 24px;
+}
+
 .guides-sidebar .notion-card,
-.guides-toc .notion-card {
+.guides-toc .toc {
   position: sticky;
   top: calc(var(--nav-height) + 24px);
 }
@@ -46,28 +62,20 @@
   font-weight: 600;
 }
 
-.guides-content-card {
-  background: var(--color-bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 28px;
-}
-
 .guides-content__loading,
 .guides-content__empty {
   color: var(--color-text-muted);
   font-size: 14px;
 }
 
-.guides-content-card .guide-header {
-  margin-bottom: 28px;
+#guides-content > .guide-step:first-child,
+#guides-content > .checklist:first-child,
+#guides-content > .errors-table:first-child,
+#guides-content > .skills-summary:first-child {
+  margin-top: 0;
 }
 
-.guides-content-card section + section {
-  margin-top: 24px;
-}
-
-.guides-content-card img {
+#guides-content img {
   max-width: 100%;
   height: auto;
 }
@@ -78,16 +86,17 @@
   padding-left: 16px;
 }
 
-.guides-content-card pre {
+#guides-content pre {
   overflow-x: auto;
 }
 
-.guides-content-card table {
+#guides-content table {
   width: 100%;
 }
 
 @media (max-width: 1280px) {
   .guides-layout {
+    display: flex;
     gap: 24px;
   }
 
@@ -107,7 +116,7 @@
   }
 
   .guides-sidebar .notion-card,
-  .guides-toc .notion-card {
+  .guides-toc .toc {
     position: static;
   }
 }
