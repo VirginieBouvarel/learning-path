@@ -11,17 +11,64 @@
 
 <!-- Nav injectée par navigation.js -->
 
-<nav aria-label="fil d'ariane" class="breadcrumb">
+<nav aria-label="fil d'ariane" class="breadcrumb" id="top">
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
   <a href="../parcours.html">Parcours</a>
   <span class="breadcrumb__separator">›</span>
   <span>Phase 4 — Architecture hexagonale complète</span>
 </nav>
 
-<div class="layout layout--guide">
+<div class="layout layout--phase">
+  <aside class="layout__sidebar">
+    <div class="notion-card">
+      <div class="notion-card__title">Pilotage</div>
+      <div class="home-side-list">
+        <div class="home-side-item">
+          <div class="home-side-item__title">Backlog KataSensei</div>
+          <div class="home-side-item__desc">Database Notion à créer après stabilisation des guides.</div>
+        </div>
+        <div class="home-side-item">
+          <div class="home-side-item__title">Suivi de progression</div>
+          <div class="home-side-item__desc">Database Notion à créer pour compétences, phases et validations.</div>
+        </div>
+      </div>
+    </div>
+    <div class="notion-card">
+      <div class="notion-card__title">Accès rapide</div>
+      <a href="../parcours.html" class="notion-card__link">
+        <span class="notion-card__link-icon notion-card__link-icon--parcours" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M4 4.5h9.5l2.5 2.5V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>
+            <path d="M13.5 4.5V7H16"/>
+            <path d="M7 9.25h5.75M7 12h3.5"/>
+          </svg>
+        </span>
+        <div>
+          <div>Parcours</div>
+          <div class="notion-card__link-desc">Timeline et phases détaillées</div>
+        </div>
+      </a>
+      <a href="../ressources.html" class="notion-card__link">
+        <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
+            <path d="M12 4.5V7.5h3"/>
+            <path d="M7 10h6M7 12.75h6M7 15.5h4"/>
+          </svg>
+        </span>
+        <div>
+          <div>Ressources</div>
+          <div class="notion-card__link-desc">Ressources filtrables par phase</div>
+        </div>
+      </a>
+    </div>
+  </aside>
   <aside class="guide-toc">
     <nav class="toc">
       <p class="toc__title">Dans cette vue d'ensemble</p>
       <ul class="toc__list">
+        <li><a href="#top">Présentation</a></li>
         <li><a href="#vision">1 — Ce que tu reconstruis</a></li>
         <li><a href="#chantiers">2 — Les 4 chantiers</a></li>
         <li><a href="#ordre">3 — Ordre recommandé</a></li>
@@ -33,7 +80,7 @@
   </aside>
 
   <main class="layout__main">
-    <div class="guide-header">
+    <div class="guide-header" id="presentation">
       <span class="guide-header__phase-badge" style="background: var(--phase-4); color: #fff;">Phase 4</span>
       <h1 class="guide-header__title">Architecture hexagonale complète + DDD + patterns front</h1>
       <p class="guide-header__meta">Durée estimée : ~14h réparties sur 3 semaines</p>
