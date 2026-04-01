@@ -86,20 +86,19 @@
           <p>GET /health en prod avant la première feature. Pipeline GitLab CI/CD minimal (test → deploy) qui grandira à chaque phase.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">📝</span><span class="concept-title">ADR 001 — première décision documentée</span><span class="concept-analogy">≈ Architecture Decision Record</span></div>
-          <p>Fichier docs/adr/001-choix-technologiques.md : Contexte / Décision / Conséquences / Alternatives rejetées. 20 lignes.</p>
+          <div class="concept-header"><span class="concept-icon">📝</span><span class="concept-title">ADR 002 — première décision documentée</span><span class="concept-analogy">≈ Architecture Decision Record</span></div>
+          <p>Fichier docs/adr/002-choix-technologiques.md : Contexte / Décision / Conséquences / Alternatives rejetées. 20 lignes.</p>
         </div>
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
-          <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 001 committé. Pipeline GitLab CI/CD minimal vert.</p>
+          <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 002 committé. Pipeline GitLab CI/CD minimal vert.</p>
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 001 committé.</p>
+          <p>Java + Vue installés et configurés. Lint actif. Docker Compose opérationnel. URL publique GET /health. ADR 002 committé.</p>
         </div>
         <div class="subpages">
-          <a href="phases/phase-0.html" class="subpage">Guide pas-à-pas — Phase 0</a>
           <a href="phases/phase-0-ide.html" class="subpage">IDE — IntelliJ IDEA</a>
           <a href="phases/phase-0-structure.html" class="subpage">Structure de dossiers</a>
           <a href="phases/phase-0-wsl2.html" class="subpage">WSL2 + ZSH + Terminal</a>
@@ -113,7 +112,7 @@
         <div class="phase-number pn-1">1</div>
         <div class="phase-info">
           <div class="phase-title">HTTP, REST, persistance naïve + gestion des erreurs</div>
-          <div class="phase-subtitle">Code simple et imparfait — la douleur justifiera l'archi hexagonale en phase 4</div>
+          <div class="phase-subtitle">Code simple et imparfait — la douleur justifiera les premières séparations front en phase 2, puis l'hexagonale complète en phase 4</div>
           <div class="tags phase-tags">
             <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
             <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Gestion des erreurs</span></span>
@@ -147,9 +146,6 @@
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
           <p>CRUD Kata en TDD. @ControllerAdvice global. Problem Details RFC 7807. CI enrichie avec les nouveaux tests.</p>
         </div>
-        <div class="subpages">
-          <a href="phases/phase-1.html" class="subpage">Guide pas-à-pas — Phase 1</a>
-        </div>
       </div>
     </div>
 
@@ -174,8 +170,8 @@
           <p>Impossible de mélanger les IDs. Le compilateur TS devient ton premier testeur. KataId et UserId ne sont pas interchangeables.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">🔀</span><span class="concept-title">Discriminated unions — états de session</span><span class="concept-analogy">≈ sealed classes Java</span></div>
-          <p>SessionState : idle | running | completed. Le compilateur interdit de lire score si status !== 'completed'.</p>
+          <div class="concept-header"><span class="concept-icon">🔀</span><span class="concept-title">Discriminated unions — états de tentative</span><span class="concept-analogy">≈ sealed classes Java</span></div>
+          <p>TentativeState : idle | running | completed. Le compilateur interdit de lire score si status !== 'completed'.</p>
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">✅</span><span class="concept-title">Result pattern + type guards</span><span class="concept-analogy">≈ Either en FP</span></div>
@@ -196,14 +192,11 @@
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
-          <p>Front Vue typé à fond. Impossible de rendre un résultat si la session n'est pas running. Impossible de mélanger KataId et UserId. LogService actif. useAsync sur toutes les pages.</p>
+          <p>Front Vue typé à fond. Impossible de rendre un résultat si la tentative n'est pas running. Impossible de mélanger KataId et UserId. LogService actif. useAsync sur toutes les pages.</p>
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
           <p>Branded types + Result + useAsync. Refactoring front phase 1. Tests Vitest sur guards, use cases, mappers, store et composables. Archi domain/infra/ui en place.</p>
-        </div>
-        <div class="subpages">
-          <a href="phases/phase-2.html" class="subpage">Guide pas-à-pas — Phase 2</a>
         </div>
       </div>
     </div>
@@ -240,7 +233,7 @@
         </div>
         <div class="concept">
           <div class="concept-header"><span class="concept-icon">🚨</span><span class="concept-title">AppError union front + hiérarchie back</span><span class="concept-analogy">≈ discriminated union d'erreurs exhaustive</span></div>
-          <p>Front : le compilateur force le traitement de chaque cas (network, validation, not-found, unauthorized). Back : sealed class DomainException.</p>
+          <p>Front : le compilateur force le traitement de chaque cas (network, validation, not-found, unauthorized). Back : hiérarchie d'exceptions métier exhaustive et cohérente.</p>
         </div>
         <hr>
         <div class="callout callout-status">
@@ -249,10 +242,7 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Auth complète en TDD. Tests JWT sur accès refusé, expiration et endpoints d'auth. AppError union. Refactoring back phase 1 sécurisé par les tests. ADR 002 écrit.</p>
-        </div>
-        <div class="subpages">
-          <a href="phases/phase-3.html" class="subpage">Guide pas-à-pas — Phase 3</a>
+          <p>Auth complète en TDD. Tests JWT sur accès refusé, expiration et endpoints d'auth. AppError union. Refactoring back phase 1 sécurisé par les tests. ADR 005 écrit.</p>
         </div>
       </div>
     </div>
@@ -263,7 +253,7 @@
         <div class="phase-number pn-4">4</div>
         <div class="phase-info">
           <div class="phase-title">Architecture hexagonale complète + DDD + patterns front</div>
-          <div class="phase-subtitle">L'IA entre en scène — grand refactoring phases 1–3 en hexagonal</div>
+          <div class="phase-subtitle">L'IA entre en scène — on complète et généralise l'hexagonale côté front et back</div>
           <div class="tags phase-tags">
             <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Archi hexagonale</span></span>
             <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
@@ -305,10 +295,7 @@
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Hexa front + back opérationnels. POST /sessions/{id}/run + /hint. Tests domaine &lt; 50ms. Règles ArchUnit et dependency-cruiser. Design patterns documentés. ADR 003.</p>
-        </div>
-        <div class="subpages">
-          <a href="phases/phase-4.html" class="subpage">Vue d'ensemble Phase 4</a>
+          <p>Hexa front + back opérationnels. POST /tentatives/{id}/run + /hint. Tests domaine &lt; 50ms. Règles ArchUnit et dependency-cruiser. Design patterns documentés. Nouvel ADR d'architecture si une décision structurante supplémentaire apparaît.</p>
         </div>
       </div>
     </div>
@@ -357,9 +344,6 @@
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
           <p>GET /users/me/progress. SSE /hint/stream. Events découplés avec listeners testés séparément. Cache Redis. ACL front. Correlation ID vérifié à travers HTTP, listeners et streaming.</p>
-        </div>
-        <div class="subpages">
-          <a href="phases/phase-5.html" class="subpage">Vue d'ensemble Phase 5</a>
         </div>
       </div>
     </div>
@@ -410,9 +394,6 @@
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
           <p>Client TS + ACL. Testcontainers verts. Logs structurés. Lazy loading des routes. Playwright. Sentry. ADR archivés. README final.</p>
         </div>
-        <div class="subpages">
-          <a href="phases/phase-6.html" class="subpage">Vue d'ensemble Phase 6</a>
-        </div>
       </div>
     </div>
 
@@ -458,9 +439,6 @@
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
           <p>Pipeline CI/CD complet vert. Docker multi-stage. KataSensei déployé. Dépendances entretenues automatiquement. README 2 commandes.</p>
-        </div>
-        <div class="subpages">
-          <a href="phases/phase-7.html" class="subpage">Vue d'ensemble Phase 7</a>
         </div>
       </div>
     </div>
