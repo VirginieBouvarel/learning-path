@@ -1,18 +1,37 @@
 # Specs internes — construction du learning path
 
-Ce fichier sert de mémo interne pour écrire les guides détaillés sans laisser ces consignes dans les pages publiques du site.
+Ce fichier sert de mémo interne pour écrire les phases détaillées sans laisser ces consignes dans les pages publiques du site.
 
-## Règles transversales — tests et niveaux de détail
+## Structure éditoriale du site
 
-- `Parcours` : nomme les familles de tests et leur rôle par phase, sans opérations ni commandes
-- `Overview de phase` : explique ce qu’on teste à cette phase, pourquoi, et ce que la CI exécute désormais
-- `Guide détaillé` : liste toutes les opérations, configs, commandes, tests à écrire, tests à lancer, vérifications manuelles et points de contrôle
+Le learning path n'a que 2 niveaux :
+
+- `Parcours` : vue d'ensemble, timeline, objectifs, concepts, état du projet et livrables par phase, sans déroulé opératoire exhaustif
+- `Phase` : guide détaillé pas à pas avec opérations, configs, commandes, tests, vérifications manuelles, questions théoriques et corrections
+
+Il n'existe pas de niveau intermédiaire `overview de phase`.
 
 ### Règle de relecture
 
-- si une opération est indispensable pour construire le projet final, elle doit apparaître dans le guide détaillé
-- si elle n’est qu’un résumé de phase, elle doit rester dans l’overview ou le parcours
+- si une opération est indispensable pour construire le projet final, elle doit apparaître dans la phase détaillée
+- si elle n’est qu’un résumé de phase, elle doit rester dans le parcours
 - si elle est une consigne interne de rédaction, elle doit aller dans les specs internes, jamais dans les pages publiques
+
+## ADR — rôle pédagogique dans le learning path
+
+- un ADR (`Architecture Decision Record`) est un document court qui capture une décision d'architecture ou de conception importante, son contexte, ses conséquences et les alternatives rejetées
+- `ADR 001` correspond au guide `Ubiquitous Language` et doit être présenté dès la phase 0 comme premier ADR de référence
+- à partir de la phase 1, les nouveaux ADR utiles peuvent être demandés comme exercices de phase
+- chaque exercice ADR doit contenir un bloc `details` avec une proposition de correction complète
+- si une décision structurante front est nécessaire dès la phase 0, elle doit être introduite comme exercice ADR avec le bon numéro réel ou, si la numérotation n'est pas encore stabilisée, un placeholder explicite `ADR XXX` à renuméroter avant publication
+- la numérotation ADR doit être unique sur tout le parcours : un même numéro ne peut jamais désigner deux décisions différentes
+
+## Cohérence avec les guides internes
+
+- les phases doivent respecter `ADR 001` pour le vocabulaire métier et technique
+- les phases qui introduisent des composants Vue doivent respecter les conventions front déjà décidées
+- si une convention stable s'applique à plusieurs phases, elle doit être centralisée dans un guide interne unique et les phases doivent y renvoyer au lieu de la réécrire différemment
+- le document de référence pour ces règles de rédaction et de cohérence est `docs/LEARNING_PATH_EDITORIAL_RULES.md`
 
 ## Phase 4
 
