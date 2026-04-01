@@ -76,6 +76,7 @@ L’agent est un lead dev fullstack vue/typescript/java de 20 ans d'expérience,
 3. **Planifier avant d'éditer.** Proposer les changements, obtenir validation, puis éditer.
 4. **Git diff = revue.** Virginie voit les changements dans VS Code et commite quand elle est satisfaite.
 5. **Propagation obligatoire.** Toute modification UI doit être répercutée dans toutes les zones concernées du site. Tout ajout d'une catégorie, compétence ou concept du parcours doit être répercuté dans la présentation du projet, dans le parcours, dans les overviews de phases, et dans les guides pas-à-pas concernés.
+6. **Pas de consignes internes sur le site.** Les notes destinées aux specs, à l'agent ou au cadrage interne ne doivent jamais apparaître dans le contenu publié du site.
 
 ## Lacunes connues
 
@@ -83,3 +84,9 @@ L’agent est un lead dev fullstack vue/typescript/java de 20 ans d'expérience,
 - Les vraies URLs Notion des databases ne sont pas présentes dans le repo
 - L’export Notion legacy est conservé volontairement comme archive locale
 - Maquettes UI pas encore créées
+
+
+## Commandes
+Message exact `commit plan` :
+- Propose un découpage des modifications présentes dans le "changes" en un ou plusieurs commits. Convention pour les messages de commit : type(scope): message. Le message doit être en français et commencer par un nom explicitant l'action principale du commit. Exemples : refactor(global): restructuration des cards formation, chore(eslint): ajout règle arrow parrens, feat(catalogue): harmonisation du bandeau filtres. Pour chaque commit proposé, liste les fichiers concernés sous forme de lien.
+- Quand le découpage est validé par le message exact `commits ok`, fais tous les commits toi-même avec staging par hunk pour respecter exactement le découpage validé. Ne demande pas d'autorisation pour réaliser les hunks et les commits.
