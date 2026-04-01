@@ -79,7 +79,7 @@
         <li><a href="#etape-5">5 — Gestion d'erreurs exhaustive</a></li>
         <li><a href="#etape-6">6 — Bean Validation avancée</a></li>
         <li><a href="#etape-7">7 — Grand refactoring back</a></li>
-        <li><a href="#etape-8">8 — ADR 004</a></li>
+        <li><a href="#etape-8">8 — ADR 005</a></li>
         <li><a href="#checklist">Checklist finale</a></li>
         <li><a href="#erreurs">Erreurs fréquentes</a></li>
       </ul>
@@ -106,6 +106,10 @@
       <strong>Promesse test de la phase</strong> : sécuriser l'auth par des tests ciblés sur JWT, accès refusé, expiration des tokens et endpoints d'authentification, puis s'appuyer sur cette base pour refactorer le back sans casser le comportement.
     </div>
 
+    <div class="callout--info">
+      <strong>ADR 001 s'applique encore ici</strong> : garde le vocabulaire métier français pour le domaine. <code>Niveau</code> remplace <code>Difficulty</code>, <code>Indice</code> remplace <code>Hint</code>, et <code>Tentative</code> remplace <code>Session</code> quand il s'agit du métier.
+    </div>
+
     <!-- Étape 1 -->
     <section class="guide-step" id="etape-1">
       <div class="guide-step__heading">
@@ -121,6 +125,28 @@
         <li>Si tu ajoutes un nouveau type d'erreur, combien de fichiers dois-tu modifier ?</li>
       </ol>
       <div class="callout--tip">Ces quatre douleurs ont chacune une réponse dans cette phase. Garde tes réponses — elles te serviront de motivation pendant les exercices.</div>
+      <h3>Réponses attendues</h3>
+      <p><strong>Question 1.1 :</strong> qu'est-ce qui empêche de passer un mauvais UUID au mauvais endroit ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Rien, tant qu'on reste sur des <code>UUID</code> bruts. Le compilateur Java voit seulement des objets du même type, pas leur intention métier. C'est exactement ce que les Value Objects vont corriger.</p>
+        </div>
+      </details>
+      <p><strong>Question 1.2 :</strong> quel principe SOLID serait violé si <code>KataService</code> gérait aussi des emails ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Le principe S de Single Responsibility. La classe aurait au moins deux raisons de changer : la logique métier des katas et la mécanique d'envoi d'emails.</p>
+        </div>
+      </details>
+      <p><strong>Question 1.3 :</strong> comment tester <code>KataService</code> sans Spring ni base ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>En injectant des doubles simples sur ses dépendances : repository fake, publisher fake, etc. Si la classe dépend d'interfaces et de types simples, elle reste testable en pur JUnit.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → refactor(kata): analyse du code naïf de la phase 1</div>
     </section>
@@ -250,6 +276,28 @@ public KataDto findById(KataId id) {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 2.1 :</strong> qu'est-ce qu'un Value Object apporte que <code>UUID</code> seul n'apporte pas ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Il apporte du sens métier, de la validation locale et une protection de type. Deux valeurs techniquement similaires deviennent distinguables par le compilateur et par le lecteur.</p>
+        </div>
+      </details>
+      <p><strong>Question 2.2 :</strong> pourquoi valider l'email dans le Value Object et pas "plus tard" dans le service ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'un objet invalide ne devrait jamais exister. En plaçant l'invariant au plus près de la donnée, tout le reste du code peut manipuler un type déjà sécurisé.</p>
+        </div>
+      </details>
+      <p><strong>Question 2.3 :</strong> pourquoi le compilateur est-il ton meilleur allié pendant ce refactoring ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'il signale immédiatement tous les points encore restés en <code>UUID</code> brut. Le refactoring est alors guidé par les erreurs de type, au lieu de dépendre d'une recherche manuelle incertaine.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → refactor(kata): remplacement UUID bruts par Value Objects KataId UserId Email</div>
     </section>
@@ -273,15 +321,15 @@ public KataDto findById(KataId id) {
             <p><strong>Réponse :</strong> <code>KataService</code> aurait deux raisons de changer : 1) la logique métier des katas change, 2) la façon d'envoyer les emails change. Deux raisons = violation de S.</p>
             <pre><code class="language-java">// Port sortant — dans domain/
 public interface KataEventPublisher {
-    void publishKataCreated(KataId kataId, String title);
+    void publishKataCreated(KataId kataId, String titre);
 }
 
 // KataService reçoit le publisher par injection
 // Il publie un événement — il ne sait pas ce qui se passe ensuite
 public KataDto create(CreateKataRequest request) {
-    var kata = new Kata(request.title(), request.description(), request.difficulty());
+    var kata = new Kata(request.titre(), request.consigne(), request.niveau());
     var saved = kataRepository.save(kata);
-    eventPublisher.publishKataCreated(saved.getId(), saved.getTitle());
+    eventPublisher.publishKataCreated(saved.getId(), saved.getTitre());
     return toDto(saved);
 }</code></pre>
           </div>
@@ -290,25 +338,25 @@ public KataDto create(CreateKataRequest request) {
 
       <div class="exercise">
         <h3>Exercice 3.2 — O : Open/Closed</h3>
-        <p>Scénario : tu dois ajouter un niveau de difficulté <code>EXPERT</code> avec un score bonus x2.</p>
+        <p>Scénario : tu dois ajouter un niveau <code>EXPERT</code> avec un score bonus x2.</p>
         <p>Observe ce code problématique :</p>
         <pre><code class="language-java">public int calculateScore(Kata kata, int baseScore) {
-    if (kata.getDifficulty() == Difficulty.EASY)   return baseScore;
-    if (kata.getDifficulty() == Difficulty.MEDIUM) return baseScore * 2;
-    if (kata.getDifficulty() == Difficulty.HARD)   return baseScore * 3;
-    throw new IllegalArgumentException("Difficulty inconnue");
+    if (kata.getNiveau() == Niveau.FACILE)   return baseScore;
+    if (kata.getNiveau() == Niveau.MOYEN)    return baseScore * 2;
+    if (kata.getNiveau() == Niveau.DIFFICILE) return baseScore * 3;
+    throw new IllegalArgumentException("Niveau inconnu");
 }</code></pre>
         <p><strong>Question :</strong> que faut-il modifier pour ajouter <code>EXPERT</code> ? Combien de fichiers ?</p>
-        <p><strong>Exercice :</strong> réécris ce calcul pour qu'ajouter <code>EXPERT</code> ne nécessite de modifier <strong>aucune classe existante</strong>. Indice : l'enum <code>Difficulty</code> peut avoir des méthodes.</p>
+        <p><strong>Exercice :</strong> réécris ce calcul pour qu'ajouter <code>EXPERT</code> ne nécessite de modifier <strong>aucune classe existante</strong>. Indice : l'enum <code>Niveau</code> peut avoir des méthodes.</p>
         <details class="solution">
           <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
           <div class="solution__content">
-            <pre><code class="language-java">public enum Difficulty {
-    EASY(1), MEDIUM(2), HARD(3), EXPERT(5);
+            <pre><code class="language-java">public enum Niveau {
+    FACILE(1), MOYEN(2), DIFFICILE(3), EXPERT(5);
 
     private final int multiplier;
 
-    Difficulty(int multiplier) {
+    Niveau(int multiplier) {
         this.multiplier = multiplier;
     }
 
@@ -319,7 +367,7 @@ public KataDto create(CreateKataRequest request) {
 
 // KataScorer devient trivial — et n'a plus besoin de changer pour EXPERT
 public int calculateScore(Kata kata, int baseScore) {
-    return kata.getDifficulty().applyTo(baseScore);
+    return kata.getNiveau().applyTo(baseScore);
 }</code></pre>
             <p>Ajouter <code>EXPERT(5)</code> dans l'enum n'ouvre aucun autre fichier. C'est le principe O.</p>
           </div>
@@ -331,16 +379,16 @@ public int calculateScore(Kata kata, int baseScore) {
 
         <h4>Liskov (L)</h4>
         <pre><code class="language-java">public interface AiSensei {
-    Hint generateHint(KataId kataId, String code, int hintsAlreadyUsed);
+    Indice generateIndice(KataId kataId, String code, int indicesDejaUtilises);
 }</code></pre>
         <p><strong>Question :</strong> <code>ApiIaSensei</code> et <code>MockAiSensei</code> doivent tous les deux implémenter cette interface. Qu'est-ce que ça garantit pour le code qui appelle <code>AiSensei</code> ?</p>
 
         <h4>Interface Segregation (I)</h4>
         <pre><code class="language-java">// Mauvaise version
 public interface AiService {
-    Hint generateHint(KataId kataId, String code, int hintsUsed);
+    Indice generateIndice(KataId kataId, String code, int indicesUtilises);
     CodeReview reviewCode(String code, String language);
-    String translateKata(String description, String targetLanguage);
+    String translateKata(String consigne, String targetLanguage);
 }</code></pre>
         <p><strong>Question :</strong> qu'est-ce qui ne va pas ? Réécris en 3 interfaces séparées.</p>
 
@@ -352,10 +400,10 @@ public interface AiService {
           <div class="solution__content">
             <p><strong>Liskov :</strong> <code>ApiIaSensei</code> et <code>MockAiSensei</code> sont <strong>substituables</strong> — le code qui appelle <code>AiSensei</code> n'a pas besoin de savoir lequel il utilise. En test on injecte <code>MockAiSensei</code>, en prod <code>ApiIaSensei</code>.</p>
             <pre><code class="language-java">// Interface Segregation
-public interface AiSensei      { Hint generateHint(...); }
+public interface AiSensei       { Indice generateIndice(...); }
 public interface CodeReviewer  { CodeReview reviewCode(...); }
 public interface KataTranslator { String translateKata(...); }</code></pre>
-            <p>Un use case qui n'a besoin que de hints ne dépend pas de <code>translateKata</code>.</p>
+            <p>Un use case qui n'a besoin que des indices ne dépend pas de <code>translateKata</code>.</p>
             <pre><code class="language-bash"># Dependency Inversion
 KataController → KataService → KataRepository (interface)
                                       ↑
@@ -364,6 +412,28 @@ KataController → KataService → KataRepository (interface)
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 3.4 :</strong> pourquoi apprendre SOLID sur ton vrai code vaut-il mieux que sur des exemples abstraits ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que tu vois immédiatement les conséquences concrètes sur le design, les tests et le coût de modification. Le principe cesse d'être une définition à réciter et devient un outil de décision.</p>
+        </div>
+      </details>
+      <p><strong>Question 3.5 :</strong> quel principe SOLID est le plus proche de la règle de dépendance de l'architecture hexagonale ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Le D de Dependency Inversion. Les couches haut niveau et bas niveau dépendent d'abstractions plutôt que d'implémentations concrètes.</p>
+        </div>
+      </details>
+      <p><strong>Question 3.6 :</strong> quel signe montre qu'une interface viole l'Interface Segregation Principle ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Quand des clients sont forcés de dépendre de méthodes qu'ils n'utilisent pas. L'interface devient alors un paquetage de responsabilités hétérogènes au lieu d'un contrat précis.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → docs(kata): documentation principes SOLID appliqués au projet</div>
     </section>
@@ -402,6 +472,12 @@ KataController → KataService → KataRepository (interface)
   jwt:
     secret: ${JWT_SECRET}
     expiration-ms: 86400000  # 24 heures</code></pre>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <p>Le résultat attendu est simplement un <code>pom.xml</code> qui contient les 3 dépendances <code>jjwt</code> et une config externalisée dans <code>application.yml</code>. Ne code pas encore le service JWT tant que la dépendance et la config ne compilent pas proprement.</p>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
@@ -629,6 +705,28 @@ public class AuthService {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 4.1 :</strong> pourquoi stocker la clé JWT dans une variable d'environnement et pas en dur dans le code ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'un secret ne doit pas vivre dans le dépôt Git. L'externalisation permet aussi de changer la valeur selon l'environnement sans recompiler l'application.</p>
+        </div>
+      </details>
+      <p><strong>Question 4.2 :</strong> pourquoi une API JWT bien configurée est-elle dite <code>stateless</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que le serveur ne garde pas de session utilisateur en mémoire. Chaque requête apporte elle-même la preuve d'authentification via le token signé.</p>
+        </div>
+      </details>
+      <p><strong>Question 4.3 :</strong> pourquoi commencer par les tests sur <code>JwtService</code> et la sécurité HTTP ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que l'authentification est facile à casser de manière discrète. Les tests fixent immédiatement le comportement attendu pour la génération, l'expiration et l'accès protégé.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(auth): ajout JwtService avec tests token génération et validation</div>
       <div class="commit-suggestion">commit suggestion → feat(secu): configuration Spring Security JWT stateless</div>
@@ -725,6 +823,28 @@ export function toUserMessage(error: AppError): string {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 5.1 :</strong> pourquoi garder une hiérarchie d'erreurs cohérente entre back et front ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que le backend exprime des problèmes techniques et métier que le front doit traduire proprement. Une taxonomie cohérente évite les ifs ad hoc et les messages inconsistants.</p>
+        </div>
+      </details>
+      <p><strong>Question 5.2 :</strong> pourquoi <code>InvalidCredentialsException</code> doit-elle rester volontairement vague ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Pour ne pas révéler à un attaquant si l'email existe déjà ou non. On protège ainsi contre l'énumération d'utilisateurs.</p>
+        </div>
+      </details>
+      <p><strong>Question 5.3 :</strong> quel intérêt a le format RFC 7807 pour les erreurs HTTP ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Il fournit une structure standard et prévisible pour les erreurs. Le front peut alors parser et mapper les réponses sans deviner le format à chaque endpoint.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → refactor(erreur): enrichissement GlobalExceptionHandler et AppError TS</div>
     </section>
@@ -779,6 +899,28 @@ public record RegisterRequest(
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 6.1 :</strong> pourquoi Bean Validation est-elle utile avant même d'entrer dans le service métier ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'elle filtre très tôt les données incohérentes et standardise la réponse d'erreur. Le service peut alors se concentrer sur la logique métier plutôt que sur la plomberie de validation de format.</p>
+        </div>
+      </details>
+      <p><strong>Question 6.2 :</strong> quelle différence entre une contrainte champ par champ et une contrainte au niveau de la classe ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Une contrainte de champ valide une propriété isolée. Une contrainte de classe compare plusieurs champs entre eux, par exemple <code>password</code> et <code>confirmPassword</code>.</p>
+        </div>
+      </details>
+      <p><strong>Question 6.3 :</strong> pourquoi une annotation custom est-elle préférable à un <code>if</code> éparpillé dans le service ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'elle rend la règle déclarative, réutilisable et intégrée au mécanisme standard de validation. Le service reste plus court et plus concentré sur son vrai rôle.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(auth): ajout annotation @PasswordsMatch et RegisterRequest</div>
     </section>
@@ -801,6 +943,12 @@ public record RegisterRequest(
           <li><code>mvn test</code> à la fin — aucun test ne doit casser</li>
         </ol>
         <div class="callout--tip">C'est le refactoring guidé par les types. Le compilateur Java se comporte exactement comme <code>tsc --noEmit</code> côté TypeScript.</div>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <p>Le résultat attendu n'est pas un snippet unique mais un codebase où chaque identité métier importante passe par un Value Object dédié. Pour vérifier que tu es au bon niveau, une recherche globale de <code>UUID</code> ne doit plus laisser que les implémentations internes des Value Objects et les entités techniques qui en ont encore besoin ponctuellement.</p>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
@@ -818,7 +966,35 @@ public record RegisterRequest(
           </tbody>
         </table>
         <p>Si une réponse est non : refactorise et documente le changement dans un commentaire <code>// SOLID: S - extraction de X</code>.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <p><strong>Exemple d'attendu :</strong> <code>KataService</code> dépend d'abstractions, <code>AuthService</code> ne gère pas la sécurité HTTP, <code>JwtService</code> ne parle ni JPA ni contrôleur, et <code>GlobalExceptionHandler</code> centralise seulement la traduction exception → réponse HTTP.</p>
+          </div>
+        </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 7.1 :</strong> pourquoi un grand refactoring doit-il être guidé par le compilateur et les tests, pas par intuition ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'au-delà de quelques fichiers, la mémoire seule n'est plus fiable. Le compilateur détecte les incompatibilités de type et les tests protègent le comportement observable.</p>
+        </div>
+      </details>
+      <p><strong>Question 7.2 :</strong> à quel moment un commentaire <code>// SOLID: ...</code> est-il utile ici ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Comme aide pédagogique temporaire pour expliciter le sens du refactoring. Ce n'est pas une fin en soi, mais un appui pour comprendre pourquoi la classe a été découpée.</p>
+        </div>
+      </details>
+      <p><strong>Question 7.3 :</strong> quel risque y a-t-il à remplacer tous les <code>UUID</code> "d'un coup" sans vérification intermédiaire ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Tu accumules trop de changements silencieux et tu perds la capacité d'identifier rapidement l'origine d'une erreur. Mieux vaut avancer par petits lots avec compilation fréquente.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → refactor(back): grand refactoring UUID vers Value Objects tests verts</div>
     </section>
@@ -827,13 +1003,13 @@ public record RegisterRequest(
     <section class="guide-step" id="etape-8">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">8</div>
-        <h2 class="guide-step__title">ADR 004</h2>
+        <h2 class="guide-step__title">ADR 005</h2>
       </div>
 
       <div class="exercise">
         <h3>Exercice 8.1 — Documente les décisions d'auth et de Value Objects</h3>
-        <p>Crée <code>docs/adr/004-auth-jwt-value-objects.md</code>.</p>
-        <pre><code class="language-bash"># ADR 004 — Auth JWT et Value Objects
+        <p>Crée <code>docs/adr/005-auth-jwt-value-objects.md</code>.</p>
+        <pre><code class="language-bash"># ADR 005 — Auth JWT et Value Objects
 ## Date
 ## Statut
 ## Contexte
@@ -844,9 +1020,71 @@ public record RegisterRequest(
 ## Conséquences
 ## Alternatives rejetées</code></pre>
         <p>C'est ton document — écris-le avec tes propres mots. Copie ensuite dans <code>docs/adr/</code> de ton projet GitLab avant de committer.</p>
-      </div>
+        <details class="solution">
+          <summary>Solution - A consulter après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-markdown"># ADR 005 — Auth JWT et Value Objects
 
-      <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 004 auth JWT et Value Objects</div>
+## Date
+2026-XX-XX
+
+## Statut
+Accepté
+
+## Contexte
+KataSensei introduit une authentification utilisateur et commence
+à renforcer le typage du backend. Les UUID bruts et une auth implicite
+ne suffisent plus pour sécuriser le code ni clarifier les frontières.
+
+## Décisions
+
+### JWT sans session serveur
+L'API reste stateless. Chaque requête authentifiée porte un token JWT.
+
+### Value Objects plutôt qu'UUID bruts
+`KataId`, `UserId` et `Email` rendent les erreurs de type visibles
+au compilateur et documentent mieux l'intention métier.
+
+### jjwt comme librairie JWT
+La librairie est largement utilisée, simple à intégrer avec Spring
+et suffisante pour le périmètre du projet.
+
+## Conséquences
+- le frontend doit envoyer le header `Authorization`
+- les tests doivent couvrir token invalide, expiré et absent
+- les services et contrôleurs manipulent des types plus explicites
+
+## Alternatives rejetées
+- session serveur classique
+- UUID bruts partout
+- implémentation maison du format JWT</code></pre>
+          </div>
+        </details>
+      </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 8.1 :</strong> à quoi sert un ADR une fois la feature terminée ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>À comprendre plus tard pourquoi un choix a été fait, quelles alternatives ont été rejetées et quelles conséquences accepter. Il sert de mémoire technique durable.</p>
+        </div>
+      </details>
+      <p><strong>Question 8.2 :</strong> pourquoi documenter dans le même ADR JWT et Value Objects est-il cohérent ici ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que cette phase introduit en même temps une décision de sécurité structurante et un renforcement du typage transversal. Les deux façonnent l'architecture du backend de manière durable.</p>
+        </div>
+      </details>
+      <p><strong>Question 8.3 :</strong> que manque-t-il à un "ADR" qui se contente de lister une décision sans contexte ni alternatives ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>L'essentiel. Sans contexte ni alternatives, on ne sait ni quel problème était posé ni pourquoi cette solution a été retenue plutôt qu'une autre.</p>
+        </div>
+      </details>
+
+      <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 005 auth JWT et Value Objects</div>
       <div class="commit-suggestion">commit suggestion → feat(auth): intégration JWT côté front Vue envoi header Authorization</div>
     </section>
 
@@ -871,7 +1109,7 @@ public record RegisterRequest(
         <li><input type="checkbox"> <code>@PasswordsMatch</code> annotation custom</li>
         <li><input type="checkbox"> Grand refactoring UUID → Value Objects, tous tests verts</li>
         <li><input type="checkbox"> SOLID checklist complète</li>
-        <li><input type="checkbox"> ADR 004 commité</li>
+        <li><input type="checkbox"> ADR 005 commité</li>
         <li><input type="checkbox"> Frontend Vue envoie le token JWT dans les headers</li>
         <li><input type="checkbox"> CI verte</li>
       </ul>

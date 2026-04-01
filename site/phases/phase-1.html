@@ -80,7 +80,7 @@
         <li><a href="#etape-6">6 — @ControllerAdvice</a></li>
         <li><a href="#etape-7">7 — Vue : afficher les katas</a></li>
         <li><a href="#etape-7bis">7 bis — CSS BEM scoped</a></li>
-        <li><a href="#etape-8">8 — ADR 002 + JaCoCo CI</a></li>
+        <li><a href="#etape-8">8 — ADR 004 + JaCoCo CI</a></li>
         <li><a href="#checklist">Checklist finale</a></li>
         <li><a href="#erreurs">Erreurs fréquentes</a></li>
       </ul>
@@ -106,6 +106,10 @@
 
     <div class="callout--warning">
       <strong>⚠️ Règle d'or</strong> Tu n'écris pas une ligne de code métier sans avoir d'abord écrit le test qui échoue. Si tu es tentée de coder avant de tester, relis cette règle.
+    </div>
+
+    <div class="callout--info">
+      <strong>ADR 001 s'applique déjà ici</strong> : dans le domaine et les exemples métier, on parle de <code>titre</code>, <code>consigne</code>, <code>niveau</code>, <code>indice</code> et <code>tentative</code>. Les suffixes techniques restent en anglais.
     </div>
 
     <!-- Étape 1 -->
@@ -205,7 +209,7 @@ class KataControllerTest {
         <h3>Exercice 2.3 — Passe au vert (🟢 GREEN)</h3>
         <p>Crée le minimum de code pour que le test passe.</p>
         <ul>
-          <li><code>KataDto</code> est un <strong>record Java</strong> avec <code>id</code>, <code>title</code>, <code>description</code>, <code>difficulty</code></li>
+          <li><code>KataDto</code> est un <strong>record Java</strong> avec <code>id</code>, <code>titre</code>, <code>consigne</code>, <code>niveau</code></li>
           <li><code>KataService</code> a une méthode <code>findAll()</code> qui retourne une liste vide</li>
           <li><code>KataController</code> est annoté <code>@RestController</code> + <code>@RequestMapping("/katas")</code> et injecte le service via le <strong>constructeur</strong> (jamais <code>@Autowired</code> sur le champ)</li>
         </ul>
@@ -213,7 +217,7 @@ class KataControllerTest {
         <details class="solution">
           <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
           <div class="solution__content">
-            <pre><code class="language-java">public record KataDto(UUID id, String title, String description, String difficulty) {}</code></pre>
+            <pre><code class="language-java">public record KataDto(UUID id, String titre, String consigne, String niveau) {}</code></pre>
             <pre><code class="language-java">@Service
 public class KataService {
     public List&lt;KataDto&gt; findAll() {
@@ -254,8 +258,8 @@ public class KataController {
         <h3>Exercice 3.1 — Crée la migration Flyway</h3>
         <p>Crée <code>src/main/resources/db/migration/V1__create_kata_table.sql</code>.</p>
         <ul>
-          <li>Table <code>kata</code> : <code>id</code> (UUID PK), <code>title</code> (varchar 255, not null), <code>description</code> (text, not null), <code>difficulty</code> (varchar 20, check EASY/MEDIUM/HARD), <code>language</code> (varchar 50, default <code>fr</code>), <code>created_at</code> (timestamp, default now)</li>
-          <li>Insère 3 katas de seed : FizzBuzz (EASY), Palindrome (EASY), Anagramme (MEDIUM)</li>
+          <li>Table <code>kata</code> : <code>id</code> (UUID PK), <code>titre</code> (varchar 255, not null), <code>consigne</code> (text, not null), <code>niveau</code> (varchar 20, check FACILE/MOYEN/DIFFICILE), <code>language</code> (varchar 50, default <code>fr</code>), <code>created_at</code> (timestamp, default now)</li>
+          <li>Insère 3 katas de seed : FizzBuzz (FACILE), Palindrome (FACILE), Anagramme (MOYEN)</li>
         </ul>
         <div class="callout--info">Flyway exécute les migrations dans l'ordre et ne rejoue <strong>jamais</strong> une migration déjà exécutée. C'est git pour la base de données.</div>
         <details class="solution">
@@ -263,17 +267,17 @@ public class KataController {
           <div class="solution__content">
             <pre><code class="language-sql">CREATE TABLE kata (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title       VARCHAR(255) NOT NULL,
-    description TEXT         NOT NULL,
-    difficulty  VARCHAR(20)  NOT NULL CHECK (difficulty IN ('EASY', 'MEDIUM', 'HARD')),
+    titre       VARCHAR(255) NOT NULL,
+    consigne    TEXT         NOT NULL,
+    niveau      VARCHAR(20)  NOT NULL CHECK (niveau IN ('FACILE', 'MOYEN', 'DIFFICILE')),
     language    VARCHAR(50)  NOT NULL DEFAULT 'fr',
     created_at  TIMESTAMP    NOT NULL DEFAULT now()
 );
 
-INSERT INTO kata (id, title, description, difficulty) VALUES
-    (gen_random_uuid(), 'FizzBuzz',   'Affiche Fizz si divisible par 3, Buzz si par 5', 'EASY'),
-    (gen_random_uuid(), 'Palindrome', 'Vérifie si un mot se lit dans les deux sens',    'EASY'),
-    (gen_random_uuid(), 'Anagramme',  'Vérifie si deux mots sont des anagrammes',       'MEDIUM');</code></pre>
+INSERT INTO kata (id, titre, consigne, niveau) VALUES
+    (gen_random_uuid(), 'FizzBuzz',   'Affiche Fizz si divisible par 3, Buzz si par 5', 'FACILE'),
+    (gen_random_uuid(), 'Palindrome', 'Vérifie si un mot se lit dans les deux sens',    'FACILE'),
+    (gen_random_uuid(), 'Anagramme',  'Vérifie si deux mots sont des anagrammes',       'MOYEN');</code></pre>
           </div>
         </details>
       </div>
@@ -284,14 +288,14 @@ INSERT INTO kata (id, title, description, difficulty) VALUES
         <ul>
           <li><code>@Entity</code> + <code>@Table(name = "kata")</code></li>
           <li><code>@Id</code> + <code>@GeneratedValue(strategy = GenerationType.UUID)</code></li>
-          <li><code>difficulty</code> est un enum <code>Difficulty { EASY, MEDIUM, HARD }</code> annoté <code>@Enumerated(EnumType.STRING)</code></li>
+          <li><code>niveau</code> est un enum <code>Niveau { FACILE, MOYEN, DIFFICILE }</code> annoté <code>@Enumerated(EnumType.STRING)</code></li>
           <li>Pas de setters — seulement des getters</li>
           <li>Un constructeur vide <strong>protégé</strong> requis par JPA (<code>protected Kata() {}</code>)</li>
         </ul>
         <details class="solution">
           <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
           <div class="solution__content">
-            <pre><code class="language-java">public enum Difficulty { EASY, MEDIUM, HARD }</code></pre>
+            <pre><code class="language-java">public enum Niveau { FACILE, MOYEN, DIFFICILE }</code></pre>
             <pre><code class="language-java">@Entity
 @Table(name = "kata")
 public class Kata {
@@ -301,30 +305,30 @@ public class Kata {
     private UUID id;
 
     @Column(nullable = false)
-    private String title;
+    private String titre;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
+    private String consigne;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Difficulty difficulty;
+    private Niveau niveau;
 
     @Column(nullable = false)
     private String language = "fr";
 
     protected Kata() {}
 
-    public Kata(String title, String description, Difficulty difficulty) {
-        this.title = title;
-        this.description = description;
-        this.difficulty = difficulty;
+    public Kata(String titre, String consigne, Niveau niveau) {
+        this.titre = titre;
+        this.consigne = consigne;
+        this.niveau = niveau;
     }
 
     public UUID getId() { return id; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public Difficulty getDifficulty() { return difficulty; }
+    public String getTitre() { return titre; }
+    public String getConsigne() { return consigne; }
+    public Niveau getNiveau() { return niveau; }
 }</code></pre>
             <p><strong>Réponse :</strong> sans setters, l'entité ne peut évoluer que via des méthodes métier explicites. <code>kata.archive()</code> dit ce qui se passe. <code>kata.setStatus("archived")</code> ne dit rien sur le métier.</p>
           </div>
@@ -335,17 +339,17 @@ public class Kata {
         <h3>Exercice 3.3 — Crée le Repository Spring Data</h3>
         <p>Crée <code>KataRepository</code> qui étend <code>JpaRepository&lt;Kata, UUID&gt;</code> et déclare deux méthodes :</p>
         <ul>
-          <li>Trouver par difficulté</li>
+          <li>Trouver par niveau</li>
           <li>Trouver par langue</li>
         </ul>
         <details class="solution">
           <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
           <div class="solution__content">
             <pre><code class="language-java">public interface KataRepository extends JpaRepository&lt;Kata, UUID&gt; {
-    List&lt;Kata&gt; findByDifficulty(Difficulty difficulty);
+    List&lt;Kata&gt; findByNiveau(Niveau niveau);
     List&lt;Kata&gt; findByLanguage(String language);
 }</code></pre>
-            <p><strong>Réponse :</strong> Spring Data parse le nom de la méthode. <code>findBy</code> + <code>Difficulty</code> → <code>SELECT * FROM kata WHERE difficulty = ?</code>. C'est de la convention sur configuration.</p>
+            <p><strong>Réponse :</strong> Spring Data parse le nom de la méthode. <code>findBy</code> + <code>Niveau</code> → <code>SELECT * FROM kata WHERE niveau = ?</code>. C'est de la convention sur configuration.</p>
           </div>
         </details>
       </div>
@@ -356,7 +360,7 @@ public class Kata {
         <ul>
           <li>Classe annotée <code>@SpringBootTest</code> + <code>@Transactional</code></li>
           <li>Vérifie que <code>kataService.findAll()</code> retourne les 3 katas de la migration Flyway</li>
-          <li>Utilise <code>assertThat(katas).extracting(KataDto::title).contains("FizzBuzz", "Palindrome", "Anagramme")</code></li>
+          <li>Utilise <code>assertThat(katas).extracting(KataDto::titre).contains("FizzBuzz", "Palindrome", "Anagramme")</code></li>
         </ul>
         <p>Lance les tests — ils échouent (<code>findAll()</code> retourne toujours <code>List.of()</code>). 🔴</p>
         <p>Puis mets à jour <code>KataService</code> pour utiliser <code>KataRepository</code> et une méthode privée <code>toDto(Kata kata)</code>. 🟢</p>
@@ -374,7 +378,7 @@ class KataServiceIntegrationTest {
     void should_returnAllKatas_when_called() {
         var katas = kataService.findAll();
         assertThat(katas).hasSize(3);
-        assertThat(katas).extracting(KataDto::title)
+        assertThat(katas).extracting(KataDto::titre)
             .contains("FizzBuzz", "Palindrome", "Anagramme");
     }
 }</code></pre>
@@ -396,9 +400,9 @@ public class KataService {
     private KataDto toDto(Kata kata) {
         return new KataDto(
             kata.getId(),
-            kata.getTitle(),
-            kata.getDescription(),
-            kata.getDifficulty().name()
+            kata.getTitre(),
+            kata.getConsigne(),
+            kata.getNiveau().name()
         );
     }
 }</code></pre>
@@ -421,32 +425,32 @@ public class KataService {
         <p>Avant d'implémenter <code>POST /katas</code>, écris deux tests dans <code>KataControllerTest</code> :</p>
         <ol>
           <li><code>should_createKata_when_requestIsValid</code> — envoie un JSON valide, vérifie <code>status().isCreated()</code> et que <code>$.id</code> existe</li>
-          <li><code>should_return400_when_titleIsBlank</code> — envoie un JSON avec title vide, vérifie <code>status().isBadRequest()</code></li>
+          <li><code>should_return400_when_titreIsBlank</code> — envoie un JSON avec <code>titre</code> vide, vérifie <code>status().isBadRequest()</code></li>
         </ol>
         <details class="solution">
           <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
           <div class="solution__content">
             <pre><code class="language-java">@Test
 void should_createKata_when_requestIsValid() throws Exception {
-    var kata = new KataDto(UUID.randomUUID(), "FizzBuzz", "Desc", "EASY");
+    var kata = new KataDto(UUID.randomUUID(), "FizzBuzz", "Boucle de 1 a 100", "FACILE");
     given(kataService.create(any())).willReturn(kata);
 
     mockMvc.perform(post("/katas")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
-                {"title":"FizzBuzz","description":"Desc","difficulty":"EASY"}
+                {"titre":"FizzBuzz","consigne":"Boucle de 1 a 100","niveau":"FACILE"}
                 """))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").exists())
-        .andExpect(jsonPath("$.title").value("FizzBuzz"));
+        .andExpect(jsonPath("$.titre").value("FizzBuzz"));
 }
 
 @Test
-void should_return400_when_titleIsBlank() throws Exception {
+void should_return400_when_titreIsBlank() throws Exception {
     mockMvc.perform(post("/katas")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
-                {"title":"","description":"Desc","difficulty":"EASY"}
+                {"titre":"","consigne":"Boucle de 1 a 100","niveau":"FACILE"}
                 """))
         .andExpect(status().isBadRequest());
 }</code></pre>
@@ -458,7 +462,7 @@ void should_return400_when_titleIsBlank() throws Exception {
       <div class="exercise">
         <h3>Exercice 4.2 — Implémente CreateKataRequest + endpoint (🟢 GREEN)</h3>
         <ul>
-          <li><code>CreateKataRequest</code> est un record avec annotations Bean Validation : <code>@NotBlank</code> sur title et description, <code>@NotNull</code> sur difficulty</li>
+          <li><code>CreateKataRequest</code> est un record avec annotations Bean Validation : <code>@NotBlank</code> sur <code>titre</code> et <code>consigne</code>, <code>@NotNull</code> sur <code>niveau</code></li>
           <li>Dans le contrôleur : <code>@PostMapping</code> + <code>@ResponseStatus(HttpStatus.CREATED)</code> + <code>@RequestBody @Valid</code></li>
           <li>Dans le service : <code>KataService.create(CreateKataRequest request)</code> qui crée et sauvegarde</li>
         </ul>
@@ -469,13 +473,13 @@ void should_return400_when_titleIsBlank() throws Exception {
             <pre><code class="language-java">public record CreateKataRequest(
     @NotBlank(message = "Le titre est obligatoire")
     @Size(min = 3, max = 100)
-    String title,
+    String titre,
 
-    @NotBlank(message = "La description est obligatoire")
-    String description,
+    @NotBlank(message = "La consigne est obligatoire")
+    String consigne,
 
-    @NotNull(message = "La difficulté est obligatoire")
-    Difficulty difficulty
+    @NotNull(message = "Le niveau est obligatoire")
+    Niveau niveau
 ) {}</code></pre>
             <pre><code class="language-java">@PostMapping
 @ResponseStatus(HttpStatus.CREATED)
@@ -485,7 +489,7 @@ public KataDto create(@RequestBody @Valid CreateKataRequest request) {
 
 // Dans KataService
 public KataDto create(CreateKataRequest request) {
-    var kata = new Kata(request.title(), request.description(), request.difficulty());
+    var kata = new Kata(request.titre(), request.consigne(), request.niveau());
     return toDto(kataRepository.save(kata));
 }</code></pre>
           </div>
@@ -542,12 +546,12 @@ public class KataNotFoundException extends DomainException {
             <pre><code class="language-java">@Test
 void should_returnKata_when_idExists() throws Exception {
     var id = UUID.randomUUID();
-    var kata = new KataDto(id, "FizzBuzz", "Desc", "EASY");
+    var kata = new KataDto(id, "FizzBuzz", "Boucle de 1 a 100", "FACILE");
     given(kataService.findById(id)).willReturn(kata);
 
     mockMvc.perform(get("/katas/" + id))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.title").value("FizzBuzz"));
+        .andExpect(jsonPath("$.titre").value("FizzBuzz"));
 }
 
 @Test
@@ -679,7 +683,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         <p>Crée <code>src/infrastructure/api/kataApi.ts</code> avec une interface <code>KataDto</code> et une fonction <code>fetchKatas()</code>.</p>
         <ul>
           <li>L'URL de base vient de <code>import.meta.env.VITE_API_URL</code> avec fallback sur <code>http://localhost:8080</code></li>
-          <li><code>difficulty</code> est une union littérale : <code>'EASY' | 'MEDIUM' | 'HARD'</code> (pas un simple <code>string</code>)</li>
+          <li><code>niveau</code> est une union littérale : <code>'FACILE' | 'MOYEN' | 'DIFFICILE'</code> (pas un simple <code>string</code>)</li>
           <li>La fonction retourne <code>Promise&lt;KataDto[]&gt;</code> et lance une erreur si <code>res.ok === false</code></li>
         </ul>
         <div class="callout--tip">Pourquoi dans <code>infrastructure/</code> et pas dans le composant Vue ? Parce que le composant ne devrait pas savoir comment les données arrivent. Premier réflexe d'archi hexagonale front.</div>
@@ -690,9 +694,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 export interface KataDto {
   id: string
-  title: string
-  description: string
-  difficulty: 'EASY' | 'MEDIUM' | 'HARD'
+  titre: string
+  consigne: string
+  niveau: 'FACILE' | 'MOYEN' | 'DIFFICILE'
 }
 
 export async function fetchKatas(): Promise&lt;KataDto[]&gt; {
@@ -710,7 +714,7 @@ export async function fetchKatas(): Promise&lt;KataDto[]&gt; {
         <ul>
           <li>Utilise <code>onMounted</code> + <code>ref</code> (pas encore <code>useAsync</code> — ça viendra en phase 2)</li>
           <li>Gère trois états : loading, error, liste</li>
-          <li>Affiche pour chaque kata : titre + difficulté</li>
+          <li>Affiche pour chaque kata : titre + niveau</li>
         </ul>
         <div class="callout--warning">Ce code sera naïf : loading state répété, try/catch manuel. Tu le ressentiras. C'est voulu — le refactoring phase 2 avec <code>useAsync</code> aura tout son sens.</div>
         <details class="solution">
@@ -742,7 +746,7 @@ onMounted(async () =&gt; {
     &lt;p v-else-if="error" role="alert"&gt;{{ error }}&lt;/p&gt;
     &lt;ul v-else&gt;
       &lt;li v-for="kata in katas" :key="kata.id"&gt;
-        {{ kata.title }} — {{ kata.difficulty }}
+        {{ kata.titre }} — {{ kata.niveau }}
       &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/div&gt;
@@ -809,12 +813,12 @@ public class CorsConfig {
         <ul>
           <li>Block : <code>.kata-list</code> | Element : <code>.kata-list__titre</code>, <code>.kata-list__item</code> | Modifier : <code>.kata-list__item--selectionne</code></li>
           <li>Installe maintenant <code>shadcn-vue</code>, puis utilise les composants <code>Card</code> et <code>Badge</code> pour les katas</li>
-          <li>Badge de difficulté coloré (EASY = vert, MEDIUM = orange, HARD = rouge)</li>
+          <li>Badge de niveau coloré (FACILE = vert, MOYEN = orange, DIFFICILE = rouge)</li>
           <li><code>&lt;style scoped&gt;</code> uniquement — pas de styles globaux</li>
           <li>Classes en français sans accents (BEM) sur les éléments spécifiques à KataSensei</li>
         </ul>
         <p>Commence ici à utiliser vraiment <code>Vitest</code> côté front. Si besoin, ajuste <code>vite.config.ts</code> pour inclure <code>tests/**/*.test.ts</code> avec <code>happy-dom</code>.</p>
-        <p>Test à écrire dans <code>tests/ui/views/KataListView.test.ts</code> : vérifie que le badge de difficulté a la bonne classe selon le niveau.</p>
+        <p>Test à écrire dans <code>tests/ui/views/KataListView.test.ts</code> : vérifie que le badge de niveau a la bonne classe selon le niveau.</p>
       </div>
 
       <div class="commit-suggestion">commit suggestion → feat(kata): ajout styles scoped BEM sur KataListView avec shadcn</div>
@@ -824,20 +828,52 @@ public class CorsConfig {
     <section class="guide-step" id="etape-8">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-1);">8</div>
-        <h2 class="guide-step__title">ADR 002 et JaCoCo CI</h2>
+        <h2 class="guide-step__title">ADR 004 et JaCoCo CI</h2>
       </div>
 
       <div class="exercise">
-        <h3>Exercice 8.1 — Écris l'ADR 002</h3>
-        <p>Documente la décision de gestion des erreurs dans <code>docs/adr/002-gestion-erreurs-centralisee.md</code>.</p>
-        <pre><code class="language-bash"># ADR 002 — [Titre]
+        <h3>Exercice 8.1 — Écris l'ADR 004</h3>
+        <p>Documente la décision de gestion des erreurs dans <code>docs/adr/004-gestion-erreurs-centralisee.md</code>.</p>
+        <pre><code class="language-bash"># ADR 004 — [Titre]
 ## Date
 ## Statut (Accepté / Déprécié / Proposé)
 ## Contexte — pourquoi cette décision était nécessaire
 ## Décision — ce qu'on a choisi
 ## Conséquences — ce que ça change
 ## Alternatives rejetées — et pourquoi</code></pre>
-        <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 002 gestion erreurs centralisée</div>
+        <details class="solution">
+          <summary>Solution - A consulter après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-markdown"># ADR 004 — Gestion d'erreurs centralisée
+
+## Date
+2026-XX-XX
+
+## Statut
+Accepté
+
+## Contexte
+La phase 1 introduit plusieurs endpoints HTTP, de la validation,
+des erreurs métier et des erreurs techniques. Sans stratégie commune,
+chaque contrôleur risque de renvoyer un format différent.
+
+## Décision
+- centraliser la transformation des exceptions dans `GlobalExceptionHandler`
+- faire hériter les erreurs métier de `DomainException`
+- renvoyer un format Problem Details cohérent pour le front
+
+## Conséquences
+- le front peut traiter un format d'erreur stable
+- les contrôleurs restent focalisés sur les cas nominaux
+- toute nouvelle exception métier doit s'intégrer dans cette stratégie
+
+## Alternatives rejetées
+- gérer les erreurs dans chaque contrôleur
+- renvoyer des chaînes de caractères non structurées
+- exposer les stack traces au client</code></pre>
+          </div>
+        </details>
+        <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 004 gestion erreurs centralisée</div>
       </div>
 
       <div class="exercise">
@@ -905,7 +941,7 @@ test-back:
         <li><input type="checkbox"> CORS résolu (proxy Vite ou config Spring)</li>
         <li><input type="checkbox"> Front Vue affiche la liste des katas</li>
         <li><input type="checkbox"> JaCoCo configuré, coverage ≥ 70%, CI vérifie le seuil</li>
-        <li><input type="checkbox"> ADR 002 committé</li>
+        <li><input type="checkbox"> ADR 004 committé</li>
       </ul>
     </section>
 

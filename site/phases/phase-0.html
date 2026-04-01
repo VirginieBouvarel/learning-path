@@ -81,7 +81,7 @@
         <li><a href="#etape-6">6 — Checkstyle</a></li>
         <li><a href="#etape-7">7 — Déploiement Fly.io</a></li>
         <li><a href="#etape-8">8 — GitLab CI/CD</a></li>
-        <li><a href="#etape-9">9 — ADR 001</a></li>
+        <li><a href="#etape-9">9 — Les ADR</a></li>
         <li><a href="#etape-10">10 — Stylelint</a></li>
         <li><a href="#etape-11">11 — Convention tests/</a></li>
         <li><a href="#checklist">Checklist finale</a></li>
@@ -295,7 +295,7 @@ npx commitizen init cz-conventional-changelog --save-dev --save-exact</code></pr
       <pre><code class="language-bash">feat(kata): add GET /katas endpoint
 fix(auth): handle expired JWT gracefully
 refactor(domain): extract KataId value object
-docs(adr): add ADR 001 tech choices</code></pre>
+docs(adr): add ADR 002 tech choices</code></pre>
       <div class="commit-suggestion">chore(front): configuration ESLint Prettier Husky Conventional Commits</div>
     </section>
 
@@ -487,54 +487,18 @@ deploy-back:
     <section class="guide-step" id="etape-9">
       <div class="guide-step__heading">
         <div class="guide-step__number">9</div>
-        <h2 class="guide-step__title">ADR 001 : tes premiers choix documentés</h2>
+        <h2 class="guide-step__title">Les ADR</h2>
       </div>
 
-      <p>Crée <code>docs/adr/001-choix-technologiques.md</code> dans ton repo KataSensei :</p>
-      <pre><code class="language-markdown"># ADR 001 — Choix technologiques de KataSensei
+      <div class="callout--info"><strong>ADR = Architecture Decision Record</strong> Un ADR est un document court qui capture une décision d'architecture ou de conception importante dans un projet logiciel : le contexte, la décision prise, ses conséquences et les alternatives rejetées. Il sert à comprendre plus tard pourquoi un choix a été fait, sans dépendre de la mémoire de l'équipe.</div>
 
-## Date
-2026-XX-XX
-
-## Statut
-Accepté
-
-## Contexte
-Premier projet fullstack personnel visant à apprendre
-l'architecture hexagonale, le TDD et le typage fort.
-
-## Décisions
-
-### Backend : Java 21 + Spring Boot 3
-Java 21 apporte les records, les sealed classes et les
-pattern matching — le système de types le plus proche
-de TypeScript côté Java.
-
-### Frontend : Vue 3 + TypeScript strict
-Stack déjà maîtrisée. TypeScript strict avec
-noUncheckedIndexedAccess dès le départ.
-
-### Architecture : Hexagonale (Ports &amp; Adapters)
-Permet de tester le domaine sans infrastructure.
-Le domaine ne dépend d'aucun framework.
-
-### Déploiement : Fly.io
-Gratuit pour les petits projets, CLI simple,
-PostgreSQL managed disponible.
-
-### Exécution de code : Piston API
-Sandbox externe gratuite et open source.
-
-## Alternatives rejetées
-- Gradle : plus puissant mais moins lisible que Maven pour débuter
-- Quarkus : excellent mais Spring a une meilleure documentation
-- Railway : Fly.io a un meilleur free tier en 2026
-
-## Conséquences
-- Apprentissage de Maven obligatoire
-- IntelliJ IDEA Ultimate retenu pour tout le parcours
-- Dépendance à Piston API pour l'exécution de code</code></pre>
-      <div class="commit-suggestion">docs(adr): ajout ADR 001 choix technologiques</div>
+      <p>Dans cette phase, tu ne rédiges pas encore d'ADR. Tu lis trois ADR de référence pour comprendre leur rôle et le niveau de précision attendu.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="../guides/ubiquitous-language.html" class="subpage">ADR 001 — Ubiquitous Language</a>
+        <a href="../guides/choix-technologiques.html" class="subpage">ADR 002 — Choix technologiques</a>
+        <a href="../guides/conventions-front.html" class="subpage">ADR 003 — Conventions front</a>
+      </div>
+      <p style="margin-top: 16px;">Le premier petit ADR à rédiger en autonomie arrive en phase 1 avec la gestion d'erreurs centralisée. À ce moment-là, le périmètre est assez petit pour servir d'exercice utile sans te noyer.</p>
     </section>
 
     <!-- Étape 10 -->
@@ -606,10 +570,11 @@ mkdir -p tests/ui/composables</code></pre>
         <li><input type="checkbox"> <code>.env.example</code> commité, <code>.env</code> ignoré</li>
         <li><input type="checkbox"> <code>fly deploy</code> → KataSensei a une URL publique</li>
         <li><input type="checkbox"> Pipeline GitLab CI/CD vert sur le premier push</li>
-        <li><input type="checkbox"> ADR 001 commité dans <code>docs/adr/</code></li>
+        <li><input type="checkbox"> ADR 001 lu et compris comme référence de vocabulaire métier</li>
+        <li><input type="checkbox"> ADR 002 lu et compris comme référence de stack initiale</li>
         <li><input type="checkbox"> Stylelint installé et configuré (on save dans IntelliJ)</li>
         <li><input type="checkbox"> Structure <code>tests/</code> préparée selon la convention miroir de <code>src/</code></li>
-        <li><input type="checkbox"> ADR 003 commité dans <code>docs/adr/</code></li>
+        <li><input type="checkbox"> ADR 003 lu et compris si tu figes déjà les conventions front en phase 0</li>
       </ul>
     </section>
 

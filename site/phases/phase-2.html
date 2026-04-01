@@ -85,7 +85,7 @@
         <li><a href="#etape-10">10 — useAsync</a></li>
         <li><a href="#etape-11">11 — useKataList + composants</a></li>
         <li><a href="#etape-12">12 — Refactoring KataListView</a></li>
-        <li><a href="#etape-13">13 — ADR 003</a></li>
+        <li><a href="#etape-13">13 — ADR 003 — conventions front</a></li>
         <li><a href="#checklist">Checklist finale</a></li>
         <li><a href="#erreurs">Erreurs fréquentes</a></li>
       </ul>
@@ -106,6 +106,10 @@
       </div>
     </div>
 
+    <div class="callout--info">
+      <strong>ADR 001 et ADR 003 s'appliquent ici</strong> : le vocabulaire métier reste en français côté domaine, et les composants Vue suivent les conventions front déjà fixées.
+    </div>
+
     <!-- Étape 0 -->
     <section class="guide-step" id="etape-0">
       <div class="guide-step__heading">
@@ -116,11 +120,15 @@
       <p>Avant d'écrire une ligne, relis le code naïf de la phase 1 et réponds à ces questions :</p>
       <ol>
         <li>Combien d'endroits font un <code>fetch</code> directement dans un composant ou un composable ?</li>
-        <li>Si l'API change le nom du champ <code>title</code> en <code>name</code>, combien de fichiers dois-tu modifier ?</li>
+        <li>Si l'API change le nom du champ <code>titre</code> en <code>name</code>, combien de fichiers dois-tu modifier ?</li>
         <li>Si tu veux tester <code>useKataList</code> sans navigateur, est-ce possible ? Pourquoi ?</li>
         <li>Si <code>loading</code>, <code>error</code>, <code>data</code> sont trois <code>ref</code> indépendants, que se passe-t-il si on oublie de mettre <code>loading = false</code> dans le <code>catch</code> ?</li>
       </ol>
       <p>Ces quatre douleurs ont chacune une solution dans cette phase. Garde tes réponses — elles te serviront de motivation.</p>
+      <div class="callout--info">
+        <strong>Ce qu'on va faire maintenant</strong> : on va découper le front en quatre zones claires.
+        Le <code>domain/</code> contiendra les types et la logique pure, <code>infrastructure/</code> parlera à l'extérieur, <code>stores/</code> gardera l'état partagé, et <code>ui/</code> pilotera Vue. Le but n'est pas de "faire de la belle archi", mais de rendre le code testable, modifiable et lisible sans effet domino.
+      </div>
 
       <h3>La structure cible</h3>
       <pre><code class="language-bash">src/
@@ -143,6 +151,29 @@
     ├── components/
     └── views/</code></pre>
 
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 0.1 :</strong> pourquoi séparer <code>domain</code> et <code>infrastructure</code> au lieu de tout mettre dans <code>src/</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que le domaine doit survivre à un changement technique. Si demain l'API, Pinia ou Vue changent, la logique métier doit rester stable. La séparation rend les dépendances visibles et limite les régressions.</p>
+        </div>
+      </details>
+      <p><strong>Question 0.2 :</strong> pourquoi les hooks Vue comme <code>onMounted</code> n'ont-ils rien à faire dans <code>domain/</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'ils dépendent du runtime Vue et du cycle de vie d'un composant. Le domaine doit rester exécutable et testable sans navigateur, sans composant monté et sans framework UI.</p>
+        </div>
+      </details>
+      <p><strong>Question 0.3 :</strong> quel symptôme indique que l'API "contamine" trop le front ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Quand un simple changement de payload backend oblige à modifier plusieurs composants, stores et tests. Cela signifie qu'il manque une couche de traduction centrale, donc un mapper ou un port bien placé.</p>
+        </div>
+      </details>
+
       <div class="commit-suggestion">commit suggestion → chore(front): mise en place structure domain/infra/stores/ui</div>
     </section>
 
@@ -155,8 +186,17 @@
 
       <div class="exercise">
         <h3>Exercice 1.1 — Crée <code>src/domain/types/branded.ts</code></h3>
+        <p><strong>Objectif :</strong> empêcher TypeScript de confondre des identifiants qui ont la même forme (<code>string</code>) mais pas le même sens métier.</p>
+        <p><strong>Procède dans cet ordre :</strong></p>
+        <ol>
+          <li>Crée le fichier <code>src/domain/types/branded.ts</code>.</li>
+          <li>Déclare d'abord les 3 types sans helper.</li>
+          <li>Ajoute ensuite un helper de conversion par type.</li>
+          <li>N'utilise <code>as</code> nulle part ailleurs dans le projet.</li>
+          <li>Lance <code>npm run type-check</code> pour vérifier que rien n'est cassé.</li>
+        </ol>
         <ul>
-          <li><code>KataId</code>, <code>UserId</code>, <code>SessionId</code> en branded types</li>
+          <li><code>KataId</code>, <code>UserId</code>, <code>TentativeId</code> en branded types</li>
           <li>Fonctions helpers <code>toKataId(s: string): KataId</code> — seuls endroits où <code>as</code> est autorisé</li>
           <li>Ces helpers sont les <strong>uniques portes d'entrée</strong> pour créer des branded types</li>
         </ul>
@@ -166,17 +206,32 @@
           <div class="solution__content">
             <pre><code class="language-typescript">export type KataId    = string & { readonly _brand: 'KataId' }
 export type UserId    = string & { readonly _brand: 'UserId' }
-export type SessionId = string & { readonly _brand: 'SessionId' }
+export type TentativeId = string & { readonly _brand: 'TentativeId' }
 
 export const toKataId    = (s: string): KataId    => s as KataId
 export const toUserId    = (s: string): UserId    => s as UserId
-export const toSessionId = (s: string): SessionId => s as SessionId</code></pre>
+export const toTentativeId = (s: string): TentativeId => s as TentativeId</code></pre>
             <p><strong>Réponse :</strong> un seul endroit à auditer si on veut valider les IDs. Si demain on ajoute une validation UUID, on la met dans <code>toKataId</code> et tout le projet en bénéficie.</p>
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1.2 :</strong> pourquoi un branded type n'existe-t-il qu'à la compilation et pas à l'exécution ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que TypeScript efface ses types au runtime. Le branded type protège le code pendant l'écriture et la compilation, mais en JavaScript final cela reste une string classique.</p>
+        </div>
+      </details>
+      <p><strong>Question 1.3 :</strong> à quel moment faut-il convertir une <code>string</code> brute en <code>KataId</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Au point d'entrée du système concerné : juste après la lecture d'une réponse API, d'une route ou d'un formulaire. On normalise tôt pour travailler ensuite avec des types métier sûrs.</p>
+        </div>
+      </details>
 
-      <div class="commit-suggestion">commit suggestion → feat(typage): ajout branded types KataId UserId SessionId</div>
+      <div class="commit-suggestion">commit suggestion → feat(typage): ajout branded types KataId UserId TentativeId</div>
     </section>
 
     <!-- Étape 2 -->
@@ -189,12 +244,13 @@ export const toSessionId = (s: string): SessionId => s as SessionId</code></pre>
       <div class="exercise">
         <h3>Exercice 2.1 — <code>AsyncState&lt;T&gt;</code> dans <code>src/domain/types/async.ts</code></h3>
         <p>4 états : <code>idle</code>, <code>loading</code>, <code>success&lt;T&gt;</code>, <code>error</code>. Fonctions constructeurs pour chaque état.</p>
-      </div>
-
-      <div class="exercise">
-        <h3>Exercice 2.2 — <code>SessionState</code> dans <code>src/domain/types/session.ts</code></h3>
-        <p><code>idle</code> | <code>running</code> (avec <code>startedAt</code>, <code>hintsUsed</code>) | <code>completed</code> (avec <code>score</code>, <code>completedAt</code>). Écris <code>canRequestHint(session: SessionState): boolean</code> avec le pattern <code>never</code> pour l'exhaustivité.</p>
-        <p><strong>Question :</strong> que se passe-t-il si tu ajoutes un état <code>paused</code> sans mettre à jour <code>canRequestHint</code> ?</p>
+        <p><strong>Ce que tu dois faire concrètement :</strong></p>
+        <ol>
+          <li>Crée le type union avec un discriminant commun nommé <code>status</code>.</li>
+          <li>Vérifie que seul l'état <code>success</code> porte <code>data</code>.</li>
+          <li>Vérifie que seul l'état <code>error</code> porte <code>message</code>.</li>
+          <li>Ajoute ensuite les helpers <code>idle()</code>, <code>loading()</code>, <code>success(data)</code> et <code>error(message)</code>.</li>
+        </ol>
         <details class="solution">
           <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
           <div class="solution__content">
@@ -204,27 +260,67 @@ export const toSessionId = (s: string): SessionId => s as SessionId</code></pre>
   | { status: 'success'; data: T }
   | { status: 'error'; message: string }
 
-export const idle    = &lt;T&gt;(): AsyncState&lt;T&gt; => ({ status: 'idle' })
+export const idle = &lt;T&gt;(): AsyncState&lt;T&gt; => ({ status: 'idle' })
 export const loading = &lt;T&gt;(): AsyncState&lt;T&gt; => ({ status: 'loading' })
 export const success = &lt;T&gt;(data: T): AsyncState&lt;T&gt; => ({ status: 'success', data })
-export const error   = &lt;T&gt;(message: string): AsyncState&lt;T&gt; => ({ status: 'error', message })</code></pre>
-            <pre><code class="language-typescript">export function canRequestHint(session: SessionState): boolean {
-  switch (session.status) {
-    case 'idle':      return false
-    case 'running':   return session.hintsUsed &lt; 3
-    case 'completed': return false
-    default: {
-      const _exhaustive: never = session
-      return _exhaustive
-    }
-  }
-}</code></pre>
-            <p><strong>Réponse :</strong> TypeScript émet une erreur sur <code>const _exhaustive: never = session</code> — <code>paused</code> n'est pas assignable à <code>never</code>. Le compilateur te force à gérer chaque cas.</p>
+export const error = &lt;T&gt;(message: string): AsyncState&lt;T&gt; => ({ status: 'error', message })</code></pre>
           </div>
         </details>
       </div>
 
-      <div class="commit-suggestion">commit suggestion → feat(typage): ajout discriminated unions AsyncState et SessionState</div>
+      <div class="exercise">
+        <h3>Exercice 2.2 — <code>TentativeState</code> dans <code>src/domain/types/tentative.ts</code></h3>
+        <p><code>idle</code> | <code>running</code> (avec <code>startedAt</code>, <code>indicesUtilises</code>) | <code>completed</code> (avec <code>score</code>, <code>completedAt</code>). Écris <code>canRequestIndice(tentative: TentativeState): boolean</code> avec le pattern <code>never</code> pour l'exhaustivité.</p>
+        <p><strong>Méthode conseillée :</strong></p>
+        <ol>
+          <li>Écris d'abord le type <code>TentativeState</code>.</li>
+          <li>Ajoute ensuite la fonction <code>canRequestIndice</code> avec un <code>switch</code>.</li>
+          <li>Ne mets le cas <code>default</code> qu'à la fin, avec la variable <code>never</code>.</li>
+          <li>Teste mentalement le cas <code>paused</code> pour comprendre ce que protège le compilateur.</li>
+        </ol>
+        <p><strong>Question :</strong> que se passe-t-il si tu ajoutes un état <code>paused</code> sans mettre à jour <code>canRequestIndice</code> ?</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export function canRequestIndice(tentative: TentativeState): boolean {
+  switch (tentative.status) {
+    case 'idle':      return false
+    case 'running':   return tentative.indicesUtilises &lt; 3
+    case 'completed': return false
+    default: {
+      const _exhaustive: never = tentative
+      return _exhaustive
+    }
+  }
+}</code></pre>
+            <p><strong>Réponse :</strong> TypeScript émet une erreur sur <code>const _exhaustive: never = tentative</code> — <code>paused</code> n'est pas assignable à <code>never</code>. Le compilateur te force à gérer chaque cas.</p>
+          </div>
+        </details>
+      </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 2.2 :</strong> pourquoi préférer une union discriminée à trois <code>ref</code> séparées comme <code>loading</code>, <code>error</code> et <code>data</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'une union modélise explicitement les états autorisés et interdit les combinaisons absurdes, par exemple "loading=true" et "data déjà présente" si ce n'est pas voulu. On remplace une convention fragile par un contrat de type.</p>
+        </div>
+      </details>
+      <p><strong>Question 2.3 :</strong> à quoi sert exactement le discriminant <code>status</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Il permet à TypeScript de raffiner automatiquement le type dans chaque branche du <code>switch</code>. Grâce à lui, TS sait qu'en cas de <code>success</code>, <code>data</code> existe, et qu'en cas de <code>error</code>, c'est <code>message</code> qui existe.</p>
+        </div>
+      </details>
+      <p><strong>Question 2.4 :</strong> pourquoi le pattern <code>never</code> est-il précieux dans une base TypeScript stricte ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'il transforme l'oubli d'un cas en erreur de compilation immédiate. On ne dépend plus d'un test manuel tardif ou d'un bug en production pour découvrir qu'un nouvel état n'est pas géré.</p>
+        </div>
+      </details>
+
+      <div class="commit-suggestion">commit suggestion → feat(typage): ajout discriminated unions AsyncState et TentativeState</div>
     </section>
 
     <!-- Étape 3 -->
@@ -237,6 +333,22 @@ export const error   = &lt;T&gt;(message: string): AsyncState&lt;T&gt; => ({ sta
       <div class="exercise">
         <h3>Exercice 3.1 — <code>Result&lt;T,E&gt;</code> dans <code>src/domain/types/result.ts</code></h3>
         <p>Union <code>ok: true / value: T</code> ou <code>ok: false / error: E</code>. Fonctions <code>ok()</code>, <code>err()</code>, <code>map()</code>, <code>mapError()</code>.</p>
+        <p><strong>Pas à pas :</strong> écris d'abord le type, puis les helpers <code>ok</code>/<code>err</code>, puis seulement les fonctions de transformation <code>map</code> et <code>mapError</code>. Vérifie après chaque ajout que l'inférence de type reste correcte.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export type Result&lt;T, E&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E }
+
+export const ok = &lt;T&gt;(value: T): Result&lt;T, never&gt; => ({ ok: true, value })
+export const err = &lt;E&gt;(error: E): Result&lt;never, E&gt; => ({ ok: false, error })
+
+export function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (value: T) => U): Result&lt;U, E&gt; {
+  return result.ok ? ok(fn(result.value)) : result
+}</code></pre>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
@@ -258,6 +370,28 @@ export function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (v: T) => U):
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 3.1 :</strong> pourquoi préférer un <code>Result</code> à des <code>throw</code> dans le front ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que le type signale explicitement qu'une opération peut échouer. L'appelant est forcé de traiter les deux branches et la circulation de l'erreur devient lisible au lieu de dépendre d'une exception implicite.</p>
+        </div>
+      </details>
+      <p><strong>Question 3.2 :</strong> quelle différence entre une erreur métier typée et un simple message texte ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Une erreur typée peut être branchée, testée et convertie de façon fiable. Un simple texte n'est ni stable ni robuste pour piloter du comportement applicatif.</p>
+        </div>
+      </details>
+      <p><strong>Question 3.3 :</strong> pourquoi garder <code>toUserMessage</code> exhaustive ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Pour qu'un nouveau type d'erreur oblige le développeur à décider immédiatement quel message montrer. Sans ça, certaines erreurs deviennent muettes ou retombent dans un message générique trompeur.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(typage): ajout Result pattern et AppError union</div>
     </section>
@@ -273,12 +407,55 @@ export function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (v: T) => U):
         <h3>Exercice 4.1 — Type guards dans <code>src/domain/types/guards.ts</code></h3>
         <p><code>isNetworkError</code>, <code>isValidationError</code>, <code>isAppError</code> — chacun vérifie la forme à runtime. Écris des tests Vitest pour chacun.</p>
         <p><strong>Question :</strong> différence entre <code>as NetworkError</code> et un type guard ?</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export function isNetworkError(error: unknown): error is NetworkError {
+  return typeof error === 'object'
+    && error !== null
+    && 'kind' in error
+    && (error as { kind?: unknown }).kind === 'network'
+}
+
+export function isAppError(error: unknown): error is AppError {
+  return typeof error === 'object'
+    && error !== null
+    && 'kind' in error
+}</code></pre>
+            <p><strong>Réponse :</strong> <code>as</code> force le compilateur à te croire sans aucune vérification. Un type guard, lui, vérifie réellement la forme à l'exécution et informe ensuite TypeScript que le raffinement est légitime.</p>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
         <h3>Exercice 4.2 — Routes typées dans <code>src/infrastructure/api/routes.ts</code></h3>
         <p>Type <code>KataRoute = `/katas/${KataId}`</code>. Fonction <code>buildKataRoute(id: KataId): KataRoute</code>. Il doit être impossible d'appeler la fonction avec un <code>string</code> brut.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export type KataRoute = `/katas/${KataId}`
+
+export function buildKataRoute(id: KataId): KataRoute {
+  return `/katas/${id}` as KataRoute
+}</code></pre>
+          </div>
+        </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 4.2 :</strong> pourquoi un type guard est-il surtout utile sur les données venant de l'extérieur ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que ces données ne sont pas garanties par le compilateur : réseau, localStorage, params d'URL, JSON arbitraire. C'est précisément là qu'il faut réintroduire des vérifications runtime.</p>
+        </div>
+      </details>
+      <p><strong>Question 4.3 :</strong> qu'apporte un template literal type sur une route ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Il encode la forme attendue directement dans le type. Cela réduit les concaténations hasardeuses et documente immédiatement le contrat de l'URL.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(typage): ajout type guards et routes typées</div>
     </section>
@@ -293,13 +470,51 @@ export function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (v: T) => U):
       <div class="exercise">
         <h3>Exercice 5.1 — Port dans <code>src/domain/ports/LogPort.ts</code></h3>
         <p>Interface avec <code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code> — chacun prend <code>context: string</code> et <code>data?: Record&lt;string, unknown&gt;</code>. C'est une interface dans <code>domain/</code> — elle ne sait pas si les logs vont dans la console ou dans Sentry.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export interface LogPort {
+  debug(context: string, data?: Record&lt;string, unknown&gt;): void
+  info(context: string, data?: Record&lt;string, unknown&gt;): void
+  warn(context: string, data?: Record&lt;string, unknown&gt;): void
+  error(context: string, data?: Record&lt;string, unknown&gt;): void
+}</code></pre>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
         <h3>Exercice 5.2 — Adapters dans <code>src/infrastructure/logging/</code></h3>
         <p><code>ConsoleLogger</code> (logs colorés en dev) et <code>SilentLogger</code> (ne fait rien, pour les tests). Export selon l'environnement dans <code>index.ts</code>.</p>
         <p><strong>Question :</strong> pourquoi <code>SilentLogger</code> plutôt que de mocker <code>console</code> dans les tests ?</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export class SilentLogger implements LogPort {
+  debug(): void {}
+  info(): void {}
+  warn(): void {}
+  error(): void {}
+}</code></pre>
+            <p><strong>Réponse :</strong> parce qu'un faux adapter stable est plus simple, plus lisible et plus proche de l'architecture réelle qu'un mock global de <code>console</code>. On teste l'injection d'une dépendance, pas le runtime du navigateur.</p>
+          </div>
+        </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 5.2 :</strong> pourquoi le logger est-il un port et pas un utilitaire global ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que le domaine ne doit pas être couplé à un mécanisme technique précis. Un port permet de remplacer la console par Sentry, Datadog ou rien du tout sans modifier la logique appelante.</p>
+        </div>
+      </details>
+      <p><strong>Question 5.3 :</strong> pourquoi éviter d'écrire directement <code>console.log</code> dans les use cases ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que cela introduit un effet de bord technique dans une couche qui doit rester pure et testable. Le code métier devient alors plus difficile à isoler et à vérifier.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(infra): ajout LogPort ConsoleLogger SilentLogger</div>
     </section>
@@ -318,11 +533,22 @@ export function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (v: T) => U):
         <p>Crée <code>src/infrastructure/api/dto/ApiKataDto.ts</code> qui représente exactement ce que l'API renvoie.</p>
         <ul>
           <li><code>id: string</code> (pas encore <code>KataId</code> — c'est le rôle du mapper de convertir)</li>
-          <li><code>title: string</code></li>
-          <li><code>description: string</code></li>
-          <li><code>difficulty: string</code> (pas encore l'enum)</li>
+          <li><code>titre: string</code></li>
+          <li><code>consigne: string</code></li>
+          <li><code>niveau: string</code> (pas encore l'enum)</li>
         </ul>
         <div class="callout--info">Ce type représente la réalité de l'API. Si l'API change, seul ce fichier change.</div>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export interface ApiKataDto {
+  id: string
+  titre: string
+  consigne: string
+  niveau: string
+}</code></pre>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
@@ -340,9 +566,9 @@ export function map&lt;T, U, E&gt;(result: Result&lt;T, E&gt;, fn: (v: T) => U):
             <pre><code class="language-typescript">// src/infrastructure/api/dto/ApiKataDto.ts
 export interface ApiKataDto {
   id: string
-  title: string
-  description: string
-  difficulty: string
+  titre: string
+  consigne: string
+  niveau: string
 }</code></pre>
             <pre><code class="language-typescript">// src/infrastructure/api/mappers/KataMapper.ts
 import { toKataId } from '@/domain/types/branded'
@@ -353,25 +579,25 @@ export const KataMapper = {
   toDomain(dto: ApiKataDto): Kata {
     return {
       id:          toKataId(dto.id),
-      title:       dto.title,
-      description: dto.description,
-      difficulty:  dto.difficulty as Kata['difficulty'],
+      titre:       dto.titre,
+      consigne:    dto.consigne,
+      niveau:      dto.niveau as Kata['niveau'],
     }
   },
 
   toDto(kata: Kata): ApiKataDto {
     return {
       id:          kata.id,
-      title:       kata.title,
-      description: kata.description,
-      difficulty:  kata.difficulty,
+      titre:       kata.titre,
+      consigne:    kata.consigne,
+      niveau:      kata.niveau,
     }
   }
 }</code></pre>
             <pre><code class="language-typescript">// KataMapper.test.ts — écrit en TDD AVANT l'implémentation
 describe('KataMapper', () => {
   it('toDomain — convertit l\'id en KataId brandé', () => {
-    const dto: ApiKataDto = { id: 'abc-123', title: 'FizzBuzz', description: '...', difficulty: 'EASY' }
+    const dto: ApiKataDto = { id: 'abc-123', titre: 'FizzBuzz', consigne: '...', niveau: 'FACILE' }
     const kata = KataMapper.toDomain(dto)
     expect(kata.id).toBe('abc-123')
     // Le type est vérifié à la compilation : kata.id est KataId, pas string
@@ -381,8 +607,30 @@ describe('KataMapper', () => {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 6.1 :</strong> pourquoi un DTO d'API ne doit-il pas être réutilisé comme type métier ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'il décrit un format d'échange technique, pas une vérité métier stable. Le réutiliser partout couple tout le front au backend et rend chaque évolution beaucoup plus coûteuse.</p>
+        </div>
+      </details>
+      <p><strong>Question 6.2 :</strong> pourquoi un mapper doit-il rester une fonction pure ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'on veut pouvoir le tester avec une entrée et une sortie déterministes, sans dépendance externe. Dès qu'il lit un store, un logger ou le réseau, il cesse d'être une simple traduction fiable.</p>
+        </div>
+      </details>
+      <p><strong>Question 6.3 :</strong> quel changement localise un bon Anti-Corruption Layer ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Un changement de contrat externe. Si l'API renomme un champ ou change un format, le coût doit rester concentré dans le DTO et le mapper, pas dans tout le domaine ou tous les composants.</p>
+        </div>
+      </details>
 
-      <div class="commit-suggestion">commit suggestion → feat(infra): ajout KataMapper SessionMapper comme Anti-Corruption Layer</div>
+      <div class="commit-suggestion">commit suggestion → feat(infra): ajout KataMapper TentativeMapper comme Anti-Corruption Layer</div>
     </section>
 
     <!-- Étape 7 -->
@@ -395,6 +643,15 @@ describe('KataMapper', () => {
       <div class="exercise">
         <h3>Exercice 7.1 — Interface dans <code>src/domain/ports/KataRepository.ts</code></h3>
         <p><code>findAll(): Promise&lt;Result&lt;Kata[], AppError&gt;&gt;</code> et <code>findById(id: KataId): Promise&lt;Result&lt;Kata, AppError&gt;&gt;</code>. Interface dans <code>domain/</code> — elle ne sait pas que fetch existe.</p>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export interface KataRepository {
+  findAll(): Promise&lt;Result&lt;Kata[], AppError&gt;&gt;
+  findById(id: KataId): Promise&lt;Result&lt;Kata, AppError&gt;&gt;
+}</code></pre>
+          </div>
+        </details>
       </div>
 
       <div class="exercise">
@@ -423,6 +680,28 @@ describe('KataMapper', () => {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 7.1 :</strong> pourquoi le port vit-il dans <code>domain/</code> alors que son implémentation vit dans <code>infrastructure/</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que c'est le domaine qui exprime son besoin : "j'ai besoin d'un repository". L'infrastructure ne fait que fournir une réponse concrète à ce besoin.</p>
+        </div>
+      </details>
+      <p><strong>Question 7.2 :</strong> pourquoi retourner un <code>Result</code> depuis le repository plutôt que lancer des exceptions réseau ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Pour garder un contrat homogène et explicite jusqu'aux couches supérieures. Le use case et le store peuvent alors traiter les succès et les erreurs sans dépendre d'un mécanisme d'exception implicite.</p>
+        </div>
+      </details>
+      <p><strong>Question 7.3 :</strong> quel avantage apporte le repository sur un simple <code>fetch</code> dans le composant ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Il centralise l'accès aux données, la conversion DTO → domaine et le mapping d'erreurs. Le composant ne connaît plus l'URL, le format JSON ni la stratégie d'erreur.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(archi): ajout port KataRepository et adapter ApiKataRepository</div>
     </section>
@@ -460,7 +739,7 @@ class FakeKataRepository implements KataRepository {
             <pre><code class="language-typescript">// GetKatasUseCase.test.ts — TDD, écrit AVANT l'implémentation
 describe('GetKatasUseCase', () => {
   it('retourne les katas disponibles', async () => {
-    const fakeKata: Kata = { id: toKataId('1'), title: 'FizzBuzz', difficulty: 'EASY', description: '' }
+    const fakeKata: Kata = { id: toKataId('1'), titre: 'FizzBuzz', niveau: 'FACILE', consigne: '' }
     const useCase = new GetKatasUseCase(new FakeKataRepository([fakeKata]))
     const result = await useCase.execute()
     expect(result.ok).toBe(true)
@@ -488,8 +767,23 @@ export class GetKatasUseCase {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 8.2 :</strong> qu'est-ce qui fait qu'un use case est "pur" dans ce guide ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Il ne dépend ni de Vue, ni de Pinia, ni d'un adapter concret. Il reçoit ses dépendances par abstraction et renvoie un résultat explicite sans effet de bord UI.</p>
+        </div>
+      </details>
+      <p><strong>Question 8.3 :</strong> pourquoi le fake repository est-il plus pédagogique qu'un mock opaque généré par une librairie ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'il montre clairement quel comportement est simulé et reste lisible comme du vrai code métier. Pour apprendre, un faux simple vaut mieux qu'un double de test magique.</p>
+        </div>
+      </details>
 
-      <div class="commit-suggestion">commit suggestion → feat(archi): ajout use cases purs GetKatasUseCase StartSessionUseCase</div>
+      <div class="commit-suggestion">commit suggestion → feat(archi): ajout use cases purs GetKatasUseCase StartTentativeUseCase</div>
     </section>
 
     <!-- Étape 9 -->
@@ -504,7 +798,7 @@ export class GetKatasUseCase {
         <ul>
           <li>Le store appelle le use case — <strong>jamais <code>fetch</code> directement</strong></li>
           <li>Il stocke le résultat dans un <code>ref&lt;Kata[]&gt;</code></li>
-          <li>Il expose un getter <code>katasByDifficulty(d: Difficulty)</code></li>
+          <li>Il expose un getter <code>katasByNiveau(n: Niveau)</code></li>
           <li>L'action <code>loadKatas()</code> retourne <code>void</code> — le state est mis à jour, pas retourné</li>
           <li>L'action utilise le Result pattern : si erreur, elle met à jour un état d'erreur</li>
           <li>Test avec <code>createPinia()</code> — use case mocké avec un objet qui implémente l'interface</li>
@@ -526,8 +820,8 @@ export const useKataStore = defineStore('kata', () => {
   // injecté via provide/inject dans main.ts
   const getKatasUseCase = inject&lt;GetKatasUseCase&gt;('getKatasUseCase')!
 
-  const katasByDifficulty = computed(() =>
-    (d: Difficulty) => katas.value.filter(k => k.difficulty === d)
+  const katasByNiveau = computed(() =>
+    (n: Niveau) => katas.value.filter(k => k.niveau === n)
   )
 
   async function loadKatas() {
@@ -546,7 +840,7 @@ export const useKataStore = defineStore('kata', () => {
     katas: readonly(katas),
     loadError: readonly(loadError),
     isLoading: readonly(isLoading),
-    katasByDifficulty,
+    katasByNiveau,
     loadKatas,
   }
 })</code></pre>
@@ -554,8 +848,23 @@ export const useKataStore = defineStore('kata', () => {
           </div>
         </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 9.2 :</strong> pourquoi un store n'est-il pas le bon endroit pour faire du mapping DTO → domaine ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que le store doit surtout conserver et exposer l'état. S'il commence à traduire les données ou à parler HTTP, il cumule plusieurs responsabilités.</p>
+        </div>
+      </details>
+      <p><strong>Question 9.3 :</strong> quelle différence entre "source de vérité" et "orchestrateur réseau" ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Une source de vérité centralise l'état partagé. Un orchestrateur réseau gère les appels externes, le mapping et les erreurs techniques. Dans cette architecture, le store fait surtout le premier rôle.</p>
+        </div>
+      </details>
 
-      <div class="commit-suggestion">commit suggestion → feat(store): ajout useKataStore useSessionStore état seul</div>
+      <div class="commit-suggestion">commit suggestion → feat(store): ajout useKataStore useTentativeStore état seul</div>
     </section>
 
     <!-- Étape 10 -->
@@ -573,7 +882,45 @@ export const useKataStore = defineStore('kata', () => {
           <li>Retourne <code>{ state: Ref&lt;AsyncState&lt;T&gt;&gt;, execute: () => Promise&lt;void&gt; }</code></li>
           <li>Test avec <code>@vue/test-utils</code> minimal (pas besoin de monter un composant)</li>
         </ul>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <pre><code class="language-typescript">export function useAsync&lt;T&gt;(fn: () => Promise&lt;Result&lt;T, AppError&gt;&gt;) {
+  const state = ref&lt;AsyncState&lt;T&gt;&gt;(idle())
+
+  async function execute() {
+    state.value = loading()
+    const result = await fn()
+    state.value = result.ok ? success(result.value) : error(toUserMessage(result.error))
+  }
+
+  return { state, execute }
+}</code></pre>
+          </div>
+        </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 10.1 :</strong> pourquoi ce composable reste-t-il en <code>infrastructure/</code> alors qu'il utilise <code>ref</code> ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'il reste headless : il n'utilise ni cycle de vie, ni router, ni composant. Il est lié à Vue réactivité, mais pas à l'UI affichée.</p>
+        </div>
+      </details>
+      <p><strong>Question 10.2 :</strong> pourquoi encapsuler le boilerplate async dans un composable dédié ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Pour éviter de réécrire partout le même cycle <code>loading → success/error</code>. Cela réduit la duplication et garantit un comportement homogène.</p>
+        </div>
+      </details>
+      <p><strong>Question 10.3 :</strong> pourquoi le composable reçoit-il une fonction, et pas directement une promesse déjà lancée ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'on veut contrôler précisément quand l'exécution démarre, pouvoir relancer l'opération et tester le composable sans déclencher d'effet de bord à l'instanciation.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(infra): ajout composable headless useAsync</div>
     </section>
@@ -582,7 +929,7 @@ export const useKataStore = defineStore('kata', () => {
     <section class="guide-step" id="etape-11">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-2);">11</div>
-        <h2 class="guide-step__title">useKataList + composants KataCard et HintPanel</h2>
+        <h2 class="guide-step__title">useKataList + composants KataCard et IndicePanel</h2>
       </div>
 
       <div class="exercise">
@@ -604,13 +951,13 @@ export const useKataStore = defineStore('kata', () => {
       </div>
 
       <div class="exercise">
-        <h3>Exercice 11 bis — Composants KataCard et HintPanel avec shadcn-vue</h3>
+        <h3>Exercice 11 bis — Composants KataCard et IndicePanel avec shadcn-vue</h3>
 
         <h4>KataCard.vue</h4>
         <ul>
           <li>Utilise le composant <code>Card</code> de shadcn-vue comme base</li>
           <li>Props typées avec les branded types : <code>id: KataId</code>, <code>titre: string</code>, <code>niveau: Niveau</code></li>
-          <li>Badge de difficulté avec le composant <code>Badge</code> de shadcn-vue</li>
+          <li>Badge de niveau avec le composant <code>Badge</code> de shadcn-vue</li>
           <li><code>&lt;style scoped&gt;</code> avec BEM pour les éléments spécifiques</li>
           <li>Test dans <code>tests/ui/components/KataCard.test.ts</code> : vérifie le rendu du titre et du niveau</li>
         </ul>
@@ -619,22 +966,44 @@ interface Props {
   id: KataId
   titre: string
   niveau: Niveau
-  description: string
+  consigne: string
 }</code></pre>
 
-        <h4>HintPanel.vue</h4>
+        <h4>IndicePanel.vue</h4>
         <ul>
           <li>Utilise le composant <code>ScrollArea</code> de shadcn-vue pour la zone de texte</li>
           <li>Bouton d'affichage/masquage de l'indice</li>
           <li><code>&lt;style scoped&gt;</code> avec BEM</li>
-          <li>Test dans <code>tests/ui/components/HintPanel.test.ts</code></li>
+          <li>Test dans <code>tests/ui/components/IndicePanel.test.ts</code></li>
         </ul>
         <pre><code class="language-bash"># Si pas encore installé
 npx shadcn-vue@latest add scroll-area</code></pre>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <p><strong>KataCard :</strong> affiche le titre, le niveau et la consigne dans une <code>Card</code> shadcn-vue, avec un <code>Badge</code> pour le niveau. Garde le composant purement présentatif : aucune logique de chargement ni appel API.</p>
+            <p><strong>IndicePanel :</strong> affiche un bouton pour révéler l'indice puis la zone scrollable. Le composant reçoit ses données par props et n'invente pas lui-même la logique métier.</p>
+          </div>
+        </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 11.2 :</strong> pourquoi garder <code>KataCard</code> "bête" et purement présentatif ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'un composant UI simple est plus facile à tester, réutiliser et remplacer. La logique de chargement ou de domaine doit rester dans les couches prévues pour ça.</p>
+        </div>
+      </details>
+      <p><strong>Question 11.3 :</strong> quel est l'intérêt de combiner shadcn-vue avec <code>&lt;style scoped&gt;</code> et BEM ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>shadcn-vue fournit une base d'UI fonctionnelle, tandis que <code>&lt;style scoped&gt;</code> et BEM gardent le code local, lisible et cohérent avec la convention du projet pour les ajustements spécifiques.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → feat(ui): ajout composable useKataList avec cycle de vie Vue</div>
-      <div class="commit-suggestion">commit suggestion → feat(kata): ajout composants KataCard et HintPanel avec shadcn-vue</div>
+      <div class="commit-suggestion">commit suggestion → feat(kata): ajout composants KataCard et IndicePanel avec shadcn-vue</div>
     </section>
 
     <!-- Étape 12 -->
@@ -652,7 +1021,35 @@ npx shadcn-vue@latest add scroll-area</code></pre>
           <li>Bouton "Réessayer" qui appelle <code>retry()</code></li>
           <li><code>role="status"</code> sur le loading, <code>role="alert"</code> sur l'erreur</li>
         </ul>
+        <details class="solution">
+          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
+          <div class="solution__content">
+            <p>La vue doit seulement lire l'état exposé par <code>useKataList()</code> et choisir quoi afficher. Si tu vois encore un <code>fetch</code>, un mapper ou un <code>try/catch</code> dans la vue, le refactoring n'est pas terminé.</p>
+          </div>
+        </details>
       </div>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 12.1 :</strong> quel est le rôle exact d'une vue après ce refactoring ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Assembler des composants, brancher un composable UI et afficher l'état courant. La vue décide du rendu, pas de l'accès aux données ni des traductions de format.</p>
+        </div>
+      </details>
+      <p><strong>Question 12.2 :</strong> pourquoi les attributs d'accessibilité <code>role="status"</code> et <code>role="alert"</code> sont-ils mentionnés ici ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce qu'une interface fonctionnelle ne se limite pas à "ça s'affiche". Elle doit aussi communiquer correctement les changements d'état aux technologies d'assistance.</p>
+        </div>
+      </details>
+      <p><strong>Question 12.3 :</strong> quel indice te montre qu'une vue est encore trop couplée ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>La présence de détails réseau, de mapping technique ou de logique métier dans le fichier de vue. Une vue trop couplée devient vite longue, fragile et difficile à tester.</p>
+        </div>
+      </details>
 
       <div class="commit-suggestion">commit suggestion → refactor(kata): refactoring KataListView vers useKataList</div>
     </section>
@@ -661,28 +1058,43 @@ npx shadcn-vue@latest add scroll-area</code></pre>
     <section class="guide-step" id="etape-13">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-2);">13</div>
-        <h2 class="guide-step__title">ADR 003</h2>
+        <h2 class="guide-step__title">ADR 003 — Conventions front</h2>
       </div>
 
-      <div class="exercise">
-        <h3>Exercice 13.1 — <code>docs/adr/003-architecture-hexagonale-front.md</code></h3>
-        <p>Documente les décisions :</p>
-        <ul>
-          <li>Pourquoi 3 niveaux de composables (domain / infrastructure / ui)</li>
-          <li>Pourquoi les stores Pinia n'appellent pas fetch directement</li>
-          <li>Pourquoi les mappers dans <code>infrastructure/</code> et pas dans <code>domain/</code></li>
-          <li>Alternatives rejetées (tout dans le composant, stores avec fetch, pas de mapper)</li>
-        </ul>
+      <p>Tu n'écris pas de nouvel ADR dans cette phase pour le front. L'objectif est d'appliquer <strong>ADR 003 — Conventions front</strong>, déjà lu en phase 0, pendant le refactoring de l'architecture Vue.</p>
+      <div class="subpages" style="margin-top: 16px;">
+        <a href="../guides/conventions-front.html" class="subpage">Ouvrir ADR 003 — Conventions front</a>
       </div>
-
-      <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 003 architecture hexagonale front</div>
+      <p style="margin-top: 16px;">En relisant cet ADR, vérifie trois points : nommage BEM, usage de <code>&lt;style scoped&gt;</code>, et emploi cohérent de <code>shadcn-vue</code> pour les composants UI.</p>
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 13.1 :</strong> pourquoi cette phase n'introduit-elle pas un nouvel ADR front ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Parce que la décision de conventions front est déjà prise et documentée. Cette phase doit d'abord apprendre à appliquer correctement une décision existante avant d'en ouvrir une nouvelle.</p>
+        </div>
+      </details>
+      <p><strong>Question 13.2 :</strong> quelle différence entre "respecter un ADR" et "copier une règle sans comprendre" ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Respecter un ADR implique de comprendre le problème traité, les choix faits et leurs conséquences. Sinon, la règle devient du cargo cult et sera cassée au premier cas un peu atypique.</p>
+        </div>
+      </details>
+      <p><strong>Question 13.3 :</strong> à quel moment faut-il créer un nouvel ADR ?</p>
+      <details class="solution">
+        <summary>Réponse attendue</summary>
+        <div class="solution__content">
+          <p>Quand une décision structurante, durable et discutable apparaît vraiment. Pas pour répéter une règle déjà actée, mais pour figer un choix qui aura un impact sur plusieurs fichiers ou plusieurs phases.</p>
+        </div>
+      </details>
     </section>
 
     <!-- Checklist -->
     <section class="checklist" id="checklist">
       <h2 class="checklist__title">Checklist finale phase 2</h2>
       <ul>
-        <li><input type="checkbox"> <code>domain/types/</code> : branded types, result, async, session, errors, guards</li>
+        <li><input type="checkbox"> <code>domain/types/</code> : branded types, result, async, tentative, errors, guards</li>
         <li><input type="checkbox"> <code>domain/ports/</code> : KataRepository (interface), LogPort (interface)</li>
         <li><input type="checkbox"> <code>domain/usecases/</code> : GetKatasUseCase testé en TDD Vitest pur</li>
         <li><input type="checkbox"> <code>infrastructure/api/dto/</code> : ApiKataDto</li>
@@ -695,7 +1107,7 @@ npx shadcn-vue@latest add scroll-area</code></pre>
         <li><input type="checkbox"> <code>KataListView.vue</code> refactorisé — plus de fetch inline</li>
         <li><input type="checkbox"> <code>npm run type-check</code> passe</li>
         <li><input type="checkbox"> <code>npm run test:unit</code> passe (guards + use cases + mappers + useAsync + store)</li>
-        <li><input type="checkbox"> ADR 003 committé</li>
+        <li><input type="checkbox"> ADR 003 relu et appliqué pendant le refactoring front</li>
       </ul>
     </section>
 
