@@ -47,6 +47,8 @@
 }
 
 .layout--phase {
+  --step-accent: var(--color-accent-purple);
+  --step-accent-soft: var(--color-accent-purple-bg);
   max-width: calc(var(--content-width) + (var(--sidebar-width) * 2) + 80px);
   flex-direction: row;
 }
@@ -235,7 +237,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-accent-purple);
+  background: var(--step-accent);
   color: #fff;
   display: flex;
   align-items: center;
@@ -303,10 +305,10 @@ pre[class*="language-"] {
   font-size: 13px;
   line-height: 1.55;
   overflow-x: auto;
-  background: #fff;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+  background: #2d2d2d;
+  border: 1px solid #3b3b3b;
+  color: #ccc;
+  box-shadow: none;
   padding: 14px 16px;
 }
 
@@ -315,10 +317,37 @@ pre[class*="language-"] {
   font-family: var(--font-mono);
 }
 
+/* Prism code inside <pre> must never inherit inline code styling */
+.guide-step pre code,
+pre[class*="language-"] code,
+pre[class*="language-"] > code[class*="language-"] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  padding: 0 !important;
+  text-shadow: none !important;
+}
+
+/* Prevent Prism HTML tokens from inheriting site badge styles (.tag) */
+pre .tag,
+code[class*="language-"] .tag,
+pre[class*="language-"] .tag {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: inherit !important;
+  display: inline !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  white-space: inherit !important;
+}
+
 /* Inline code */
-.guide-step p code,
-.guide-step li code,
-.guide-step td code {
+.guide-step p code:not([class*="language-"]),
+.guide-step li > code:not([class*="language-"]),
+.guide-step td code:not([class*="language-"]) {
   font-family: var(--font-mono);
   font-size: 12.5px;
   background: var(--color-bg-tag);
@@ -663,24 +692,41 @@ details.solution .solution__content {
 }
 
 /* ==========================================================================
-   Commit suggestion
+   Commit block
    ========================================================================== */
 
 .commit-suggestion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--color-bg);
-  border: 1px dashed var(--color-border-tag);
+  background: var(--step-accent-soft);
+  border-left: 4px solid var(--step-accent);
   border-radius: var(--radius-md);
-  padding: 8px 14px;
-  margin: 16px 0 8px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--color-text-muted);
+  padding: 14px 16px;
+  margin: 18px 0 8px;
 }
 
-.commit-suggestion::before {
-  content: '📦';
-  flex-shrink: 0;
+.commit-suggestion__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--step-accent);
+  margin-bottom: 8px;
+}
+
+.commit-suggestion p {
+  font-size: 13.5px;
+  color: var(--color-text-light);
+  margin: 0 0 6px;
+}
+
+.commit-suggestion p:last-child {
+  margin-bottom: 0;
+}
+
+.commit-suggestion code {
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, .55);
+  color: var(--step-accent);
+  border: 1px solid rgba(255, 255, 255, .75);
+  padding: 1px 5px;
+  border-radius: 4px;
 }
