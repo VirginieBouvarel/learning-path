@@ -39,6 +39,6 @@ Les reports déjà identifiés depuis la phase 0 sont notamment :
 
 ## À compléter avant ou pendant la phase 1
 
-- préciser le livrable exact de fin de phase 1
-- préciser le premier incrément métier réellement visé
-- préciser les fichiers source internes à relire si nécessaire
+- livrable exact de fin de phase 1 : un premier catalogue de katas persisté en PostgreSQL, exposé via `GET /katas`, `POST /katas` et `GET /katas/{id}`, avec erreurs HTTP homogènes et affichage côté frontend Vue
+- premier incrément métier réellement visé : consultation et création de katas, sans architecture hexagonale complète à ce stade
+- fichiers source internes utiles à relire pour cette phase : `docs/NEXT_PHASE.md`, `docs/audits/PHASE_1_AUDIT.md` et `site/phases/phase-0.html` comme référence concrète de trame
