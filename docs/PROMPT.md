@@ -18,6 +18,7 @@ Quand je te dis `travaille sur la phase X`, tu dois d'abord lire les fichiers de
    - le fichier `.md` dont le nom commence par `Phase X`
 9. le ou les autres fichiers de contenu déjà existants utiles au scope réel de la phase, seulement s'ils sont explicitement pointés par `docs/PHASE_X.md`
 10. le dernier audit disponible de cette phase s'il existe déjà
+    - format attendu : `docs/audits/PHASE_X_AUDIT.md`
 
 ## Références stables
 
@@ -47,15 +48,17 @@ Quand tu travailles sur une phase, tu dois :
 5. tenir compte du périmètre réel déjà présent dans les contenus de référence liés à cette phase
 6. proposer une structure cible complète avant toute édition
 7. expliciter les grandes étapes et le livrable de fin de phase
-8. attendre validation avant d'éditer
-9. réécrire la phase depuis zéro
-10. après réécriture, mettre à jour `docs/NEXT_PHASE.md` avec :
+8. rédiger un audit complet de la phase dans `docs/audits/PHASE_X_AUDIT.md` avant toute édition
+9. attendre validation avant d'éditer
+10. réécrire la phase depuis zéro
+11. après réécriture, mettre à jour `docs/NEXT_PHASE.md` avec :
    - les reports repris dans la phase courante
    - les nouveaux reports à transmettre à la phase suivante
 
 ## Exigence de méthode
 
-- ne jamais faire une simple retouche si la structure de la phase est insuffisante
+- quand je te demande de travailler sur une phase, tu dois repartir de zéro pour sa réécriture ; tu ne fais pas une simple retouche de l'existant
+- l'audit sert à cadrer cette réécriture, pas à décider entre "ajuster" ou "réécrire"
 - ne jamais enrichir superficiellement un résumé en le faisant passer pour un guide pas-à-pas
 - raisonner comme si la phase devait être exécutée seule, sans aide humaine
 - si une étape reste trop implicite, trop grosse ou trop abstraite, elle est ratée
@@ -69,10 +72,11 @@ Avant édition :
 - une structure cible complète
 - les grandes étapes
 - le livrable de fin de phase
+- un audit archivé dans `docs/audits/PHASE_X_AUDIT.md`
 
 Après édition :
 
 - la phase réécrite
 - la mise à jour de `docs/NEXT_PHASE.md`
 - si nécessaire, la mise à jour du fichier `docs/PHASE_X.md`
-- si utile, un audit archivé ou mis à jour pour garder la trace du raisonnement
+- la mise à jour de `docs/audits/PHASE_X_AUDIT.md` si le cadrage a évolué pendant le travail

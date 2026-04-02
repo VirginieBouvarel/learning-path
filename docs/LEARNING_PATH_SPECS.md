@@ -60,6 +60,29 @@ Il n'existe pas de niveau intermédiaire `overview de phase`.
 - elles peuvent contenir de la redondance, une structure ancienne ou des formulations à réécrire, mais elles ne doivent pas être ignorées
 - leur rôle est d'aider à récupérer le fond utile sans recopier mécaniquement la forme héritée de Notion
 
+## Audit de phase avant réécriture
+
+- avant toute réécriture d'une phase, il faut produire ou mettre à jour un audit riche dans `docs/audits/PHASE_X_AUDIT.md`
+- cet audit est le document maître de diagnostic et de cadrage avant édition
+- le niveau de détail attendu pour cet audit est celui de `docs/audits/PHASE_0_AUDIT.md`
+- cet audit doit être un document riche, argumenté et structuré, pas une synthèse courte
+- il doit contenir au minimum :
+  - un diagnostic sévère de l'existant
+  - une conclusion explicite sur la nécessité de réécrire la phase depuis zéro
+  - une structure cible proposée
+  - le livrable de fin de phase
+  - les grandes étapes proposées
+  - les éléments à retirer, déplacer ou reporter
+  - une position pédagogique recommandée
+  - la structure interne attendue des étapes de la phase réécrite
+- s'il existe déjà un audit pour la phase, il doit être relu avant de commencer et mis à jour au lieu de créer un doublon
+- le dossier de référence pour ces audits est uniquement `docs/audits/`
+
+## Règle de décision avant édition
+
+- quand on travaille sur une phase, on la réécrit depuis zéro ; on ne se contente pas d'ajuster marginalement l'existant
+- l'audit sert à cadrer cette réécriture, à fixer le niveau d'exigence et à définir la structure cible
+
 ## Phase 4
 
 - Faire écrire au moins 3 règles `ArchUnit` :
