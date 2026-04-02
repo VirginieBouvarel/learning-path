@@ -6,7 +6,6 @@
   <title>Phase 0 — Setup · KataSensei</title>
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/guide.css">
-  <!-- Prism.js — coloration syntaxique (Java, TypeScript, bash, YAML, JSON, XML) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
@@ -72,582 +71,982 @@
     <nav class="toc">
       <p class="toc__title">Dans ce guide</p>
       <ul class="toc__list">
-        <li><a href="#top">Présentation</a></li>
-        <li><a href="#etape-1">1 — Java &amp; SDKMAN</a></li>
-        <li><a href="#etape-2">2 — Spring Boot</a></li>
-        <li><a href="#etape-3">3 — Vue 3</a></li>
-        <li><a href="#etape-4">4 — Lint &amp; Hooks</a></li>
-        <li><a href="#etape-5">5 — Docker &amp; .env</a></li>
-        <li><a href="#etape-6">6 — Checkstyle</a></li>
-        <li><a href="#etape-7">7 — Déploiement Fly.io</a></li>
-        <li><a href="#etape-8">8 — GitLab CI/CD</a></li>
-        <li><a href="#etape-9">9 — Les ADR</a></li>
-        <li><a href="#etape-10">10 — Stylelint</a></li>
-        <li><a href="#etape-11">11 — Convention tests/</a></li>
-        <li><a href="#checklist">Checklist finale</a></li>
-        <li><a href="#erreurs">Erreurs fréquentes</a></li>
+        <li><a href="#presentation">Présentation</a></li>
+        <li><a href="#etape-1">1 — Installer WSL2 et zsh</a></li>
+        <li><a href="#etape-2">2 — Préparer l'espace de travail</a></li>
+        <li><a href="#etape-3">3 — Initialiser le repo</a></li>
+        <li><a href="#etape-4">4 — Créer le backend</a></li>
+        <li><a href="#etape-5">5 — Vérifier le backend</a></li>
+        <li><a href="#etape-6">6 — Créer le frontend</a></li>
+        <li><a href="#etape-7">7 — Faire communiquer front et back</a></li>
+        <li><a href="#phase-dod">Definition of Done</a></li>
+        <li><a href="#checklist">Checklist de phase</a></li>
+        <li><a href="#deploiement">Déploiement</a></li>
+        <li><a href="#ressources">Ressources utiles</a></li>
       </ul>
     </nav>
   </aside>
 
-  <!-- Contenu principal -->
   <main class="layout__main">
-
-    <!-- En-tête du guide -->
     <div class="guide-header" id="presentation">
       <span class="guide-header__phase-badge" style="background: var(--phase-0);">Phase 0</span>
-      <h1 class="guide-header__title">Setup — environnement, config, prod day 1</h1>
-      <p class="guide-header__meta">Durée estimée : ~6h réparties sur 1 semaine</p>
-      <p class="guide-header__intro">Ce guide te conduit de zéro à un projet qui tourne en prod. Chaque commande est expliquée. Lis avant de copier-coller.</p>
+      <h1 class="guide-header__title">Setup réel du projet — de zéro à un système minimal observable</h1>
+      <p class="guide-header__meta">Durée estimée : ~8h réparties sur 1 semaine</p>
+      <p class="guide-header__intro">
+        Cette phase part d'une situation réelle : tu es sur Windows 11, tu travailles dans Ubuntu via WSL2, et le projet KataSensei n'existe pas encore sur ta machine. À la fin de la phase, tu auras un repo Git initialisé, un backend Spring Boot qui répond, un frontend Vue qui s'affiche et une première communication HTTP visible entre les deux.
+      </p>
       <div class="tags">
-        <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">CI/CD &amp; ops</span></span>
+        <span class="tag tag--cat-ops"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">Setup &amp; environnement</span></span>
+        <span class="tag tag--cat-front"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">Frontend</span></span>
+        <span class="tag tag--cat-back"><span class="tag__dot" aria-hidden="true">⚫</span><span class="tag__label">Backend</span></span>
       </div>
       <div class="subpages" style="margin-top: 16px;">
-        <a href="phase-0-wsl2.html" class="subpage">WSL2 + ZSH</a>
-        <a href="phase-0-ide.html" class="subpage">IntelliJ IDEA</a>
+        <a href="phase-0-wsl2.html" class="subpage">WSL2 + Terminal</a>
+        <a href="phase-0-ide.html" class="subpage">IDE et éditeurs</a>
         <a href="phase-0-structure.html" class="subpage">Structure de dossiers</a>
       </div>
     </div>
 
-    <!-- Étape 1 -->
+    <section class="guide-step">
+      <h2>Objectif de phase</h2>
+      <p>Construire une base de travail exécutable sans aucun implicite, depuis un poste Windows 11 + WSL2 Ubuntu, jusqu'à un premier système fullstack minimal.</p>
+
+      <h2>État de départ exact</h2>
+      <ul>
+        <li>Windows 11 est installé.</li>
+        <li>WSL2 n'est pas encore forcément installé.</li>
+        <li>Ubuntu n'est pas encore forcément installé dans WSL.</li>
+        <li><code>zsh</code> et Oh My Zsh ne sont pas encore forcément installés.</li>
+        <li>Le repo KataSensei n'existe pas encore sur ta machine.</li>
+        <li>Tu n'as encore ni projet Spring Boot, ni projet Vue, ni dossier de travail KataSensei.</li>
+      </ul>
+
+      <h2>Résultat attendu en fin de phase</h2>
+      <ul>
+        <li>Un dossier `~/workspace/katasensei` existe dans WSL.</li>
+        <li>Ce dossier est un repo Git initialisé.</li>
+        <li>Le backend `katasensei-back` démarre sur `http://localhost:8080`.</li>
+        <li>Le health check `http://localhost:8080/actuator/health` répond avec un statut `UP`.</li>
+        <li>Le frontend `katasensei-front` démarre sur `http://localhost:5173`.</li>
+        <li>La page front affiche la réponse du backend.</li>
+      </ul>
+
+      <h2>Valeur livrée à l'utilisateur</h2>
+      <p>La valeur livrée n'est pas encore fonctionnelle côté produit, mais elle est technique et observable : le squelette complet du système tourne, ce qui rend possible la première vraie fonctionnalité métier en phase 1.</p>
+
+      <h2>Prérequis</h2>
+      <ul>
+        <li>Tu as un compte Windows 11 avec les droits nécessaires pour installer WSL.</li>
+        <li>Tu peux ouvrir Windows Terminal ou l'invite de commandes Windows pour lancer l'installation de WSL.</li>
+        <li>Tu acceptes de travailler ensuite uniquement avec des commandes Unix dans le terminal Ubuntu.</li>
+      </ul>
+
+      <h2>Outils mobilisés</h2>
+      <ul>
+        <li>Windows Terminal ou invite de commandes Windows pour l'installation initiale de WSL</li>
+        <li>Terminal Ubuntu dans WSL2</li>
+        <li><code>zsh</code> et Oh My Zsh</li>
+        <li>Git</li>
+        <li>SDKMAN pour Java et Maven</li>
+        <li>NVM pour Node.js</li>
+        <li>Spring Initializr</li>
+        <li>Vue 3 + Vite + TypeScript</li>
+        <li>Un éditeur de code connecté à WSL</li>
+      </ul>
+    </section>
+
     <section class="guide-step" id="etape-1">
       <div class="guide-step__heading">
         <div class="guide-step__number">1</div>
-        <h2 class="guide-step__title">Installer Java sans souffrir (SDKMAN)</h2>
+        <h2 class="guide-step__title">Installer WSL2, Ubuntu, zsh et Oh My Zsh</h2>
       </div>
 
-      <p><strong>Pourquoi SDKMAN ?</strong> Parce que les projets Java ont souvent des contraintes de version. SDKMAN te permet de switcher comme <code>nvm</code> avec Node. Tu ne touches jamais au Java système de ta machine.</p>
+      <p><strong>Objectif</strong><br>Installer l'environnement Unix de travail réel du learning path avant toute commande de projet.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le guide ne peut pas supposer que WSL2, Ubuntu ou `zsh` existent déjà. Il faut d'abord construire le terminal cible du parcours.</p>
+      <p><strong>État de départ exact</strong><br>Tu es sur Windows 11. Aucun repo KataSensei n'existe encore. WSL2, Ubuntu, `zsh` et Oh My Zsh peuvent être absents.</p>
 
-      <h3>1.1 — Installer SDKMAN</h3>
-      <pre><code class="language-bash">curl -s "https://get.sdkman.io" | bash</code></pre>
-      <p>Ferme et rouvre ton terminal (ou <code>source ~/.zshrc</code>), puis vérifie :</p>
-      <pre><code class="language-bash">sdk version
-# SDKMAN 5.x.x</code></pre>
-      <div class="callout--warning"><strong>⚠️ Erreur fréquente</strong> Si tu as déjà un Java installé via Homebrew, SDKMAN peut entrer en conflit. Désinstalle le Java Homebrew d'abord : <code>brew uninstall java</code></div>
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Ouvre <strong>Windows Terminal</strong> ou <strong>l'invite de commandes Windows</strong> en mode administrateur. Cette étape se fait côté Windows, pas encore dans Ubuntu.</li>
+        <li>Lance l'installation standard de WSL :
+          <pre><code class="language-bash">wsl --install</code></pre>
+          Résultat attendu : Windows indique qu'il active WSL, installe Ubuntu et demande un redémarrage si nécessaire.
+        </li>
+        <li>Redémarre la machine si Windows le demande, puis ouvre Ubuntu depuis le menu Démarrer.</li>
+        <li>Lors du premier lancement d'Ubuntu, choisis ton nom d'utilisateur Linux et ton mot de passe. Résultat attendu : un terminal Ubuntu s'ouvre avec un prompt de type <code>virginie@machine:~$</code>.</li>
+        <li>Dans ce terminal Ubuntu, mets à jour les paquets :
+          <pre><code class="language-bash">sudo apt update
+sudo apt upgrade -y</code></pre>
+        </li>
+        <li>Installe `zsh` et Git :
+          <pre><code class="language-bash">sudo apt install -y zsh git curl unzip zip</code></pre>
+        </li>
+        <li>Vérifie que `zsh` est bien installé :
+          <pre><code class="language-bash">zsh --version</code></pre>
+        </li>
+        <li>Installe Oh My Zsh :
+          <pre><code class="language-bash">sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</code></pre>
+          Résultat attendu : le script crée `~/.oh-my-zsh`, configure `~/.zshrc` et peut basculer automatiquement vers `zsh`.
+        </li>
+        <li>Vérifie quel shell est utilisé :
+          <pre><code class="language-bash">echo $SHELL</code></pre>
+          Résultat attendu : tu dois voir un chemin se terminant par <code>/zsh</code>.
+        </li>
+        <li>Si nécessaire, définis `zsh` comme shell par défaut puis ferme et rouvre Ubuntu :
+          <pre><code class="language-bash">chsh -s $(which zsh)</code></pre>
+        </li>
+      </ol>
 
-      <h3>1.2 — Installer Java 21</h3>
-      <pre><code class="language-bash">sdk install java 21.0.3-tem
-sdk default java 21.0.3-tem</code></pre>
-      <p>Vérification :</p>
-      <pre><code class="language-bash">java -version
-# openjdk version "21.0.3" ...</code></pre>
+      <h3>Résultat attendu</h3>
+      <p>Tu disposes maintenant d'un terminal Ubuntu dans WSL2 avec `zsh` et Oh My Zsh, qui constitue l'environnement officiel du learning path.</p>
 
-      <h3>1.3 — Installer Maven</h3>
-      <pre><code class="language-bash">sdk install maven
-mvn -version
-# Apache Maven 3.x.x</code></pre>
-      <p><strong>Maven c'est quoi ?</strong> L'équivalent de <code>npm</code> pour Java. <code>pom.xml</code> = <code>package.json</code>. <code>mvn install</code> = <code>npm install</code>. <code>mvn test</code> = <code>npm test</code>.</p>
-      <div class="commit-suggestion">chore(infra): installation SDKMAN Java 21 Maven</div>
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li><code>wsl --install</code> échoue : vérifie que tu es bien dans un terminal Windows lancé en administrateur.</li>
+        <li>Ubuntu ne se lance pas après installation : ouvre l'application Ubuntu depuis le menu Démarrer et termine l'initialisation du compte Linux.</li>
+        <li><code>echo $SHELL</code> n'affiche pas `zsh` : relance Ubuntu ou exécute <code>chsh -s $(which zsh)</code>, puis ferme et rouvre le terminal.</li>
+        <li>Le script Oh My Zsh échoue à télécharger : vérifie la connexion réseau puis relance la commande dans Ubuntu.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Ferme complètement Ubuntu, rouvre-le, puis vérifie sans aide que tu es bien revenue dans un shell `zsh`.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <pre><code class="language-bash">echo $SHELL
+zsh --version</code></pre>
+        <p>Tu dois voir un chemin finissant par `/zsh` et une version de `zsh` installée.</p>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> Pourquoi installer WSL2 avant même de créer le projet ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que tout le parcours repose sur un environnement Unix cohérent. Sans WSL2, les chemins, les shells, les commandes et certains comportements d'outillage ne correspondent pas au guide.</p>
+      </details>
+
+      <p><strong>Question 2</strong> À quoi sert `zsh` dans ce parcours ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>`zsh` fournit un shell Unix moderne, confortable et cohérent pour toutes les commandes du learning path. Ce n'est pas obligatoire dans l'absolu pour programmer, mais c'est l'environnement de référence ici.</p>
+      </details>
+
+      <p><strong>Question 3</strong> Pourquoi installer Oh My Zsh si ce n'est pas indispensable techniquement ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce qu'il améliore l'ergonomie du terminal dès le départ et stabilise l'environnement pédagogique du parcours. On veut éviter les variations inutiles de configuration entre phases.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>WSL2 est installé.</li>
+        <li>Ubuntu se lance correctement.</li>
+        <li>`zsh` est installé.</li>
+        <li>Oh My Zsh est installé.</li>
+        <li>Le shell actif est `zsh`.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> J'ai lancé `wsl --install` depuis un terminal Windows adapté.</li>
+        <li><input type="checkbox"> Ubuntu s'ouvre correctement sur ma machine.</li>
+        <li><input type="checkbox"> `zsh --version` répond sans erreur.</li>
+        <li><input type="checkbox"> `echo $SHELL` retourne un chemin finissant par `/zsh`.</li>
+        <li><input type="checkbox"> Oh My Zsh est installé.</li>
+      </ul>
     </section>
 
-    <!-- Étape 2 -->
     <section class="guide-step" id="etape-2">
       <div class="guide-step__heading">
         <div class="guide-step__number">2</div>
-        <h2 class="guide-step__title">Créer le projet Spring Boot</h2>
+        <h2 class="guide-step__title">Préparer l'espace de travail WSL et vérifier les outils minimaux</h2>
       </div>
 
-      <h3>2.1 — Spring Initializr (le create-vue du Java)</h3>
-      <p>Rends-toi sur <a href="https://start.spring.io" target="_blank" rel="noopener">start.spring.io</a> et configure :</p>
-      <table>
-        <thead><tr><th>Option</th><th>Valeur</th></tr></thead>
-        <tbody>
-          <tr><td>Project</td><td>Maven</td></tr>
-          <tr><td>Language</td><td>Java</td></tr>
-          <tr><td>Spring Boot</td><td>3.3.x (dernière stable)</td></tr>
-          <tr><td>Group</td><td><code>dev.katasensei</code></td></tr>
-          <tr><td>Artifact</td><td><code>katasensei-back</code></td></tr>
-          <tr><td>Java</td><td>21</td></tr>
-        </tbody>
-      </table>
-      <p><strong>Dépendances à cocher</strong> — lis chaque description avant de cocher :</p>
-      <table>
-        <thead><tr><th>Dépendance</th><th>Rôle</th><th>Équivalent front</th></tr></thead>
-        <tbody>
-          <tr><td>Spring Web</td><td>Serveur HTTP + REST</td><td>Express.js</td></tr>
-          <tr><td>Spring Data JPA</td><td>ORM pour la DB</td><td>Prisma / TypeORM</td></tr>
-          <tr><td>PostgreSQL Driver</td><td>Connecteur PostgreSQL</td><td>pg (node-postgres)</td></tr>
-          <tr><td>Spring Actuator</td><td>Health check + métriques</td><td>/healthz endpoint</td></tr>
-        </tbody>
-      </table>
-      <p>Clique <strong>Generate</strong>, dézippe dans ton dossier de projets.</p>
+      <p><strong>Objectif</strong><br>Créer un point de départ propre dans Ubuntu et vérifier que les outils indispensables existent avant de générer les projets.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Une fois l'environnement Unix installé, il faut poser un dossier de travail propre et vérifier les outils de base avant de générer les projets.</p>
+      <p><strong>État de départ exact</strong><br>Tu es sur Windows 11. WSL2, Ubuntu, `zsh` et Oh My Zsh sont installés. Aucun repo KataSensei n'existe encore. Tu vas tout faire depuis un terminal Ubuntu ouvert dans WSL.</p>
 
-      <h3>2.2 — Ouvrir dans IntelliJ IDEA</h3>
-      <p>Télécharge <a href="https://www.jetbrains.com/idea/download/" target="_blank" rel="noopener">IntelliJ IDEA Ultimate</a>. Ouvre le dossier du projet — IntelliJ détecte Maven automatiquement et télécharge les dépendances.</p>
-      <div class="callout--info"><strong>ℹ️ Pourquoi IntelliJ et pas VS Code ?</strong> Pour Java, IntelliJ a une compréhension du langage sans comparaison. Ici on tranche pour IntelliJ Ultimate afin de garder le même IDE sur tout le parcours, front comme back.</div>
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Ouvre un terminal Ubuntu dans WSL. Le prompt doit ressembler à quelque chose comme <code>virginie@machine:~$</code>.</li>
+        <li>Affiche ton dossier courant pour vérifier que tu démarres bien dans ton home Linux :
+          <pre><code class="language-bash">pwd</code></pre>
+          Tu dois voir un chemin de type <code>/home/ton-user</code>.
+        </li>
+        <li>Crée un dossier de travail unique pour tous tes projets si tu ne l'as pas encore :
+          <pre><code class="language-bash">mkdir -p ~/workspace
+cd ~/workspace</code></pre>
+          Résultat attendu : <code>pwd</code> doit répondre <code>/home/ton-user/workspace</code>.
+        </li>
+        <li>Vérifie que Git, Curl et Unzip sont disponibles :
+          <pre><code class="language-bash">git --version
+curl --version
+unzip -v</code></pre>
+          Résultat attendu : les trois commandes affichent une version sans erreur.
+        </li>
+        <li>Si une des commandes précédentes échoue, installe les outils manquants dans le même terminal Ubuntu :
+          <pre><code class="language-bash">sudo apt update
+sudo apt install -y git curl unzip zip</code></pre>
+          Résultat attendu : l'installation se termine sans message d'erreur bloquant.
+        </li>
+        <li>Vérifie si Java et Node sont déjà présents :
+          <pre><code class="language-bash">java -version
+node -v
+npm -v</code></pre>
+          Si une commande échoue, ce n'est pas grave. Tu vas les installer dans les étapes suivantes.
+        </li>
+      </ol>
 
-      <h3>2.3 — Lire le pom.xml</h3>
-      <p>Ouvre <code>pom.xml</code> et lis chaque balise. Tu dois pouvoir répondre à :</p>
+      <h3>Résultat attendu</h3>
+      <p>Tu disposes maintenant d'un terminal Ubuntu prêt à l'emploi, d'un dossier de travail explicite dans WSL et d'une vision claire des outils déjà installés ou manquants.</p>
+
+      <h3>Erreurs fréquentes</h3>
       <ul>
-        <li>Quel est le <code>groupId</code> et pourquoi ?</li>
-        <li>À quoi sert chaque <code>&lt;dependency&gt;</code> ?</li>
-        <li>Que fait le plugin <code>spring-boot-maven-plugin</code> ?</li>
+        <li><code>pwd</code> retourne un chemin qui commence par <code>/mnt/c/</code> : tu es dans le système de fichiers Windows. Reviens dans ton home Linux avec <code>cd ~</code>, puis repars dans <code>~/workspace</code>.</li>
+        <li><code>sudo: command not found</code> : ton terminal n'est probablement pas Ubuntu. Ferme-le et ouvre explicitement la distribution Ubuntu de WSL.</li>
+        <li><code>git: command not found</code> : installe Git avec <code>sudo apt install -y git</code>.</li>
       </ul>
-      <div class="callout--warning"><strong>⚠️ Erreur fréquente</strong> Ignorer le <code>pom.xml</code>. Un dev qui ne comprend pas son <code>pom.xml</code> subira son projet.</div>
-      <div class="commit-suggestion">chore(back): initialisation projet Spring Boot</div>
+
+      <h3>Exercice</h3>
+      <p>Ferme le terminal, rouvre un nouveau terminal Ubuntu, puis reviens sans aide dans le dossier `~/workspace`. Vérifie ensuite que `git --version` fonctionne toujours.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <pre><code class="language-bash">cd ~/workspace
+pwd
+git --version</code></pre>
+        <p>Tu dois voir le chemin `~/workspace` puis une version Git. Si ce n'est pas le cas, c'est que tu n'es pas revenue dans le bon terminal ou le bon dossier.</p>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> Pourquoi travaille-t-on dans le système de fichiers Linux de WSL plutôt que dans `C:\` ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que les outils Unix, Node, Java et les watchers de fichiers sont plus fiables et plus rapides dans le système de fichiers Linux natif de WSL que sur un montage Windows accessible via `/mnt/c`.</p>
+      </details>
+
+      <p><strong>Question 2</strong> Quelle est la différence entre “ouvrir Ubuntu” et “ouvrir PowerShell” dans cette phase ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Ubuntu dans WSL exécute des commandes Unix dans un environnement Linux. PowerShell exécute des commandes Windows avec d'autres conventions de chemins, de shell et d'outils. Ici tout le guide suppose un environnement Unix.</p>
+      </details>
+
+      <p><strong>Question 3</strong> Pourquoi vérifie-t-on les outils avant de créer le repo ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce qu'un setup explicite réduit les causes d'échec. Si une commande ne marche pas dès le départ, il vaut mieux le découvrir avant d'avoir déjà généré plusieurs projets et douter de la source du problème.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Tu sais ouvrir le bon terminal.</li>
+        <li>Le dossier `~/workspace` existe.</li>
+        <li>Tu sais vérifier où tu es avec <code>pwd</code>.</li>
+        <li>Tu as identifié si Git, Curl et Unzip sont installés.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> J'ai ouvert Ubuntu dans WSL.</li>
+        <li><input type="checkbox"> Je travaille dans `~/workspace` et non dans `/mnt/c/...`.</li>
+        <li><input type="checkbox"> `git --version` répond sans erreur.</li>
+        <li><input type="checkbox"> `curl --version` répond sans erreur.</li>
+        <li><input type="checkbox"> `unzip -v` répond sans erreur.</li>
+      </ul>
     </section>
 
-    <!-- Étape 3 -->
     <section class="guide-step" id="etape-3">
       <div class="guide-step__heading">
         <div class="guide-step__number">3</div>
-        <h2 class="guide-step__title">Créer le projet Vue 3</h2>
+        <h2 class="guide-step__title">Créer le dossier du projet et initialiser Git</h2>
       </div>
 
-      <h3>3.1 — create-vue avec toutes les options</h3>
-      <pre><code class="language-bash">npm create vue@latest katasensei-front</code></pre>
-      <p>Réponds exactement comme ceci :</p>
-      <pre><code class="language-bash">✔ Add TypeScript? › Yes
-✔ Add JSX Support? › No
-✔ Add Vue Router? › Yes
-✔ Add Pinia? › Yes
-✔ Add Vitest? › Yes
-✔ Add an End-to-End Testing Solution? › Playwright
-✔ Add ESLint? › Yes
-✔ Add Prettier? › Yes
-✔ Add Vue DevTools? › Yes</code></pre>
-      <pre><code class="language-bash">cd katasensei-front
-npm install
-npm run dev
-# → http://localhost:5173</code></pre>
+      <p><strong>Objectif</strong><br>Créer la racine du projet KataSensei et enlever toute ambiguïté sur l'existence du repo.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Avant de générer un backend et un frontend, il faut savoir exactement où ils vont vivre et à partir de quel dossier les commandes doivent être lancées.</p>
+      <p><strong>État de départ exact</strong><br>Tu es dans `~/workspace`. Aucun dossier `katasensei` n'existe encore, ou s'il existe tu as décidé de repartir de zéro et tu l'as supprimé manuellement avant cette étape.</p>
 
-      <h3>3.2 — Activer TypeScript strict</h3>
-      <p>Ouvre <code>tsconfig.app.json</code> et ajoute ces options :</p>
-      <pre><code class="language-json">{
-  "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  }
-}</code></pre>
-      <p><strong>Pourquoi ces options ?</strong></p>
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Depuis le terminal Ubuntu ouvert dans `~/workspace`, crée le dossier racine du projet puis entre dedans :
+          <pre><code class="language-bash">mkdir katasensei
+cd katasensei</code></pre>
+          Résultat attendu : <code>pwd</code> doit retourner <code>/home/ton-user/workspace/katasensei</code>.
+        </li>
+        <li>Initialise Git dans ce dossier :
+          <pre><code class="language-bash">git init</code></pre>
+          Résultat attendu : Git affiche un message indiquant qu'un dépôt vide a été créé.
+        </li>
+        <li>Force le nom de branche principale à `main` pour partir sur une base cohérente :
+          <pre><code class="language-bash">git branch -M main</code></pre>
+          Vérification :
+          <pre><code class="language-bash">git branch --show-current</code></pre>
+          Résultat attendu : <code>main</code>.
+        </li>
+        <li>Crée un `.gitignore` minimal à la racine du repo. Ouvre le dossier `~/workspace/katasensei` dans ton éditeur puis crée le fichier `.gitignore` avec ce contenu :
+          <pre><code class="language-gitignore">.DS_Store
+node_modules
+dist
+.idea
+.vscode
+target
+*.log</code></pre>
+        </li>
+        <li>Crée aussi un fichier `README.md` minimal pour documenter le repo dès le départ :
+          <pre><code class="language-markdown"># KataSensei
+
+Monorepo initial du projet fil rouge.
+</code></pre>
+        </li>
+        <li>Vérifie l'état du repo :
+          <pre><code class="language-bash">git status --short</code></pre>
+          Résultat attendu : tu dois voir `.gitignore` et `README.md` en fichiers non suivis.
+        </li>
+      </ol>
+
+      <h3>Résultat attendu</h3>
+      <p>Tu as maintenant un repo Git concret, avec une racine de projet explicite. Toutes les étapes suivantes partiront de `~/workspace/katasensei`.</p>
+
+      <h3>Erreurs fréquentes</h3>
       <ul>
-        <li><code>strict</code> : active 8 règles strictes d'un coup (noImplicitAny, strictNullChecks…)</li>
-        <li><code>noUncheckedIndexedAccess</code> : <code>array[0]</code> peut être <code>undefined</code> — le compilateur te force à le gérer</li>
-        <li><code>exactOptionalPropertyTypes</code> : différencie <code>{ a?: string }</code> de <code>{ a: string | undefined }</code></li>
+        <li><code>mkdir: cannot create directory 'katasensei': File exists</code> : le dossier existe déjà. Vérifie son contenu avec <code>ls</code> et décide consciemment si tu le réutilises ou si tu repars de zéro.</li>
+        <li><code>git init</code> exécuté dans le mauvais dossier : vérifie avec <code>pwd</code>. Si besoin, supprime le dossier `.git` créé au mauvais endroit seulement si tu es certaine du dossier concerné.</li>
+        <li>Le nom de branche n'est pas `main` : relance <code>git branch -M main</code> depuis la racine du repo.</li>
       </ul>
-      <div class="callout--warning"><strong>⚠️ Erreur fréquente</strong> Activer strict sur un projet existant = des centaines d'erreurs. C'est pourquoi on le fait maintenant.</div>
 
-      <h3>3.3 — Créer la structure hexagonale front dès le début</h3>
-      <pre><code class="language-bash">mkdir -p src/domain src/infrastructure src/ui
-touch src/domain/.gitkeep src/infrastructure/.gitkeep src/ui/.gitkeep</code></pre>
-      <p>Dans <code>src/domain/</code> on mettra les types purs et les use cases. Dans <code>src/infrastructure/</code> les appels API. Dans <code>src/ui/</code> les composants Vue.</p>
-      <div class="callout--tip"><strong>💡 Note</strong> Ce sont les fondations. Plus facile à poser avant de construire les murs.</div>
-      <div class="commit-suggestion">chore(front): initialisation projet Vue 3 TypeScript strict</div>
+      <h3>Exercice</h3>
+      <p>Ajoute dans `README.md` une phrase qui explique en une ligne le rôle de `katasensei-back` et `katasensei-front`, même si ces dossiers n'existent pas encore.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <pre><code class="language-markdown"># KataSensei
+
+Monorepo initial du projet fil rouge.
+
+- `katasensei-back` contiendra l'application Spring Boot.
+- `katasensei-front` contiendra l'application Vue 3.
+</code></pre>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> Pourquoi initialise-t-on Git avant de générer les projets ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que cela fixe un périmètre clair dès le départ, permet de voir immédiatement les fichiers créés et évite de se demander plus tard ce qui appartient ou non au repo.</p>
+      </details>
+
+      <p><strong>Question 2</strong> Pourquoi avoir une branche principale `main` dès la phase 0 ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que la branche principale sert de référence commune pour la suite du workflow Git, les futures branches de travail et les futures automatisations.</p>
+      </details>
+
+      <p><strong>Question 3</strong> À quoi sert `.gitignore` à ce stade ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Il évite de commiter des fichiers générés localement, lourds ou spécifiques à une machine, comme `node_modules`, `target` ou les fichiers d'IDE.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le dossier `~/workspace/katasensei` existe.</li>
+        <li>Ce dossier est un repo Git.</li>
+        <li>La branche principale s'appelle `main`.</li>
+        <li>`.gitignore` et `README.md` existent.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `pwd` affiche le dossier `~/workspace/katasensei`.</li>
+        <li><input type="checkbox"> `git branch --show-current` retourne `main`.</li>
+        <li><input type="checkbox"> `.gitignore` existe à la racine du repo.</li>
+        <li><input type="checkbox"> `README.md` existe à la racine du repo.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <div class="commit-suggestion__title">Commit</div>
+        <p>C'est le bon moment pour commit : la racine du projet existe et le repo Git est initialisé proprement.</p>
+        <p>Fichiers à commit :</p>
+        <ul>
+          <li><code>.gitignore</code></li>
+          <li><code>README.md</code></li>
+        </ul>
+        <p>Ne commit pas encore les futurs dossiers <code>katasensei-back</code> et <code>katasensei-front</code> s'ils n'existent pas encore ou ne font pas partie de cette étape.</p>
+        <p>Message suggéré : <code>chore(repo): initialisation du monorepo KataSensei</code></p>
+      </div>
     </section>
 
-    <!-- Étape 4 -->
     <section class="guide-step" id="etape-4">
       <div class="guide-step__heading">
         <div class="guide-step__number">4</div>
-        <h2 class="guide-step__title">Configurer le lint, Prettier et les hooks</h2>
+        <h2 class="guide-step__title">Installer Java 21 puis générer un backend Spring Boot minimal</h2>
       </div>
 
-      <h3>4.1 — Configurer ESLint</h3>
-      <p>create-vue a déjà généré <code>.eslintrc.cjs</code>. Installe les plugins TypeScript stricts :</p>
-      <pre><code class="language-bash">npm install -D @typescript-eslint/eslint-plugin @typescript-eslint/parser</code></pre>
-      <p>Mets à jour <code>.eslintrc.cjs</code> :</p>
-      <pre><code class="language-javascript">module.exports = {
-  extends: [
-    'plugin:vue/vue3-recommended',
-    '@vue/eslint-config-typescript/recommended',
-    '@vue/eslint-config-prettier'
-  ],
-  rules: {
-    '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/explicit-function-return-type': 'warn',
-    'vue/component-api-style': ['error', ['script-setup']]
-  }
-}</code></pre>
+      <p><strong>Objectif</strong><br>Obtenir un backend Java capable de démarrer localement dans le repo que tu viens de créer.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>La phase 0 doit prouver qu'un backend existe réellement. On installe donc Java et Maven avant de générer l'application Spring Boot.</p>
+      <p><strong>État de départ exact</strong><br>Tu es dans `~/workspace/katasensei`. Le repo existe, mais aucun dossier `katasensei-back` n'existe encore.</p>
 
-      <h3>4.2 — Configurer Prettier</h3>
-      <p>Crée <code>.prettierrc</code> à la racine :</p>
-      <pre><code class="language-json">{
-  "singleQuote": true,
-  "semi": false,
-  "printWidth": 100,
-  "trailingComma": "es5"
-}</code></pre>
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Depuis le terminal Ubuntu ouvert à la racine du repo, installe SDKMAN si ce n'est pas déjà fait :
+          <pre><code class="language-bash">curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"</code></pre>
+          Résultat attendu : la commande <code>sdk version</code> doit fonctionner.
+        </li>
+        <li>Installe Java 21 et Maven avec SDKMAN :
+          <pre><code class="language-bash">sdk install java 21.0.7-tem
+sdk default java 21.0.7-tem
+sdk install maven</code></pre>
+          Vérification :
+          <pre><code class="language-bash">java -version
+mvn -version</code></pre>
+          Résultat attendu : Java 21 et Maven s'affichent sans erreur.
+        </li>
+        <li>Toujours depuis `~/workspace/katasensei`, télécharge le squelette Spring Boot directement dans `katasensei-back` :
+          <pre><code class="language-bash">curl -L "https://start.spring.io/starter.zip?type=maven-project&amp;language=java&amp;baseDir=katasensei-back&amp;groupId=dev.katasensei&amp;artifactId=katasensei-back&amp;name=katasensei-back&amp;description=Backend%20minimal%20de%20KataSensei&amp;packageName=dev.katasensei.katasenseiback&amp;packaging=jar&amp;javaVersion=21&amp;dependencies=web,actuator" -o katasensei-back.zip
+unzip katasensei-back.zip
+rm katasensei-back.zip</code></pre>
+          Résultat attendu : le dossier `katasensei-back` existe à la racine du repo.
+        </li>
+        <li>Entre dans le dossier backend :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back</code></pre>
+        </li>
+        <li>Lance l'application générée pour vérifier qu'elle démarre avant toute modification :
+          <pre><code class="language-bash">./mvnw spring-boot:run</code></pre>
+          Résultat attendu : tu dois voir dans les logs une ligne proche de <code>Started KatasenseiBackApplication</code>.
+        </li>
+        <li>Laisse ce terminal ouvert quelques secondes pour observer les logs, puis arrête l'application avec <code>Ctrl + C</code>.</li>
+      </ol>
 
-      <h3>4.3 — Husky + lint-staged (pre-commit hook)</h3>
-      <pre><code class="language-bash">npm install -D husky lint-staged
-npx husky init</code></pre>
-      <p>Écrase <code>.husky/pre-commit</code> avec :</p>
-      <pre><code class="language-bash">npx lint-staged</code></pre>
-      <p>Ajoute dans <code>package.json</code> :</p>
-      <pre><code class="language-json">"lint-staged": {
-  "*.{ts,vue}": ["eslint --fix", "prettier --write"],
-  "*.{json,md,css}": ["prettier --write"]
-}</code></pre>
-      <p>Test : essaie de committer du code avec une erreur TypeScript → le commit est refusé. ✅</p>
+      <h3>Résultat attendu</h3>
+      <p>Le backend Spring Boot existe, compile et démarre. Tu sais dans quel dossier il se trouve et avec quelle commande le lancer.</p>
 
-      <h3>4.4 — Conventional Commits + Commitizen</h3>
-      <pre><code class="language-bash">npm install -D commitizen cz-conventional-changelog
-npx commitizen init cz-conventional-changelog --save-dev --save-exact</code></pre>
-      <p>Ajoute dans <code>package.json</code> :</p>
-      <pre><code class="language-json">"scripts": {
-  "commit": "cz"
-}</code></pre>
-      <p>Désormais : <code>npm run commit</code> au lieu de <code>git commit</code> → interface guidée.</p>
-      <p>Format des commits :</p>
-      <pre><code class="language-bash">feat(kata): add GET /katas endpoint
-fix(auth): handle expired JWT gracefully
-refactor(domain): extract KataId value object
-docs(adr): add ADR 002 tech choices</code></pre>
-      <div class="commit-suggestion">chore(front): configuration ESLint Prettier Husky Conventional Commits</div>
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li><code>sdk: command not found</code> : le shell n'a pas été rechargé. Lance <code>source "$HOME/.sdkman/bin/sdkman-init.sh"</code>.</li>
+        <li><code>java: command not found</code> après installation : ferme puis rouvre le terminal Ubuntu, ou recharge le shell SDKMAN.</li>
+        <li><code>./mvnw: Permission denied</code> : exécute <code>chmod +x mvnw</code> puis relance la commande.</li>
+        <li>Le port 8080 est déjà utilisé : identifie le processus qui l'occupe ou arrête l'autre application avant de relancer le backend.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Relance seule le backend une deuxième fois, puis arrête-le proprement avec <code>Ctrl + C</code>. L'objectif est d'ancrer la commande et le dossier à utiliser.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+./mvnw spring-boot:run</code></pre>
+        <p>Attends la ligne de démarrage, puis interrompt le process avec <code>Ctrl + C</code>.</p>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> Pourquoi utilise-t-on SDKMAN pour Java et Maven ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que SDKMAN permet de gérer proprement plusieurs versions de Java et d'outils liés, sans dépendre du système global ni bricoler les chemins à la main.</p>
+      </details>
+
+      <p><strong>Question 2</strong> À quoi sert Spring Initializr ici ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Spring Initializr génère un squelette de projet cohérent avec les bonnes dépendances, une structure standard et un point d'entrée prêt à lancer.</p>
+      </details>
+
+      <p><strong>Question 3</strong> Pourquoi vérifie-t-on d'abord que l'application générée démarre sans modification ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que cela permet d'isoler les problèmes. Si le projet généré ne démarre pas déjà, le souci vient du setup ou du scaffold, pas de ton code métier.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Java 21 est installé et visible avec <code>java -version</code>.</li>
+        <li>Maven est installé et visible avec <code>mvn -version</code>.</li>
+        <li>Le dossier `katasensei-back` existe.</li>
+        <li>Le backend démarre avec <code>./mvnw spring-boot:run</code>.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `java -version` répond avec Java 21.</li>
+        <li><input type="checkbox"> `mvn -version` répond sans erreur.</li>
+        <li><input type="checkbox"> Le dossier `katasensei-back` existe dans le repo.</li>
+        <li><input type="checkbox"> J'ai vu le log de démarrage Spring Boot.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <div class="commit-suggestion__title">Commit</div>
+        <p>C'est le bon moment pour commit : le backend minimal existe et démarre sans modification métier supplémentaire.</p>
+        <p>Fichiers à commit :</p>
+        <ul>
+          <li><code>katasensei-back/</code> dans l'état généré à cette étape</li>
+        </ul>
+        <p>Ne commit pas encore les modifications de <code>PingController.java</code> ou de <code>application.properties</code> si elles appartiennent à l'étape suivante.</p>
+        <p>Message suggéré : <code>chore(back): initialisation du backend Spring Boot minimal</code></p>
+      </div>
     </section>
 
-    <!-- Étape 5 -->
     <section class="guide-step" id="etape-5">
       <div class="guide-step__heading">
         <div class="guide-step__number">5</div>
-        <h2 class="guide-step__title">Docker Compose + variables d'environnement</h2>
+        <h2 class="guide-step__title">Ajouter une preuve backend observable avec un health check et un endpoint simple</h2>
       </div>
 
-      <h3>5.1 — Créer docker-compose.yml</h3>
-      <p>À la racine du projet back, crée <code>docker-compose.yml</code> :</p>
-      <pre><code class="language-yaml">services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: katasensei
-      POSTGRES_USER: katasensei
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U katasensei"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      <p><strong>Objectif</strong><br>Transformer le backend généré en un backend observable, avec une réponse HTTP testable depuis le terminal et le navigateur.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Un projet qui “démarre” n'est pas encore une preuve suffisante. Il faut une sortie observable : un health check et une première route applicative.</p>
+      <p><strong>État de départ exact</strong><br>Le dossier `katasensei-back` existe et démarre. Tu es prête à modifier le code généré dans ton éditeur, tout en continuant à lancer les commandes depuis le terminal Ubuntu.</p>
 
-volumes:
-  postgres_data:</code></pre>
-      <div class="callout--warning"><strong>⚠️ Le healthcheck est critique</strong> Sans lui, Spring Boot démarre avant que PostgreSQL soit prêt et plante avec une erreur cryptique.</div>
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Ouvre le dossier `~/workspace/katasensei` dans ton éditeur.</li>
+        <li>Dans le backend, crée le fichier `src/main/java/dev/katasensei/katasenseiback/PingController.java` avec ce contenu :
+          <pre><code class="language-java">package dev.katasensei.katasenseiback;
 
-      <h3>5.2 — Variables d'environnement</h3>
-      <p>Crée <code>.env</code> (ignoré par git) :</p>
-      <pre><code class="language-bash">DB_PASSWORD=localpassword123
-DB_URL=jdbc:postgresql://localhost:5432/katasensei
-DB_USERNAME=katasensei</code></pre>
-      <p>Crée <code>.env.example</code> (commité dans git) :</p>
-      <pre><code class="language-bash">DB_PASSWORD=CHANGE_ME
-DB_URL=jdbc:postgresql://localhost:5432/katasensei
-DB_USERNAME=katasensei</code></pre>
-      <p>Ajoute dans <code>.gitignore</code> :</p>
-      <pre><code class="language-bash">.env
-*.env.local</code></pre>
+import java.util.Map;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-      <h3>5.3 — Profils Spring Boot</h3>
-      <p>Renomme <code>src/main/resources/application.properties</code> en <code>application.yml</code> :</p>
-      <pre><code class="language-yaml">spring:
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info</code></pre>
-      <p>Crée <code>application-dev.yml</code> :</p>
-      <pre><code class="language-yaml">spring:
-  jpa:
-    show-sql: true
-logging:
-  level:
-    dev.katasensei: DEBUG</code></pre>
+@RestController
+@CrossOrigin(origins = "http://localhost:5173")
+public class PingController {
 
-      <h3>5.4 — Démarrer l'infra locale</h3>
-      <pre><code class="language-bash">docker-compose up -d
-# ✅ postgres démarré</code></pre>
-      <p>Vérification :</p>
-      <pre><code class="language-bash">docker-compose ps
-# katasensei-postgres   running (healthy)</code></pre>
-      <div class="commit-suggestion">chore(infra): ajout Docker Compose PostgreSQL avec variables d'environnement</div>
+    @GetMapping("/api/ping")
+    public Map&lt;String, String&gt; ping() {
+        return Map.of("message", "KataSensei back is alive");
+    }
+}</code></pre>
+          Pourquoi ici : cette route sera la preuve la plus simple de communication front/back.
+        </li>
+        <li>Ouvre le fichier `src/main/resources/application.properties` et remplace son contenu par :
+          <pre><code class="language-properties">spring.application.name=katasensei-back
+management.endpoints.web.exposure.include=health</code></pre>
+          Résultat attendu : l'endpoint Actuator `health` devient exposé en HTTP.
+        </li>
+        <li>Dans un terminal Ubuntu placé dans `~/workspace/katasensei/katasensei-back`, relance le backend :
+          <pre><code class="language-bash">./mvnw spring-boot:run</code></pre>
+        </li>
+        <li>Dans un second terminal Ubuntu, teste le health check :
+          <pre><code class="language-bash">curl http://localhost:8080/actuator/health</code></pre>
+          Résultat attendu : une réponse JSON contenant un statut `UP`.
+        </li>
+        <li>Toujours dans le second terminal, teste l'endpoint métier minimal :
+          <pre><code class="language-bash">curl http://localhost:8080/api/ping</code></pre>
+          Résultat attendu :
+          <pre><code class="language-json">{"message":"KataSensei back is alive"}</code></pre>
+        </li>
+      </ol>
+
+      <h3>Résultat attendu</h3>
+      <p>Le backend ne se contente plus de démarrer. Il possède maintenant une route technique de santé et une route applicative minimale.</p>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li><code>404</code> sur <code>/actuator/health</code> : vérifie que la propriété <code>management.endpoints.web.exposure.include=health</code> est bien présente.</li>
+        <li><code>404</code> sur <code>/api/ping</code> : vérifie le package, le nom du fichier et les annotations <code>@RestController</code> et <code>@GetMapping</code>.</li>
+        <li><code>Port 8080 was already in use</code> : un ancien backend tourne encore. Arrête-le avant de relancer.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Modifie temporairement le message de l'endpoint `/api/ping` en `KataSensei backend ready`, relance le backend, puis vérifie la nouvelle réponse avec `curl`.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <p>Dans `PingController.java`, change la valeur retournée :</p>
+        <pre><code class="language-java">return Map.of("message", "KataSensei backend ready");</code></pre>
+        <p>Puis relance :</p>
+        <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+./mvnw spring-boot:run</code></pre>
+        <p>Ensuite :</p>
+        <pre><code class="language-bash">curl http://localhost:8080/api/ping</code></pre>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> À quoi sert un health check dans un projet web ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Il sert à vérifier rapidement si l'application est démarrée et capable de répondre, localement comme plus tard en déploiement ou en supervision.</p>
+      </details>
+
+      <p><strong>Question 2</strong> Pourquoi ajoute-t-on un endpoint `/api/ping` alors que le health check existe déjà ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que le health check est une preuve technique, alors que `/api/ping` est la première route applicative simple que le frontend pourra réellement appeler.</p>
+      </details>
+
+      <p><strong>Question 3</strong> Pourquoi a-t-on besoin de `@CrossOrigin` dès cette phase ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que le frontend Vite tournera sur un autre port que le backend. Sans configuration CORS minimale, le navigateur bloquera l'appel HTTP entre `localhost:5173` et `localhost:8080`.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li><code>/actuator/health</code> répond avec un statut `UP`.</li>
+        <li><code>/api/ping</code> répond avec un JSON contenant un message.</li>
+        <li>Tu sais relancer le backend et tester ses routes depuis un second terminal.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le backend est lancé sur le port 8080.</li>
+        <li><input type="checkbox"> `curl http://localhost:8080/actuator/health` répond avec `UP`.</li>
+        <li><input type="checkbox"> `curl http://localhost:8080/api/ping` répond avec un JSON.</li>
+        <li><input type="checkbox"> Je comprends à quoi sert `@CrossOrigin` dans cette étape.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <div class="commit-suggestion__title">Commit</div>
+        <p>C'est le bon moment pour commit : le backend ne se contente plus de démarrer, il expose maintenant une preuve technique et une première route applicative.</p>
+        <p>Fichiers à commit :</p>
+        <ul>
+          <li><code>katasensei-back/src/main/java/dev/katasensei/katasenseiback/PingController.java</code></li>
+          <li><code>katasensei-back/src/main/resources/application.properties</code></li>
+        </ul>
+        <p>Ne commit pas encore les fichiers du frontend qui n'appartiennent pas à cette étape.</p>
+        <p>Message suggéré : <code>feat(back): ajout du health check exposé et du premier endpoint ping</code></p>
+      </div>
     </section>
 
-    <!-- Étape 6 -->
     <section class="guide-step" id="etape-6">
       <div class="guide-step__heading">
         <div class="guide-step__number">6</div>
-        <h2 class="guide-step__title">Checkstyle côté Java</h2>
+        <h2 class="guide-step__title">Installer Node.js puis créer un frontend Vue 3 minimal</h2>
       </div>
 
-      <h3>6.1 — Ajouter Checkstyle dans pom.xml</h3>
-      <pre><code class="language-xml">&lt;plugin&gt;
-  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-  &lt;artifactId&gt;maven-checkstyle-plugin&lt;/artifactId&gt;
-  &lt;version&gt;3.3.1&lt;/version&gt;
-  &lt;configuration&gt;
-    &lt;configLocation&gt;google_checks.xml&lt;/configLocation&gt;
-    &lt;failsOnError&gt;true&lt;/failsOnError&gt;
-  &lt;/configuration&gt;
-  &lt;executions&gt;
-    &lt;execution&gt;
-      &lt;goals&gt;&lt;goal&gt;check&lt;/goal&gt;&lt;/goals&gt;
-    &lt;/execution&gt;
-  &lt;/executions&gt;
-&lt;/plugin&gt;</code></pre>
-      <pre><code class="language-bash">mvn checkstyle:check</code></pre>
-      <div class="callout--info"><strong>ℹ️ Équivalent Java d'ESLint</strong> Google Checks est un standard répandu — tu rencontreras ce style sur la plupart des projets Java sérieux.</div>
-      <div class="commit-suggestion">chore(back): ajout Checkstyle Google Java style</div>
+      <p><strong>Objectif</strong><br>Obtenir une interface Vue visible localement dans le même repo que le backend.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>La phase 0 doit produire un système complet. Une fois le backend observable, on ajoute un frontend minimal capable d'afficher une page.</p>
+      <p><strong>État de départ exact</strong><br>Le backend existe et répond. Le dossier `katasensei-front` n'existe pas encore. Tu es toujours dans le repo `~/workspace/katasensei`.</p>
+
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Dans un terminal Ubuntu placé à la racine du repo, installe NVM si nécessaire :
+          <pre><code class="language-bash">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] &amp;&amp; \. "$NVM_DIR/nvm.sh"</code></pre>
+          Vérification :
+          <pre><code class="language-bash">nvm --version</code></pre>
+        </li>
+        <li>Installe Node.js 22 et active-le dans le terminal courant :
+          <pre><code class="language-bash">nvm install 22
+nvm use 22
+node -v
+npm -v</code></pre>
+          Résultat attendu : les commandes `node -v` et `npm -v` répondent sans erreur.
+        </li>
+        <li>Place-toi à la racine du repo puis génère le frontend :
+          <pre><code class="language-bash">cd ~/workspace/katasensei
+npm create vue@latest katasensei-front</code></pre>
+          Réponds exactement :
+          <pre><code class="language-bash">Add TypeScript? Yes
+Add JSX Support? No
+Add Vue Router for Single Page Application development? No
+Add Pinia for state management? No
+Add Vitest for Unit Testing? Yes
+Add an End-to-End Testing Solution? No
+Add ESLint for code quality? Yes
+Add Prettier for code formatting? Yes</code></pre>
+        </li>
+        <li>Entre dans le dossier du frontend puis installe les dépendances :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+npm install</code></pre>
+        </li>
+        <li>Remplace le contenu de `src/App.vue` par cette version minimale :
+          <pre><code class="language-html">&lt;script setup lang="ts"&gt;
+const title = 'KataSensei front is running'
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;main&gt;
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+    &lt;p&gt;Le frontend Vue 3 tourne en local.&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+main {
+  max-width: 720px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+  font-family: sans-serif;
+}
+&lt;/style&gt;</code></pre>
+        </li>
+        <li>Lance le frontend :
+          <pre><code class="language-bash">npm run dev</code></pre>
+          Résultat attendu : Vite affiche une URL locale, en général <code>http://localhost:5173</code>.
+        </li>
+        <li>Ouvre cette URL dans le navigateur Windows. Tu dois voir le titre “KataSensei front is running”.</li>
+      </ol>
+
+      <h3>Résultat attendu</h3>
+      <p>Le frontend Vue 3 existe, s'affiche localement et fait partie du même repo que le backend.</p>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li><code>nvm: command not found</code> : recharge le shell avec les lignes `export NVM_DIR=...` puis relance.</li>
+        <li><code>npm ERR! code EACCES</code> : n'utilise pas `sudo npm install`. Vérifie que Node a bien été installé via NVM dans ton home.</li>
+        <li>Le navigateur n'affiche rien sur `localhost:5173` : vérifie que `npm run dev` tourne encore dans le terminal et qu'aucun autre projet Vite n'utilise déjà ce port.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Ajoute une deuxième phrase dans `App.vue` qui explique que la communication avec le backend sera testée à l'étape suivante.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <pre><code class="language-html">&lt;template&gt;
+  &lt;main&gt;
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+    &lt;p&gt;Le frontend Vue 3 tourne en local.&lt;/p&gt;
+    &lt;p&gt;L'étape suivante affichera une réponse renvoyée par le backend.&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/template&gt;</code></pre>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> Pourquoi installe-t-on Node avec NVM plutôt qu'avec le gestionnaire système ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que NVM permet de gérer plusieurs versions de Node sans polluer le système et sans dépendre d'une version globale imposée par Ubuntu.</p>
+      </details>
+
+      <p><strong>Question 2</strong> Pourquoi le frontend et le backend sont-ils dans le même repo ici ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que ce learning path suit un monorepo pédagogique simple. Cela rend les chemins, l'historique Git et la compréhension globale plus faciles au démarrage.</p>
+      </details>
+
+      <p><strong>Question 3</strong> Pourquoi ne configure-t-on pas encore Vue Router ou Pinia ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce que la phase 0 vise une preuve minimale observable. Ajouter trop d'outillage avant la première communication réelle compliquerait inutilement le démarrage.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Node.js et npm fonctionnent dans WSL.</li>
+        <li>Le dossier `katasensei-front` existe.</li>
+        <li>Le frontend s'affiche sur `http://localhost:5173`.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `node -v` répond sans erreur.</li>
+        <li><input type="checkbox"> `npm -v` répond sans erreur.</li>
+        <li><input type="checkbox"> Le dossier `katasensei-front` existe dans le repo.</li>
+        <li><input type="checkbox"> J'ai vu la page Vue dans le navigateur.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <div class="commit-suggestion__title">Commit</div>
+        <p>C'est le bon moment pour commit : le frontend Vue existe, se lance localement et affiche une première page visible.</p>
+        <p>Fichiers à commit :</p>
+        <ul>
+          <li><code>katasensei-front/</code> dans l'état généré à cette étape</li>
+          <li>la première version minimale de <code>katasensei-front/src/App.vue</code></li>
+        </ul>
+        <p>Ne commit pas encore la version de <code>src/App.vue</code> qui appelle le backend si elle appartient à l'étape suivante.</p>
+        <p>Message suggéré : <code>chore(front): initialisation du frontend Vue 3 TypeScript</code></p>
+      </div>
     </section>
 
-    <!-- Étape 7 -->
     <section class="guide-step" id="etape-7">
       <div class="guide-step__heading">
         <div class="guide-step__number">7</div>
-        <h2 class="guide-step__title">Premier déploiement en prod (Fly.io)</h2>
+        <h2 class="guide-step__title">Faire communiquer le frontend et le backend</h2>
       </div>
 
-      <h3>7.1 — Installer le CLI Fly</h3>
-      <pre><code class="language-bash">brew install flyctl
-fly auth login</code></pre>
+      <p><strong>Objectif</strong><br>Afficher dans le navigateur une donnée renvoyée par le backend pour prouver que le système complet fonctionne déjà.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>La phase 0 ne doit pas se terminer avec deux applications isolées. Il faut une preuve observable de communication front/back.</p>
+      <p><strong>État de départ exact</strong><br>Le backend répond sur `localhost:8080/api/ping`. Le frontend tourne sur `localhost:5173`. Les deux applications sont encore très simples.</p>
 
-      <h3>7.2 — Dockerfile minimal (imparfait, c'est voulu)</h3>
-      <p>Crée <code>Dockerfile</code> à la racine du back :</p>
-      <pre><code class="language-docker">FROM eclipse-temurin:21-jre-alpine
-WORKDIR /app
-COPY target/katasensei-back-*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
-      <div class="callout--tip"><strong>💡 Note</strong> Dockerfile imparfait déployé > Dockerfile parfait non déployé. Le multi-stage viendra en phase 7.</div>
+      <h3>Micro-étapes</h3>
+      <ol>
+        <li>Laisse le backend démarré dans un premier terminal Ubuntu :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+./mvnw spring-boot:run</code></pre>
+        </li>
+        <li>Laisse le frontend démarré dans un second terminal Ubuntu :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+npm run dev</code></pre>
+        </li>
+        <li>Dans `katasensei-front/src/App.vue`, remplace le contenu par :
+          <pre><code class="language-html">&lt;script setup lang="ts"&gt;
+import { onMounted, ref } from 'vue'
 
-      <h3>7.3 — Déployer sur Fly.io</h3>
-      <pre><code class="language-bash">mvn package -DskipTests
-fly launch
-# Fly détecte le Dockerfile automatiquement
-# Réponds aux questions : région = cdg (Paris), PostgreSQL = non (on gère le nôtre)</code></pre>
-      <p>Ajoute les secrets :</p>
-      <pre><code class="language-bash">fly secrets set DB_URL="jdbc:postgresql://..."
-fly secrets set DB_USERNAME="katasensei"
-fly secrets set DB_PASSWORD="..."</code></pre>
-      <pre><code class="language-bash">fly deploy</code></pre>
+const backendMessage = ref('Chargement en cours...')
+const errorMessage = ref('')
 
-      <h3>7.4 — Vérifier que ça tourne</h3>
-      <pre><code class="language-bash">curl https://katasensei-back.fly.dev/actuator/health
-# {"status":"UP"}</code></pre>
-      <p>🎉 <strong>KataSensei a une URL publique.</strong></p>
-      <div class="commit-suggestion">chore(infra): premier déploiement Fly.io GET /actuator/health</div>
-    </section>
+onMounted(async () =&gt; {
+  try {
+    const response = await fetch('http://localhost:8080/api/ping')
 
-    <!-- Étape 8 -->
-    <section class="guide-step" id="etape-8">
-      <div class="guide-step__heading">
-        <div class="guide-step__number">8</div>
-        <h2 class="guide-step__title">Pipeline GitLab CI/CD minimal</h2>
-      </div>
+    if (!response.ok) {
+      throw new Error('Le backend a répondu avec une erreur HTTP')
+    }
 
-      <p>Crée <code>.gitlab-ci.yml</code> :</p>
-      <pre><code class="language-yaml">stages:
-  - test
-  - deploy
+    const data = (await response.json()) as { message: string }
+    backendMessage.value = data.message
+  } catch (error) {
+    errorMessage.value =
+      error instanceof Error ? error.message : 'Erreur inconnue pendant l&apos;appel API'
+  }
+})
+&lt;/script&gt;
 
-test-back:
-  stage: test
-  image: maven:3.9-eclipse-temurin-21
-  script:
-    - cd katasensei-back
-    - mvn test
+&lt;template&gt;
+  &lt;main&gt;
+    &lt;h1&gt;KataSensei démarre correctement&lt;/h1&gt;
+    &lt;p&gt;Frontend : visible sur le port 5173.&lt;/p&gt;
+    &lt;p&gt;Backend : attendu sur le port 8080.&lt;/p&gt;
+    &lt;p&gt;Message du backend : {{ backendMessage }}&lt;/p&gt;
+    &lt;p v-if="errorMessage"&gt;Erreur observée : {{ errorMessage }}&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/template&gt;
 
-test-front:
-  stage: test
-  image: node:20
-  script:
-    - cd katasensei-front
-    - npm ci
-    - npm run type-check
-    - npm run lint
-    - npm run test:unit
+&lt;style scoped&gt;
+main {
+  max-width: 720px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+  font-family: sans-serif;
+}
+&lt;/style&gt;</code></pre>
+        </li>
+        <li>Retourne sur le navigateur à l'adresse du frontend et recharge la page.</li>
+        <li>Résultat attendu : la ligne “Message du backend” doit afficher <code>KataSensei back is alive</code> ou la variante que tu as définie dans l'exercice précédent.</li>
+        <li>Arrête ensuite l'un des deux serveurs pour observer un cas d'erreur. Par exemple, coupe le backend avec <code>Ctrl + C</code> puis recharge la page front. Résultat attendu : un message d'erreur apparaît.</li>
+      </ol>
 
-deploy-back:
-  stage: deploy
-  image: flyio/flyctl:latest
-  needs: [test-back, test-front]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-  script:
-    - cd katasensei-back
-    - fly deploy --remote-only</code></pre>
-      <div class="callout--info"><strong>ℹ️ Règle d'or CI</strong> Le job <code>deploy</code> ne tourne que si <code>test-back</code> et <code>test-front</code> sont verts. Les tests protègent la prod.</div>
-      <div class="callout--info"><strong>ℹ️ Variables CI</strong> Ajoute <code>FLY_API_TOKEN</code> dans <code>Settings → CI/CD → Variables</code> sur GitLab avant d'activer le déploiement.</div>
-      <div class="commit-suggestion">chore(ci): ajout pipeline GitLab CI/CD test + deploy</div>
-    </section>
+      <h3>Résultat attendu</h3>
+      <p>Tu disposes maintenant de la première preuve complète du système : un front visible qui appelle un back réel et affiche sa réponse.</p>
 
-    <!-- Étape 9 -->
-    <section class="guide-step" id="etape-9">
-      <div class="guide-step__heading">
-        <div class="guide-step__number">9</div>
-        <h2 class="guide-step__title">Les ADR</h2>
-      </div>
-
-      <div class="callout--info"><strong>ADR = Architecture Decision Record</strong> Un ADR est un document court qui capture une décision d'architecture ou de conception importante dans un projet logiciel : le contexte, la décision prise, ses conséquences et les alternatives rejetées. Il sert à comprendre plus tard pourquoi un choix a été fait, sans dépendre de la mémoire de l'équipe.</div>
-
-      <p>Dans cette phase, tu ne rédiges pas encore d'ADR. Tu lis trois ADR de référence pour comprendre leur rôle et le niveau de précision attendu.</p>
-      <div class="subpages" style="margin-top: 16px;">
-        <a href="../guides/ubiquitous-language.html" class="subpage">ADR 001 — Ubiquitous Language</a>
-        <a href="../guides/choix-technologiques.html" class="subpage">ADR 002 — Choix technologiques</a>
-        <a href="../guides/conventions-front.html" class="subpage">ADR 003 — Conventions front</a>
-      </div>
-      <p style="margin-top: 16px;">Le premier petit ADR à rédiger en autonomie arrive en phase 1 avec la gestion d'erreurs centralisée. À ce moment-là, le périmètre est assez petit pour servir d'exercice utile sans te noyer.</p>
-    </section>
-
-    <!-- Étape 10 -->
-    <section class="guide-step" id="etape-10">
-      <div class="guide-step__heading">
-        <div class="guide-step__number">10</div>
-        <h2 class="guide-step__title">Stylelint</h2>
-      </div>
-
-      <h3>10.1 — Installer Stylelint</h3>
-      <pre><code class="language-bash">npm install -D stylelint stylelint-config-recommended-vue</code></pre>
-      <p>Crée <code>.stylelintrc.json</code> à la racine du front :</p>
-      <pre><code class="language-json">{
-  "extends": ["stylelint-config-recommended-vue"]
-}</code></pre>
-      <p>Ajoute le script dans <code>package.json</code> :</p>
-      <pre><code class="language-json">"scripts": {
-  "lint:css": "stylelint \"src/**/*.vue\""
-}</code></pre>
-      <p>Ajoute dans <code>lint-staged</code> (dans <code>package.json</code>) :</p>
-      <pre><code class="language-json">"lint-staged": {
-  "*.vue": ["eslint --fix", "stylelint --fix", "prettier --write"]
-}</code></pre>
-
-      <h3>10.2 — Configurer dans IntelliJ</h3>
-      <p>Settings → Languages &amp; Frameworks → Style Sheets → Stylelint :</p>
+      <h3>Erreurs fréquentes</h3>
       <ul>
-        <li>✅ <strong>Enable</strong></li>
-        <li>Stylelint package : <code>katasensei-front/node_modules/stylelint</code></li>
-        <li>✅ <strong>Run on save</strong></li>
+        <li>Le navigateur affiche une erreur CORS : vérifie la présence de <code>@CrossOrigin(origins = "http://localhost:5173")</code> sur le contrôleur backend.</li>
+        <li>Le message reste sur “Chargement en cours...” : vérifie que le backend tourne réellement sur le port 8080 et que l'URL appelée est correcte.</li>
+        <li>Le message d'erreur apparaît alors que le backend tourne : teste d'abord l'endpoint avec <code>curl http://localhost:8080/api/ping</code> pour savoir si le problème vient du backend ou du frontend.</li>
       </ul>
-      <div class="commit-suggestion">chore(front): ajout Stylelint avec config Vue</div>
-    </section>
 
-    <!-- Étape 11 -->
-    <section class="guide-step" id="etape-11">
-      <div class="guide-step__heading">
-        <div class="guide-step__number">11</div>
-        <h2 class="guide-step__title">Convention tests/</h2>
+      <h3>Exercice</h3>
+      <p>Change le texte du titre principal du frontend pour qu'il résume en une phrase ce que prouve cette phase 0.</p>
+
+      <details>
+        <summary>Solution - A consulter après 20 min</summary>
+        <p>Exemple de titre acceptable :</p>
+        <pre><code class="language-html">&lt;h1&gt;Le squelette fullstack KataSensei fonctionne en local&lt;/h1&gt;</code></pre>
+        <p>Le point important est que le titre parle d'une preuve réelle, pas d'une intention abstraite.</p>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p><strong>Question 1</strong> Pourquoi cette communication front/back est-elle la vraie fin logique de la phase 0 ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce qu'elle prouve que l'environnement, le backend, le frontend, les ports, le navigateur et les échanges HTTP fonctionnent ensemble. C'est une base exploitable pour la suite.</p>
+      </details>
+
+      <p><strong>Question 2</strong> Pourquoi affiche-t-on aussi les erreurs côté front ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce qu'un système observable ne doit pas seulement montrer le cas nominal. Voir le cas d'échec permet de distinguer un chargement bloqué d'un backend inaccessible.</p>
+      </details>
+
+      <p><strong>Question 3</strong> Pourquoi n'introduit-on pas encore de couche d'abstraction API ou d'architecture hexagonale front ?</p>
+      <details>
+        <summary>Réponse attendue</summary>
+        <p>Parce qu'avant d'abstraire, il faut d'abord voir clairement le problème concret à résoudre. La phase 0 doit montrer le flux HTTP le plus simple possible avant d'introduire des couches supplémentaires.</p>
+      </details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le frontend charge et affiche une donnée renvoyée par le backend.</li>
+        <li>Le cas d'erreur est observable quand le backend est arrêté.</li>
+        <li>Tu sais quel terminal lancer pour chaque application.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le backend tourne sur `localhost:8080`.</li>
+        <li><input type="checkbox"> Le frontend tourne sur `localhost:5173`.</li>
+        <li><input type="checkbox"> La page front affiche le message renvoyé par `/api/ping`.</li>
+        <li><input type="checkbox"> Si j'arrête le backend, une erreur visible apparaît côté front.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <div class="commit-suggestion__title">Commit</div>
+        <p>C'est le bon moment pour commit : la première communication front/back est visible dans le navigateur et le cas d'erreur principal est observable.</p>
+        <p>Fichiers à commit :</p>
+        <ul>
+          <li><code>katasensei-front/src/App.vue</code></li>
+        </ul>
+        <p>Ne commit pas d'autres fichiers si tu n'as modifié que cette intégration frontend.</p>
+        <p>Message suggéré : <code>feat(front): affichage du premier appel HTTP vers le backend</code></p>
       </div>
-
-      <p>Prépare dès maintenant le dossier <code>tests/</code> à côté de <code>src/</code> en reproduisant la même arborescence. Vitest et Playwright font partie du scaffold de départ, même si leur usage réel se construira ensuite au fil du parcours.</p>
-      <pre><code class="language-bash">mkdir -p tests/domain/usecases
-mkdir -p tests/domain/types
-mkdir -p tests/infrastructure/api/mappers
-mkdir -p tests/stores
-mkdir -p tests/ui/components
-mkdir -p tests/ui/views
-mkdir -p tests/ui/composables</code></pre>
-      <div class="callout--info"><strong>ℹ️ Convention</strong> <code>tests/domain/usecases/GetKatasUseCase.test.ts</code> teste <code>src/domain/usecases/GetKatasUseCase.ts</code>. L'arborescence est identique, seul le dossier racine change.</div>
-      <div class="commit-suggestion">chore(front): préparation structure dossier tests avec scaffold complet</div>
     </section>
 
-    <!-- Checklist finale -->
+    <section class="guide-step" id="phase-dod">
+      <h2>Definition of Done de la phase</h2>
+      <ul>
+        <li>Le repo `~/workspace/katasensei` existe et est initialisé avec Git.</li>
+        <li>Le backend Spring Boot démarre localement sur le port 8080.</li>
+        <li>Le health check `GET /actuator/health` répond avec `UP`.</li>
+        <li>Le backend expose un endpoint `GET /api/ping` répondant en JSON.</li>
+        <li>Le frontend Vue 3 démarre localement sur le port 5173.</li>
+        <li>Le frontend affiche une donnée renvoyée par le backend.</li>
+        <li>Le cas d'échec principal est observable quand le backend est coupé.</li>
+        <li>Au moins un premier commit propre peut être créé à partir de ces étapes.</li>
+      </ul>
+    </section>
+
     <section class="checklist" id="checklist">
-      <h2 class="checklist__title">☑ Checklist finale — Phase 0</h2>
+      <h2 class="checklist__title">Checklist manuelle de validation — Phase 0</h2>
       <ul>
-        <li><input type="checkbox"> <code>java -version</code> → Java 21</li>
-        <li><input type="checkbox"> <code>mvn -version</code> → Maven 3.x</li>
-        <li><input type="checkbox"> IntelliJ ouvre le projet sans erreur</li>
-        <li><input type="checkbox"> <code>npm run dev</code> → Vue tourne sur localhost:5173</li>
-        <li><input type="checkbox"> TypeScript strict activé (<code>strict: true</code> + les 4 autres options)</li>
-        <li><input type="checkbox"> Structure <code>domain/infra/ui</code> créée côté front</li>
-        <li><input type="checkbox"> ESLint + Prettier configurés</li>
-        <li><input type="checkbox"> Pre-commit hook actif (teste avec un commit incorrect)</li>
-        <li><input type="checkbox"> <code>docker-compose up -d</code> → postgres healthy</li>
-        <li><input type="checkbox"> <code>mvn spring-boot:run</code> → Spring démarre et se connecte à la DB</li>
-        <li><input type="checkbox"> <code>curl localhost:8080/actuator/health</code> → <code>{"status":"UP"}</code></li>
-        <li><input type="checkbox"> <code>.env.example</code> commité, <code>.env</code> ignoré</li>
-        <li><input type="checkbox"> <code>fly deploy</code> → KataSensei a une URL publique</li>
-        <li><input type="checkbox"> Pipeline GitLab CI/CD vert sur le premier push</li>
-        <li><input type="checkbox"> ADR 001 lu et compris comme référence de vocabulaire métier</li>
-        <li><input type="checkbox"> ADR 002 lu et compris comme référence de stack initiale</li>
-        <li><input type="checkbox"> Stylelint installé et configuré (on save dans IntelliJ)</li>
-        <li><input type="checkbox"> Structure <code>tests/</code> préparée selon la convention miroir de <code>src/</code></li>
-        <li><input type="checkbox"> ADR 003 lu et compris si tu figes déjà les conventions front en phase 0</li>
+        <li><input type="checkbox"> J'ai travaillé uniquement depuis un terminal Ubuntu dans WSL.</li>
+        <li><input type="checkbox"> Le dossier `~/workspace/katasensei` existe dans le système de fichiers Linux.</li>
+        <li><input type="checkbox"> `git branch --show-current` retourne `main`.</li>
+        <li><input type="checkbox"> `java -version` répond avec Java 21.</li>
+        <li><input type="checkbox"> `mvn -version` répond sans erreur.</li>
+        <li><input type="checkbox"> `node -v` et `npm -v` répondent sans erreur.</li>
+        <li><input type="checkbox"> `curl http://localhost:8080/actuator/health` retourne un JSON avec `UP`.</li>
+        <li><input type="checkbox"> `curl http://localhost:8080/api/ping` retourne un JSON avec un message.</li>
+        <li><input type="checkbox"> Le navigateur affiche le frontend sur `http://localhost:5173`.</li>
+        <li><input type="checkbox"> Le frontend affiche bien la réponse du backend.</li>
+        <li><input type="checkbox"> Si j'arrête le backend, je vois une erreur visible côté frontend.</li>
       </ul>
     </section>
 
-    <!-- Erreurs fréquentes -->
-    <section class="errors-table" id="erreurs">
-      <h2>Erreurs fréquentes</h2>
-      <table>
-        <thead><tr><th>Erreur</th><th>Cause probable</th><th>Solution</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>SDKMAN command not found</code></td>
-            <td>Shell non rechargé</td>
-            <td><code>source ~/.zshrc</code> ou rouvre le terminal</td>
-          </tr>
-          <tr>
-            <td><code>Connection refused</code> à la DB</td>
-            <td>Docker pas démarré</td>
-            <td><code>docker-compose up -d</code></td>
-          </tr>
-          <tr>
-            <td><code>Could not connect to localhost:5432</code></td>
-            <td>PostgreSQL pas encore healthy</td>
-            <td>Attendre 10s, retester</td>
-          </tr>
-          <tr>
-            <td><code>Whitelabel Error Page</code></td>
-            <td>Route introuvable</td>
-            <td>Normal sans contrôleur — <code>/actuator/health</code> fonctionne</td>
-          </tr>
-          <tr>
-            <td>Commit refusé par Husky</td>
-            <td>Lint ou type error</td>
-            <td>Lire le message d'erreur, corriger, recommitter</td>
-          </tr>
-          <tr>
-            <td><code>FLY_API_TOKEN</code> manquant en CI</td>
-            <td>Variable GitLab CI/CD non configurée</td>
-            <td><code>fly tokens create deploy</code> puis ajoute <code>FLY_API_TOKEN</code> dans <code>Settings → CI/CD → Variables</code></td>
-          </tr>
-        </tbody>
-      </table>
+    <section class="guide-step" id="deploiement">
+      <h2>Stratégie de déploiement de fin de phase</h2>
+      <p>Cette phase 0 ne cherche pas encore une mise en production complète. Ce serait prématuré tant que la structure du projet, les conventions de qualité et la stratégie d'infrastructure ne sont pas encore posées. En revanche, la préparation est immédiatement exploitable :</p>
+      <ul>
+        <li>les ports sont connus et stables en local ;</li>
+        <li>le backend possède déjà un health check ;</li>
+        <li>le frontend sait déjà appeler le backend ;</li>
+        <li>le repo est initialisé proprement pour accueillir la suite du workflow.</li>
+      </ul>
+      <p>La phase suivante pourra donc introduire les premières conventions de qualité, la structuration du code et une stratégie de déploiement sans repartir d'un setup fragile.</p>
     </section>
 
-    <!-- Ce que tu sais faire -->
-    <section class="skills-summary">
-      <h2>Ce que tu sais faire après cette phase</h2>
+    <section class="guide-step" id="ressources">
+      <h2>Ressources externes utiles</h2>
       <ul>
-        <li>Installer et gérer Java avec SDKMAN</li>
-        <li>Lire et comprendre un <code>pom.xml</code></li>
-        <li>Créer un projet Spring Boot depuis Spring Initializr</li>
-        <li>Configurer TypeScript strict sur Vue 3</li>
-        <li>Mettre en place ESLint + Prettier + Husky</li>
-        <li>Écrire des commits Conventional Commits</li>
-        <li>Utiliser Docker Compose pour l'infra locale</li>
-        <li>Gérer les variables d'environnement proprement</li>
-        <li>Déployer sur Fly.io</li>
-        <li>Écrire un pipeline GitLab CI/CD basique</li>
-        <li>Documenter une décision technique (ADR)</li>
+        <li><a href="https://learn.microsoft.com/windows/wsl/" target="_blank" rel="noopener">Documentation officielle WSL</a> — à relire si ton terminal Ubuntu ou l'accès aux fichiers WSL pose problème.</li>
+        <li><a href="https://sdkman.io/" target="_blank" rel="noopener">SDKMAN</a> — utile pour comprendre la gestion de versions de Java et Maven.</li>
+        <li><a href="https://start.spring.io/" target="_blank" rel="noopener">Spring Initializr</a> — générateur officiel de projets Spring Boot.</li>
+        <li><a href="https://vuejs.org/guide/quick-start.html" target="_blank" rel="noopener">Vue.js Quick Start</a> — utile pour comparer ce que fait `create-vue` avec le scaffold officiel.</li>
+        <li><a href="https://vite.dev/guide/" target="_blank" rel="noopener">Documentation Vite</a> — utile pour comprendre le serveur de dev front et les ports utilisés.</li>
       </ul>
     </section>
 
-    <!-- Sous-pages -->
     <div class="subpages-section">
       <p class="subpages-section__title">Guides complémentaires — Phase 0</p>
       <div class="subpages">
         <a href="phase-0-wsl2.html" class="subpage">WSL2 + ZSH + Terminal</a>
-        <a href="phase-0-ide.html" class="subpage">IntelliJ IDEA — configuration complète</a>
+        <a href="phase-0-ide.html" class="subpage">IDE et éditeurs</a>
         <a href="phase-0-structure.html" class="subpage">Structure de dossiers</a>
       </div>
     </div>
 
     <p class="footer">KataSensei Learning Path · Phase 0</p>
-
   </main>
 </div>
 
@@ -657,10 +1056,8 @@ mkdir -p tests/ui/composables</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-docker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-properties.min.js"></script>
 </body>
 </html>
