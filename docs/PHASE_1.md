@@ -29,6 +29,9 @@ Les reports déjà identifiés depuis la phase 0 sont notamment :
 
 ## Travail attendu avant réécriture
 
+- produire ou mettre à jour `docs/audits/PHASE_1_AUDIT.md` avant toute autre proposition
+- faire de cet audit la première réponse de travail à l'utilisateur
+- attendre validation de cet audit avant toute édition
 - auditer l'existant de `site/phases/phase-1.html`
 - vérifier ce qui existe déjà dans les contenus source utiles au scope de la phase 1
 - reprendre les reports pertinents hérités de la phase 0
