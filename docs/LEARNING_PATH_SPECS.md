@@ -31,19 +31,34 @@ Il n'existe pas de niveau intermédiaire `overview de phase`.
 - les phases doivent respecter `ADR 001` pour le vocabulaire métier et technique
 - les phases qui introduisent des composants Vue doivent respecter les conventions front déjà décidées
 - si une convention stable s'applique à plusieurs phases, elle doit être centralisée dans un guide interne unique et les phases doivent y renvoyer au lieu de la réécrire différemment
-- le document de référence pour ces règles de rédaction et de cohérence est `docs/LEARNING_PATH_EDITORIAL_RULES.md`
+- le document de référence pour les règles éditoriales et de cohérence est `docs/LEARNING_PATH_EDITORIAL_RULES.md`
 
-## A prévoir dans la prochaine phase
+## Reports vers la phase suivante
 
-- si, pendant la réécriture d'une phase, un sujet utile est volontairement retiré, réduit ou reporté pour garder une progression pédagogique cohérente, ce report doit être noté explicitement dans cette section
-- chaque point reporté doit préciser :
+- si, pendant la réécriture d'une phase, un sujet utile est volontairement retiré, réduit ou reporté pour garder une progression pédagogique cohérente, ce report doit être consigné dans `docs/NEXT_PHASE.md`
+- chaque point reporté doit préciser au minimum :
   - la phase d'origine concernée
   - l'élément retiré ou allégé
   - la raison du report
   - la phase cible où il devra être repris
-  - si nécessaire, la forme attendue du traitement futur (`étape complète`, `exercice`, `ressource`, `ADR`, `guide annexe`)
-- cette section sert de garde-fou éditorial pour éviter qu'un sujet important disparaisse entre deux réécritures
-- lors du travail sur la phase suivante, cette section doit être relue avant toute proposition de structure cible
+  - la forme attendue du traitement futur (`étape complète`, `exercice`, `ressource`, `ADR`, `guide annexe`)
+  - un statut `à traiter` ou `traité`
+- `docs/NEXT_PHASE.md` doit être relu avant toute proposition de structure cible pour la phase suivante
+- quand un point est repris dans la phase suivante, il ne doit pas être supprimé de `docs/NEXT_PHASE.md` : son statut doit passer à `traité`
+
+## Trame de phase
+
+- la trame validée de référence pour toutes les futures phases est décrite dans `docs/TRAME.md`
+- la page `site/phases/phase-0.html` sert de référence concrète de structure et de niveau de détail tant qu'une autre trame n'a pas été explicitement validée
+
+## Sources héritées à relire avant réécriture
+
+- avant de réécrire une phase, il faut relire systématiquement dans `content/` les deux sources correspondant à cette phase :
+  - le dossier dont le nom commence par `Phase X`
+  - le fichier `.md` dont le nom commence par `Phase X`
+- ces sources servent de mémoire du travail de réflexion déjà mené
+- elles peuvent contenir de la redondance, une structure ancienne ou des formulations à réécrire, mais elles ne doivent pas être ignorées
+- leur rôle est d'aider à récupérer le fond utile sans recopier mécaniquement la forme héritée de Notion
 
 ## Phase 4
 
