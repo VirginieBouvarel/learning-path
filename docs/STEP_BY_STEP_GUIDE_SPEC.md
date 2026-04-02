@@ -6,6 +6,18 @@ Document de cadrage pour écrire ou réécrire les guides pas-à-pas des phases 
 
 Écrire un guide pas-à-pas de phase qui permette à une développeuse frontend Vue.js de réaliser seule, dans le bon ordre, une incrémentation réelle de KataSensei jusqu'à une version déployée et utilisable.
 
+## Pré-travail obligatoire
+
+Avant toute réécriture d'une phase :
+
+- produire ou mettre à jour un audit complet dans `docs/audits/PHASE_X_AUDIT.md`
+- utiliser `docs/audits/PHASE_0_AUDIT.md` comme référence de niveau de détail attendu
+- remettre cet audit à l'utilisateur comme première réponse de travail
+- attendre validation
+- réécrire ensuite la phase depuis zéro
+
+Cet audit n'est pas un livrable optionnel. Il fait partie du workflow normal de réécriture.
+
 ## Public cible
 
 - développeuse frontend Vue.js confirmée

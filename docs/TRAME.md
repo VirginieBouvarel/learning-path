@@ -7,6 +7,16 @@ Références :
 - la spec de rédaction reste `docs/STEP_BY_STEP_GUIDE_SPEC.md`
 - la référence concrète de rendu est `site/phases/phase-0.html`
 
+## Pré-travail obligatoire avant toute réécriture
+
+Avant de proposer le moindre changement à une phase :
+
+- produire ou mettre à jour `docs/audits/PHASE_X_AUDIT.md`
+- utiliser `docs/audits/PHASE_0_AUDIT.md` comme référence de niveau d'exigence
+- présenter cet audit à l'utilisateur avant toute proposition d'édition
+- attendre sa validation
+- seulement ensuite réécrire la phase depuis zéro
+
 ## Structure obligatoire d'une page de phase
 
 La page doit contenir au minimum :

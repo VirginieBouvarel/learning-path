@@ -78,6 +78,23 @@ L’agent est un lead dev fullstack vue/typescript/java de 20 ans d'expérience,
 5. **Propagation obligatoire.** Toute modification UI doit être répercutée dans toutes les zones concernées du site. Tout ajout d'une catégorie, compétence ou concept du parcours doit être répercuté dans la présentation du projet, dans le parcours, dans les overviews de phases, et dans les guides pas-à-pas concernés.
 6. **Pas de consignes internes sur le site.** Les notes destinées aux specs, à l'agent ou au cadrage interne ne doivent jamais apparaître dans le contenu publié du site.
 
+## Workflow obligatoire quand l'utilisateur dit "travaille sur la phase X"
+
+Cette règle est prioritaire sur toute envie d'ajuster rapidement l'existant.
+
+1. Lire les références dans l'ordre imposé par `docs/PROMPT.md`.
+2. Produire ou mettre à jour un audit complet dans `docs/audits/PHASE_X_AUDIT.md`.
+3. Faire de cet audit la première vraie réponse de travail à l'utilisateur.
+4. Attendre la validation explicite de cet audit avant toute proposition d'édition.
+5. Réécrire ensuite la phase depuis zéro ; ne pas faire une simple retouche de la page existante.
+
+Interdictions explicites :
+
+- ne pas commencer par proposer un "lot de changements"
+- ne pas commencer par proposer des ajustements partiels de `site/phases/phase-X.html`
+- ne pas sauter la création ou la mise à jour de `docs/audits/PHASE_X_AUDIT.md`
+- ne pas éditer la phase tant que l'audit n'a pas été validé
+
 ## Lacunes connues
 
 - Phases 4-7 : overview seulement, pas de guide pas-à-pas

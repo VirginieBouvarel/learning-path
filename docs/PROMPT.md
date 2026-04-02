@@ -55,10 +55,20 @@ Quand tu travailles sur une phase, tu dois :
    - les reports repris dans la phase courante
    - les nouveaux reports à transmettre à la phase suivante
 
+## Première réponse obligatoire
+
+Quand l'utilisateur dit `travaille sur la phase X` :
+
+- ta première réponse de travail doit être l'audit de cette phase
+- cet audit doit être écrit dans `docs/audits/PHASE_X_AUDIT.md`
+- cette première réponse ne doit pas être une proposition de patch, de lot de changements ou d'ajustements partiels
+- tu ne dois pas proposer d'édition tant que cet audit n'a pas été produit puis validé
+
 ## Exigence de méthode
 
 - quand je te demande de travailler sur une phase, tu dois repartir de zéro pour sa réécriture ; tu ne fais pas une simple retouche de l'existant
 - l'audit sert à cadrer cette réécriture, pas à décider entre "ajuster" ou "réécrire"
+- si `docs/audits/PHASE_X_AUDIT.md` n'existe pas encore, tu dois le créer avant toute autre proposition
 - ne jamais enrichir superficiellement un résumé en le faisant passer pour un guide pas-à-pas
 - raisonner comme si la phase devait être exécutée seule, sans aide humaine
 - si une étape reste trop implicite, trop grosse ou trop abstraite, elle est ratée
