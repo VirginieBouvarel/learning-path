@@ -77,7 +77,6 @@ Chaque phase doit contenir :
 - prérequis
 - liste des outils mobilisés
 - découpage en étapes courtes
-- Definition of Done de phase
 - checklist manuelle de validation
 - stratégie de déploiement de fin de phase
 - ressources externes utiles
@@ -99,7 +98,6 @@ Chaque étape doit contenir :
 - un bloc `details` `Solution - A consulter après 20 min` pour chaque exercice
 - au moins 3 questions théoriques
 - un bloc `details` de réponse attendue pour chaque question
-- Definition of Done de l'étape
 - checklist manuelle
 - suggestion de commit si pertinente
 
@@ -140,26 +138,6 @@ Quand la micro-étape demande d'écrire ou modifier du code, ajouter aussi si n�
 - une phase ne doit pas empiler plusieurs gros concepts non reliés sans fil conducteur
 - les exercices doivent suivre la chronologie réelle de construction du produit
 - on ne présente pas une abstraction avant d'avoir montré le problème concret qu'elle résout
-
-## Definition of Done
-
-Chaque étape doit avoir au moins une preuve observable parmi :
-
-- affichage visuel
-- log console
-- réponse HTTP visible
-- test qui passe
-- page accessible
-- ressource créée dans le projet
-- comportement manuel vérifiable
-
-Chaque phase doit avoir une Definition of Done plus globale avec :
-
-- fonctionnalité visible ou preuve technique claire
-- tests minimaux exécutés
-- checklist manuelle validée
-- déploiement effectué si possible
-- incrément cohérent et utilisable
 
 ## Déploiement
 
@@ -258,7 +236,7 @@ Le guide est mauvais si :
 
 ## Prompt court à réutiliser
 
-`Réécris cette phase comme un vrai guide pas-à-pas exécutable pour une développeuse frontend Vue.js qui débute en backend Java. Supprime tout implicite. L'environnement cible est Windows 11 + WSL2 Ubuntu, avec terminal WSL / Unix uniquement. Pour chaque étape, précise le contexte de départ, le terminal à ouvrir si nécessaire, le dossier exact, les commandes exactes, les résultats attendus, les erreurs fréquentes, un exercice concret, sa solution en details, 3 questions théoriques minimum avec réponses en details, une Definition of Done, une checklist manuelle, et une suggestion de commit si pertinente. Suis l'ordre réel de construction d'un produit web qui va en prod.`
+`Réécris cette phase comme un vrai guide pas-à-pas exécutable pour une développeuse frontend Vue.js qui débute en backend Java. Supprime tout implicite. L'environnement cible est Windows 11 + WSL2 Ubuntu, avec terminal WSL / Unix uniquement. Pour chaque étape, précise le contexte de départ, le terminal à ouvrir si nécessaire, le dossier exact, les commandes exactes, les résultats attendus, les erreurs fréquentes, un exercice concret, sa solution en details, 3 questions théoriques minimum avec réponses en details, une checklist manuelle, et une suggestion de commit si pertinente. Suis l'ordre réel de construction d'un produit web qui va en prod.`
 
 ## Plan de travail recommandé
 

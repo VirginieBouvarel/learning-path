@@ -36,7 +36,6 @@ La page doit contenir au minimum :
   - prérequis
   - outils mobilisés
 - une succession d'étapes courtes orientées action
-- une `Definition of Done` de phase
 - une checklist manuelle de validation de phase
 - une stratégie de déploiement de fin de phase avec preuve déployée explicite
 - des ressources externes utiles
@@ -58,7 +57,6 @@ Chaque étape doit contenir :
 - un bloc `details` avec `Solution - A consulter après 20 min`
 - au moins 3 questions théoriques
 - un bloc `details` de réponse attendue pour chaque question
-- une `Definition of Done` de l'étape
 - une checklist manuelle
 - si pertinent, un bloc `Commit` en fin d'étape
 
