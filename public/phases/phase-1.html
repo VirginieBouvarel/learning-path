@@ -1406,6 +1406,36 @@ npm run format:check</code></pre>
 ./mvnw verify</code></pre>
           Résultat attendu : les tests passent et le build complet ne signale pas de régression majeure.
         </li>
+        <li>Formalise maintenant la vraie décision d'architecture utile révélée par cette phase : le format commun des erreurs HTTP. Dans ton projet KataSensei, crée si besoin `docs/adr/` puis ajoute `docs/adr/ADR-004-standardiser-les-erreurs-http.md` avec un contenu de ce type :
+          <pre><code class="language-markdown"># ADR 004 — Standardiser les erreurs HTTP
+
+## Date
+2026-XX-XX
+
+## Statut
+Accepté
+
+## Contexte
+Le backend expose maintenant plusieurs endpoints métier.
+Le frontend doit pouvoir afficher les erreurs sans dépendre
+du format par défaut de Spring.
+
+## Décision
+Toutes les erreurs métier utiles au frontend sont transformées
+par `@RestControllerAdvice`.
+Le JSON d'erreur minimal contient `type`, `title`, `status`
+et `detail`.
+
+## Alternatives rejetées
+- Gérer les erreurs dans chaque controller
+- Laisser Spring renvoyer un format implicite selon les cas
+
+## Conséquences
+- chaque nouvelle exception métier doit être mappée dans l'advice global
+- le frontend peut compter sur un format stable
+- le contrat HTTP d'échec devient explicite et testable</code></pre>
+          Ce n'est pas un ADR décoratif : il capture une décision déjà matérialisée dans `GlobalExceptionHandler`.
+        </li>
         <li>Adopte maintenant explicitement la convention de commit du projet. Elle a toujours la forme :
           <pre><code class="language-text">type(scope): description en francais</code></pre>
           où :
@@ -1459,6 +1489,7 @@ source .env
         <li>Tu sais quelles commandes lancer avant commit côté front et côté back.</li>
         <li>Le frontend possède au moins un lint exécutable.</li>
         <li>Le backend possède au moins ses tests Maven exécutables.</li>
+        <li>La décision de standardiser les erreurs HTTP est formalisée dans un ADR simple et utile.</li>
         <li>La convention de commit du projet est explicite.</li>
       </ul>
 
@@ -1467,6 +1498,7 @@ source .env
         <li><input type="checkbox"> Je connais mes commandes de vérification avant commit.</li>
         <li><input type="checkbox"> Je peux lancer le lint frontend.</li>
         <li><input type="checkbox"> Je peux lancer les tests backend.</li>
+        <li><input type="checkbox"> J'ai rédigé l'ADR sur la standardisation des erreurs HTTP.</li>
         <li><input type="checkbox"> Je sais formuler un message de commit conforme au projet.</li>
       </ul>
 
@@ -1480,6 +1512,7 @@ source .env
         <li>La table `kata` existe et contient des données de départ.</li>
         <li>`GET /katas`, `POST /katas` et `GET /katas/{id}` fonctionnent.</li>
         <li>Les erreurs HTTP métiers sont renvoyées dans un format JSON homogène.</li>
+        <li>La décision de standardiser ces erreurs HTTP est formalisée dans un ADR court.</li>
         <li>Le frontend affiche le catalogue réel des katas.</li>
         <li>Les principales commandes de vérification locale sont définies.</li>
         <li>Le projet possède au moins un premier niveau de tests backend et une vérification front minimale.</li>
@@ -1495,6 +1528,7 @@ source .env
         <li><input type="checkbox"> `POST /katas` crée un kata valide.</li>
         <li><input type="checkbox"> `GET /katas/{id}` renvoie un kata existant.</li>
         <li><input type="checkbox"> Un identifiant absent renvoie une erreur JSON en `404`.</li>
+        <li><input type="checkbox"> L'ADR sur la standardisation des erreurs HTTP est rédigé.</li>
         <li><input type="checkbox"> Le frontend affiche les katas dans le navigateur.</li>
         <li><input type="checkbox"> Si le backend est coupé, le frontend affiche un état d'erreur simple.</li>
         <li><input type="checkbox"> J'ai exécuté au moins les vérifications minimales avant commit.</li>
@@ -1544,6 +1578,7 @@ fly deploy</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
 
