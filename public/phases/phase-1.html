@@ -299,15 +299,17 @@ volumes:
   flyway:
     enabled: true</code></pre>
         </li>
-        <li>Dans le terminal qui servira à démarrer le backend, exporte les variables :
+        <li>Dans `katasensei-back`, crée un fichier `.env` local pour éviter de retaper les variables à chaque nouveau terminal :
           <pre><code class="language-bash">export DB_HOST=localhost
 export DB_PORT=5432
 export DB_NAME=katasensei
 export DB_USER=katasensei
 export DB_PASSWORD=katasensei</code></pre>
+          Ce fichier reste local. Tu le rechargeras avec `source .env` avant les commandes backend qui dépendent de PostgreSQL.
         </li>
-        <li>Relance le backend :
+        <li>Relance le backend en rechargeant d'abord ce fichier :
           <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+source .env
 ./mvnw spring-boot:run</code></pre>
         </li>
       </ol>
@@ -315,7 +317,7 @@ export DB_PASSWORD=katasensei</code></pre>
       <h3>Erreurs fréquentes</h3>
       <ul>
         <li>Si `docker compose` ne fonctionne pas, vérifie d'abord que Docker est bien lancé côté Windows.</li>
-        <li>Si Spring échoue à se connecter à la base, vérifie l'ordre suivant : variables exportées, port 5432, nom de base, utilisateur, mot de passe.</li>
+        <li>Si Spring échoue à se connecter à la base, vérifie l'ordre suivant : `source .env`, port 5432, nom de base, utilisateur, mot de passe.</li>
         <li>Si tu utilises `application.properties` au lieu de `application.yml`, adapte simplement la syntaxe, mais garde les mêmes valeurs.</li>
       </ul>
 
@@ -339,7 +341,7 @@ export DB_PASSWORD=katasensei</code></pre>
       <h3>Definition of Done de l'étape</h3>
       <ul>
         <li>PostgreSQL démarre localement via Docker Compose.</li>
-        <li>Le backend connaît ses paramètres de connexion via variables d'environnement.</li>
+        <li>Le backend connaît ses paramètres de connexion via un fichier `.env` local rechargé dans le terminal.</li>
         <li>Tu sais vérifier que la base répond réellement.</li>
       </ul>
 
@@ -347,7 +349,7 @@ export DB_PASSWORD=katasensei</code></pre>
       <ul>
         <li><input type="checkbox"> `docker compose ps` montre PostgreSQL démarré.</li>
         <li><input type="checkbox"> Je peux me connecter à la base avec `psql` dans le conteneur.</li>
-        <li><input type="checkbox"> Le backend lit sa datasource depuis des variables.</li>
+        <li><input type="checkbox"> Le backend lit sa datasource depuis un `.env` local rechargé avec `source .env`.</li>
       </ul>
 
       <div class="commit-suggestion">Commit recommandé : <code>feat(infra): ajout postgres local et configuration datasource</code></div>
@@ -390,7 +392,10 @@ INSERT INTO kata (id, titre, consigne, niveau) VALUES
     ('00000000-0000-0000-0000-000000000002', 'Palindrome', 'Detecte si un texte se lit dans les deux sens', 'FACILE'),
     ('00000000-0000-0000-0000-000000000003', 'Anagramme', 'Detecte si deux mots ont les memes lettres', 'MOYEN');</code></pre>
         </li>
-        <li>Relance le backend avec les variables d'environnement déjà exportées.
+        <li>Relance le backend avec le fichier `.env` déjà préparé :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+source .env
+./mvnw spring-boot:run</code></pre>
           Résultat attendu : Flyway exécute la migration au démarrage.
         </li>
         <li>Vérifie que la table existe :
@@ -476,6 +481,7 @@ INSERT INTO kata (id, titre, consigne, niveau) VALUES
           <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
 mkdir -p src/test/java/dev/katasensei/kata</code></pre>
         </li>
+        <li>Avant de lancer Maven dans cette étape, garde en tête les deux préconditions bloquantes : PostgreSQL doit toujours tourner, et ton terminal backend doit avoir rechargé le fichier `.env` avec `source .env`.</li>
         <li>Crée le fichier `src/test/java/dev/katasensei/kata/KataControllerWebTest.java`.</li>
         <li>Écris d'abord ce test web :
           <pre><code class="language-java">package dev.katasensei.kata;
@@ -491,7 +497,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(KataController.class)
@@ -500,7 +506,7 @@ class KataControllerWebTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private KataService kataService;
 
     @Test
@@ -520,7 +526,7 @@ class KataControllerWebTest {
     }
 }</code></pre>
         </li>
-        <li>Lance les tests :
+        <li>Lance les tests dans ce même terminal backend :
           <pre><code class="language-bash">./mvnw test</code></pre>
           Résultat attendu : le test échoue parce que `KataController`, `KataService` et `KataResponse` n'existent pas encore.
         </li>
@@ -574,7 +580,7 @@ public class KataController {
     }
 }</code></pre>
         </li>
-        <li>Relance les tests :
+        <li>Relance les tests sans changer de terminal :
           <pre><code class="language-bash">./mvnw test</code></pre>
           Résultat attendu : le test web passe maintenant.
         </li>
@@ -1195,7 +1201,7 @@ curl http://localhost:8080/katas/99999999-9999-9999-9999-999999999999</code></pr
 }
 
 export async function listerKatas(): Promise&lt;KataResume[]&gt; {
-  const response = await fetch('http://localhost:8080/katas')
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/katas`)
 
   if (!response.ok) {
     throw new Error('Impossible de charger le catalogue de katas')
@@ -1205,7 +1211,7 @@ export async function listerKatas(): Promise&lt;KataResume[]&gt; {
 }</code></pre>
         </li>
         <li>Pourquoi ce fichier ?
-          Parce qu'on centralise ici la communication HTTP, au lieu de disperser des `fetch` dans plusieurs composants.
+          Parce qu'on centralise ici la communication HTTP, au lieu de disperser des `fetch` dans plusieurs composants, tout en gardant `VITE_API_URL` comme point d'entrée déjà posé en phase 0.
         </li>
         <li>Ouvre `src/App.vue`.</li>
         <li>Remplace le contenu par une version simple qui charge les katas au montage :
@@ -1221,7 +1227,7 @@ onMounted(async () =&gt; {
   try {
     katas.value = await listerKatas()
   } catch (error) {
-    errorMessage.value = 'Le catalogue n’a pas pu être charge.'
+    errorMessage.value = 'Le catalogue n&apos;a pas pu être chargé.'
   } finally {
     isLoading.value = false
   }
@@ -1257,7 +1263,7 @@ onMounted(async () =&gt; {
 
       <h3>Erreurs fréquentes</h3>
       <ul>
-        <li>Si le navigateur bloque l'appel avec une erreur CORS, ajoute une configuration CORS côté backend ou un proxy de développement Vite selon ce qui existe déjà dans le projet.</li>
+        <li>Si le navigateur bloque l'appel avec une erreur CORS, vérifie d'abord la configuration CORS globale introduite en phase 0 et la valeur de `CORS_ALLOWED_ORIGIN` côté backend.</li>
         <li>Si `fetch` renvoie bien des données mais que rien ne s'affiche, vérifie le nom exact des champs `titre` et `niveau`.</li>
         <li>Si tu n'affiches aucun état de chargement, l'écran peut sembler vide alors que l'appel est simplement en cours.</li>
       </ul>
@@ -1335,15 +1341,15 @@ onMounted(async () =&gt; {
   }
 }</code></pre>
         </li>
-        <li>Initialise Husky :
-          <pre><code class="language-bash">npm run prepare</code></pre>
-          Résultat attendu : un dossier `.husky/` est créé à la racine du frontend.
+        <li>Initialise Husky avec la commande compatible v9 :
+          <pre><code class="language-bash">npx husky init</code></pre>
+          Résultat attendu : un dossier `.husky/` existe à la racine du frontend et un fichier `.husky/pre-commit` a été créé.
         </li>
-        <li>Crée le hook `pre-commit` :
-          <pre><code class="language-bash">npx husky add .husky/pre-commit "npm run lint && npm run test"</code></pre>
-          Résultat attendu : le fichier `.husky/pre-commit` existe et contient la commande de vérification.
+        <li>Ouvre ensuite `.husky/pre-commit` et remplace son contenu par :
+          <pre><code class="language-bash">npm run lint && npm run test</code></pre>
+          Résultat attendu : le hook ne garde que les vérifications minimales utiles à la phase 1.
         </li>
-        <li>Ouvre le fichier `.husky/pre-commit` pour vérifier qu'il ressemble à ceci :
+        <li>Vérifie le hook :
           <pre><code class="language-bash">npm run lint && npm run test</code></pre>
           Ce hook signifie : avant chaque commit frontend, le lint et les tests Vitest doivent passer.
         </li>
@@ -1394,8 +1400,9 @@ npm run format:check</code></pre>
         <li>Place-toi ensuite dans le backend :
           <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back</code></pre>
         </li>
-        <li>Lance les vérifications backend :
-          <pre><code class="language-bash">./mvnw test
+        <li>Lance les vérifications backend dans un shell qui a rechargé le `.env` :
+          <pre><code class="language-bash">source .env
+./mvnw test
 ./mvnw verify</code></pre>
           Résultat attendu : les tests passent et le build complet ne signale pas de régression majeure.
         </li>
@@ -1417,6 +1424,7 @@ chore(qualite): ajout verifications minimales avant commit</code></pre>
       <ul>
         <li>Si tu rends le hook trop lourd, tu seras tentée de le contourner. Garde-le simple en phase 1.</li>
         <li>Si `npm run test` échoue avec une erreur liée à `jsdom`, vérifie la configuration de `vite.config.ts` et la présence de `jsdom` dans les dépendances.</li>
+        <li>Si `./mvnw test` échoue avec un problème de datasource, vérifie d'abord que PostgreSQL tourne toujours et que tu as bien lancé `source .env` dans le terminal backend courant.</li>
         <li>Ne transforme pas cette étape en inventaire d'outils sans rapport avec le flux métier construit dans la phase.</li>
       </ul>
 
@@ -1431,6 +1439,7 @@ npm run test
 npm run format:check
 
 cd ~/workspace/katasensei/katasensei-back
+source .env
 ./mvnw test
 ./mvnw verify</code></pre>
           <p>Cette séquence correspond exactement au niveau minimal attendu avant un commit en fin de phase 1.</p>
