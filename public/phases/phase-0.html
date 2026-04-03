@@ -28,11 +28,11 @@
       <div class="home-side-list">
         <div class="home-side-item">
           <div class="home-side-item__title">Backlog KataSensei</div>
-          <div class="home-side-item__desc">Database Notion à créer après stabilisation des guides.</div>
+          <div class="home-side-item__desc">Section à venir.</div>
         </div>
         <div class="home-side-item">
           <div class="home-side-item__title">Suivi de progression</div>
-          <div class="home-side-item__desc">Database Notion à créer pour compétences, phases et validations.</div>
+          <div class="home-side-item__desc">Section à venir.</div>
         </div>
       </div>
     </div>
@@ -383,13 +383,25 @@ cd katasensei</code></pre>
           Résultat attendu : <code>main</code>.
         </li>
         <li>Crée un `.gitignore` minimal à la racine du repo. Ouvre le dossier `~/workspace/katasensei` dans ton éditeur puis crée le fichier `.gitignore` avec ce contenu :
-          <pre><code class="language-gitignore">.DS_Store
+          <pre><code class="language-gitignore"># Systèmes
+.DS_Store
+*.log
+
+# Java
+target
+*.class
+*.jar
+
+# Node
 node_modules
 dist
+
+# Environnement local
+.env
+
+# IDE
 .idea
-.vscode
-target
-*.log</code></pre>
+.vscode</code></pre>
         </li>
         <li>Crée aussi un fichier `README.md` minimal pour documenter le repo dès le départ :
           <pre><code class="language-markdown"># KataSensei
@@ -1016,28 +1028,136 @@ main {
 
     <section class="guide-step" id="deploiement">
       <h2>Stratégie de déploiement de fin de phase</h2>
-      <p>Cette phase 0 doit déjà se terminer par un premier déploiement minimal. L'objectif n'est pas de livrer KataSensei complet, mais de prouver qu'un squelette fullstack simple peut vivre hors du poste local.</p>
-      <ul>
-        <li>Avant déploiement : vérifie que le backend démarre, que le frontend démarre et que l'appel front vers le backend fonctionne bien en local.</li>
-        <li>Initialise d'abord les deux applications Fly.io du projet :
-          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
-fly launch --name katasensei-back --no-deploy
+      <p>Cette phase 0 se termine par un premier déploiement minimal sur Fly.io. L'objectif n'est pas de livrer KataSensei complet, mais de prouver qu'un squelette fullstack simple peut vivre hors du poste local.</p>
 
-cd ~/workspace/katasensei/katasensei-front
+      <h3>Vérifications avant déploiement</h3>
+      <ul>
+        <li>Le backend démarre localement et répond sur <code>http://localhost:8080/actuator/health</code>.</li>
+        <li>Le frontend démarre localement et affiche le message renvoyé par <code>/api/ping</code>.</li>
+        <li>Tous les fichiers sensibles (<code>.env</code>) sont bien dans <code>.gitignore</code>.</li>
+      </ul>
+
+      <h3>Installer flyctl dans WSL</h3>
+      <ol>
+        <li>Dans un terminal Ubuntu, installe flyctl :
+          <pre><code class="language-bash">curl -L https://fly.io/install.sh | sh</code></pre>
+          Résultat attendu : le script installe <code>flyctl</code> dans <code>~/.fly/bin/</code>.
+        </li>
+        <li>Ajoute flyctl au PATH si ce n'est pas fait automatiquement. Ouvre <code>~/.zshrc</code> et ajoute en fin de fichier :
+          <pre><code class="language-bash">export FLYCTL_INSTALL="$HOME/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"</code></pre>
+          Puis recharge le shell :
+          <pre><code class="language-bash">source ~/.zshrc</code></pre>
+        </li>
+        <li>Vérifie l'installation :
+          <pre><code class="language-bash">fly version</code></pre>
+          Résultat attendu : la version de flyctl s'affiche.
+        </li>
+        <li>Connecte-toi à ton compte Fly.io (crée-en un sur <a href="https://fly.io" target="_blank" rel="noopener">fly.io</a> si besoin) :
+          <pre><code class="language-bash">fly auth login</code></pre>
+          Résultat attendu : ton navigateur s'ouvre, tu te connectes, puis le terminal confirme l'authentification.
+        </li>
+      </ol>
+
+      <h3>Préparer le déploiement du backend</h3>
+      <ol>
+        <li>Crée le fichier <code>katasensei-back/Dockerfile</code> avec ce contenu :
+          <pre><code class="language-docker">FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY target/katasensei-back-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+        </li>
+        <li>Depuis le dossier backend, compile le jar avant de déployer :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+./mvnw package -DskipTests</code></pre>
+          Résultat attendu : un fichier <code>target/katasensei-back-0.0.1-SNAPSHOT.jar</code> est créé.
+        </li>
+        <li>Initialise l'application Fly.io sans déployer immédiatement :
+          <pre><code class="language-bash">fly launch --name katasensei-back --no-deploy</code></pre>
+          Résultat attendu : un fichier <code>fly.toml</code> est créé dans le dossier backend.
+        </li>
+        <li>Déploie le backend :
+          <pre><code class="language-bash">fly deploy</code></pre>
+          Résultat attendu : Fly.io construit l'image Docker, la déploie et affiche l'URL publique de l'application.
+        </li>
+        <li>Vérifie le health check en production :
+          <pre><code class="language-bash">curl https://katasensei-back.fly.dev/actuator/health</code></pre>
+          Résultat attendu : réponse JSON avec un statut <code>UP</code>.
+        </li>
+      </ol>
+
+      <h3>Préparer le déploiement du frontend</h3>
+      <ol>
+        <li>Crée le fichier <code>katasensei-front/nginx.conf</code> pour servir les fichiers statiques Vite :
+          <pre><code class="language-nginx">server {
+  listen 8080;
+  root /usr/share/nginx/html;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}</code></pre>
+        </li>
+        <li>Crée le fichier <code>katasensei-front/Dockerfile</code> :
+          <pre><code class="language-docker">FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 8080</code></pre>
+        </li>
+        <li>Dans <code>katasensei-front/src/App.vue</code>, remplace l'URL codée en dur par une variable d'environnement Vite. Dans le <code>&lt;script setup&gt;</code>, change :
+          <pre><code class="language-typescript">const response = await fetch('http://localhost:8080/api/ping')</code></pre>
+          par :
+          <pre><code class="language-typescript">const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ping`)</code></pre>
+          Puis crée le fichier <code>katasensei-front/.env</code> pour le développement local :
+          <pre><code class="language-bash">VITE_API_URL=http://localhost:8080</code></pre>
+          Ce fichier est dans <code>.gitignore</code>. Crée aussi <code>katasensei-front/.env.example</code> avec une valeur fictive à committer :
+          <pre><code class="language-bash">VITE_API_URL=https://ton-backend.fly.dev</code></pre>
+        </li>
+        <li>Depuis le dossier frontend, initialise l'application Fly.io sans déployer :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
 fly launch --name katasensei-front --no-deploy</code></pre>
         </li>
-        <li>Déploie ensuite le squelette minimal de la phase :
-          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
-fly deploy
-
-cd ~/workspace/katasensei/katasensei-front
-fly deploy</code></pre>
+        <li>Injecte la variable d'environnement pointant vers le backend déployé :
+          <pre><code class="language-bash">fly secrets set VITE_API_URL=https://katasensei-back.fly.dev</code></pre>
         </li>
-        <li>Après déploiement : ouvre l'URL publique du frontend et vérifie qu'elle charge sans erreur bloquante.</li>
-        <li>Après déploiement : vérifie que le frontend déployé peut toujours atteindre le backend déployé sur le point d'entrée minimal prévu par la phase.</li>
-        <li>La preuve attendue en fin de phase est simple : une URL publique existe et montre le squelette KataSensei vivant avec une communication front/back observable.</li>
+        <li>Déploie le frontend :
+          <pre><code class="language-bash">fly deploy</code></pre>
+          Résultat attendu : Fly.io construit l'image, déploie et affiche l'URL publique du frontend.
+        </li>
+      </ol>
+
+      <h3>Vérifications après déploiement</h3>
+      <ul>
+        <li>Ouvre l'URL publique du frontend dans le navigateur. Tu dois voir la page KataSensei chargée.</li>
+        <li>La ligne "Message du backend" doit afficher la réponse renvoyée par le backend déployé.</li>
+        <li>Si la page affiche une erreur à la place du message, vérifie que <code>VITE_API_URL</code> pointe bien vers l'URL Fly.io du backend et que le backend expose bien <code>@CrossOrigin</code> avec l'URL publique du frontend.</li>
       </ul>
-      <p>La phase suivante pourra alors enrichir le produit sans repartir d'un projet purement local.</p>
+
+      <p>La phase suivante pourra enrichir le produit sans repartir d'un projet purement local.</p>
+
+      <div class="commit-suggestion">
+        <div class="commit-suggestion__title">Commit</div>
+        <p>Avant de déployer, commit les fichiers de configuration ajoutés dans cette section.</p>
+        <p>Fichiers à commit :</p>
+        <ul>
+          <li><code>katasensei-back/Dockerfile</code></li>
+          <li><code>katasensei-back/fly.toml</code></li>
+          <li><code>katasensei-front/Dockerfile</code></li>
+          <li><code>katasensei-front/nginx.conf</code></li>
+          <li><code>katasensei-front/fly.toml</code></li>
+          <li><code>katasensei-front/.env.example</code></li>
+        </ul>
+        <p>Ne commit pas <code>.env</code>.</p>
+        <p>Message suggéré : <code>chore(deploy): ajout des Dockerfiles et configuration Fly.io pour le premier déploiement</code></p>
+      </div>
     </section>
 
     <section class="guide-step" id="ressources">
@@ -1073,5 +1193,7 @@ fly deploy</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-properties.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-docker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-nginx.min.js"></script>
 </body>
 </html>
