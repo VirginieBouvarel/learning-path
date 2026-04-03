@@ -198,10 +198,16 @@ La section déploiement supposait `flyctl` installé et utilisateur connecté, s
 - `fly launch`, `fly secrets set` et `fly deploy` côté frontend
 - vérifications après déploiement
 
-**4. Scripts Prism complétés**
+**4. Configuration CORS corrigée**
+La phase 0 enseignait encore `@CrossOrigin(origins = "http://localhost:5173")` directement sur `PingController`, ce qui figeait une URL locale dans le code et cassait la logique de déploiement Fly.io. La page a été corrigée pour :
+- introduire une configuration CORS globale via `WebMvcConfigurer`
+- lire l'origine autorisée depuis `CORS_ALLOWED_ORIGIN`
+- expliquer l'export local `CORS_ALLOWED_ORIGIN=http://localhost:5173`
+- compléter le déploiement backend avec `fly secrets set CORS_ALLOWED_ORIGIN=https://katasensei-front.fly.dev`
+
+**5. Scripts Prism complétés**
 Les composants `prism-docker.min.js` et `prism-nginx.min.js` ont été ajoutés pour la coloration des snippets Dockerfile et nginx ajoutés par la correction 3.
 
 ### Bugs restants non traités
 
-- La section déploiement ne couvre pas la configuration CORS du backend pour l'URL publique Fly.io du frontend (le `@CrossOrigin` actuel est limité à `localhost:5173`). Ce point mérite une note ou une micro-étape à intégrer avant la prochaine révision de la phase.
 - Les sous-pages `phase-0-wsl2.html`, `phase-0-ide.html` et `phase-0-structure.html` n'ont pas été auditées dans cette session.

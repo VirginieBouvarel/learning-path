@@ -614,12 +614,10 @@ rm katasensei-back.zip</code></pre>
           <pre><code class="language-java">package dev.katasensei.katasenseiback;
 
 import java.util.Map;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 public class PingController {
 
     @GetMapping("/api/ping")
@@ -629,13 +627,40 @@ public class PingController {
 }</code></pre>
           Pourquoi ici : cette route sera la preuve la plus simple de communication front/back.
         </li>
+        <li>Crée ensuite le fichier `src/main/java/dev/katasensei/katasenseiback/CorsConfig.java` pour centraliser CORS dès le début :
+          <pre><code class="language-java">package dev.katasensei.katasenseiback;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+
+    private final String corsAllowedOrigin;
+
+    public CorsConfig(@Value("${CORS_ALLOWED_ORIGIN}") String corsAllowedOrigin) {
+        this.corsAllowedOrigin = corsAllowedOrigin;
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+            .allowedOrigins(corsAllowedOrigin)
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+    }
+}</code></pre>
+          Pourquoi ici : on évite d'éparpiller CORS sur chaque controller et on garde une seule origine autorisée, pilotée par l'environnement.
+        </li>
         <li>Ouvre le fichier `src/main/resources/application.properties` et remplace son contenu par :
           <pre><code class="language-properties">spring.application.name=katasensei-back
 management.endpoints.web.exposure.include=health</code></pre>
           Résultat attendu : l'endpoint Actuator `health` devient exposé en HTTP.
         </li>
-        <li>Dans un terminal Ubuntu placé dans `~/workspace/katasensei/katasensei-back`, relance le backend :
-          <pre><code class="language-bash">./mvnw spring-boot:run</code></pre>
+        <li>Dans un terminal Ubuntu placé dans `~/workspace/katasensei/katasensei-back`, définis d'abord l'origine frontend autorisée puis relance le backend :
+          <pre><code class="language-bash">export CORS_ALLOWED_ORIGIN=http://localhost:5173
+./mvnw spring-boot:run</code></pre>
         </li>
         <li>Dans un second terminal Ubuntu, teste le health check :
           <pre><code class="language-bash">curl http://localhost:8080/actuator/health</code></pre>
@@ -685,10 +710,10 @@ management.endpoints.web.exposure.include=health</code></pre>
         <p>Parce que le health check est une preuve technique, alors que `/api/ping` est la première route applicative simple que le frontend pourra réellement appeler.</p>
       </details>
 
-      <p><strong>Question 3</strong> Pourquoi a-t-on besoin de `@CrossOrigin` dès cette phase ?</p>
+      <p><strong>Question 3</strong> Pourquoi configure-t-on déjà CORS globalement dès cette phase ?</p>
       <details>
         <summary>Réponse attendue</summary>
-        <p>Parce que le frontend Vite tournera sur un autre port que le backend. Sans configuration CORS minimale, le navigateur bloquera l'appel HTTP entre `localhost:5173` et `localhost:8080`.</p>
+        <p>Parce que le frontend Vite tournera sur un autre port que le backend. Sans configuration CORS minimale, le navigateur bloquera l'appel HTTP entre `localhost:5173` et `localhost:8080`. Le faire globalement évite de dupliquer `@CrossOrigin` dans chaque controller et prépare déjà le passage du local au déploiement.</p>
       </details>
 
       <h3>Definition of Done de l'étape</h3>
@@ -703,7 +728,7 @@ management.endpoints.web.exposure.include=health</code></pre>
         <li><input type="checkbox"> Le backend est lancé sur le port 8080.</li>
         <li><input type="checkbox"> `curl http://localhost:8080/actuator/health` répond avec `UP`.</li>
         <li><input type="checkbox"> `curl http://localhost:8080/api/ping` répond avec un JSON.</li>
-        <li><input type="checkbox"> Je comprends à quoi sert `@CrossOrigin` dans cette étape.</li>
+        <li><input type="checkbox"> Je comprends pourquoi `CORS_ALLOWED_ORIGIN` pilote la configuration CORS globale du backend.</li>
       </ul>
 
       <div class="commit-suggestion">
@@ -712,6 +737,7 @@ management.endpoints.web.exposure.include=health</code></pre>
         <p>Fichiers à commit :</p>
         <ul>
           <li><code>katasensei-back/src/main/java/dev/katasensei/katasenseiback/PingController.java</code></li>
+          <li><code>katasensei-back/src/main/java/dev/katasensei/katasenseiback/CorsConfig.java</code></li>
           <li><code>katasensei-back/src/main/resources/application.properties</code></li>
         </ul>
         <p>Ne commit pas encore les fichiers du frontend qui n'appartiennent pas à cette étape.</p>
@@ -934,7 +960,7 @@ main {
 
       <h3>Erreurs fréquentes</h3>
       <ul>
-        <li>Le navigateur affiche une erreur CORS : vérifie la présence de <code>@CrossOrigin(origins = "http://localhost:5173")</code> sur le contrôleur backend.</li>
+        <li>Le navigateur affiche une erreur CORS : vérifie que `CorsConfig` existe bien et que le backend a été relancé avec <code>CORS_ALLOWED_ORIGIN=http://localhost:5173</code>.</li>
         <li>Le message reste sur “Chargement en cours...” : vérifie que le backend tourne réellement sur le port 8080 et que l'URL appelée est correcte.</li>
         <li>Le message d'erreur apparaît alors que le backend tourne : teste d'abord l'endpoint avec <code>curl http://localhost:8080/api/ping</code> pour savoir si le problème vient du backend ou du frontend.</li>
       </ul>
@@ -1076,6 +1102,10 @@ ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
           <pre><code class="language-bash">fly launch --name katasensei-back --no-deploy</code></pre>
           Résultat attendu : un fichier <code>fly.toml</code> est créé dans le dossier backend.
         </li>
+        <li>Déclare ensuite l'origine frontend autorisée côté backend :
+          <pre><code class="language-bash">fly secrets set CORS_ALLOWED_ORIGIN=https://katasensei-front.fly.dev</code></pre>
+          Résultat attendu : Fly.io enregistre le secret qui servira à la configuration CORS globale du backend.
+        </li>
         <li>Déploie le backend :
           <pre><code class="language-bash">fly deploy</code></pre>
           Résultat attendu : Fly.io construit l'image Docker, la déploie et affiche l'URL publique de l'application.
@@ -1138,7 +1168,7 @@ fly launch --name katasensei-front --no-deploy</code></pre>
       <ul>
         <li>Ouvre l'URL publique du frontend dans le navigateur. Tu dois voir la page KataSensei chargée.</li>
         <li>La ligne "Message du backend" doit afficher la réponse renvoyée par le backend déployé.</li>
-        <li>Si la page affiche une erreur à la place du message, vérifie que <code>VITE_API_URL</code> pointe bien vers l'URL Fly.io du backend et que le backend expose bien <code>@CrossOrigin</code> avec l'URL publique du frontend.</li>
+        <li>Si la page affiche une erreur à la place du message, vérifie que <code>VITE_API_URL</code> pointe bien vers l'URL Fly.io du backend et que le backend a bien reçu <code>CORS_ALLOWED_ORIGIN=https://katasensei-front.fly.dev</code>.</li>
       </ul>
 
       <p>La phase suivante pourra enrichir le produit sans repartir d'un projet purement local.</p>
