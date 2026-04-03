@@ -585,3 +585,38 @@ Pourquoi :
 
 - le plus important maintenant est de stabiliser le nouveau découpage entre phase 2 et phase 3
 - après réécriture de la nouvelle phase 2 puis de la nouvelle phase 3, la renumérotation des phases suivantes pourra être recalée proprement à partir des specs, du contenu réellement écrit et de `docs/NEXT_PHASE.md`
+
+---
+
+## Mise à jour — Corrections appliquées (2026-04-03)
+
+Audit transversal des 4 phases (0, 1, 2, 3) réalisé. La phase 2 réécrite depuis zéro a été évaluée et les bugs bloquants suivants ont été corrigés chirurgicalement dans `public/phases/phase-2.html` :
+
+### Corrections appliquées
+
+**1. Contenu interne dans la sidebar supprimé**
+Les mentions "Database Notion à créer après stabilisation des guides" ont été remplacées par un texte neutre.
+
+**2. Encart Pinia ajouté avant l'étape 1**
+La phase 0 répondait "No" à l'invite Pinia lors de la création du projet. Un encart d'avertissement détaille maintenant comment installer Pinia (`npm install pinia`) et le brancher dans `main.ts` avec `app.use(createPinia())`.
+
+**3. Encart alias `@/` ajouté avant l'étape 1**
+Tous les imports utilisent `@/` mais l'alias n'était jamais configuré. L'encart montre la configuration exacte dans `vite.config.ts` et `tsconfig.app.json`.
+
+**4. Désalignement `description`/`consigne` corrigé**
+- Le modèle `Kata` front utilisait `description: string` alors que le backend expose `consigne`. Corrigé dans les deux snippets de l'étape 3.
+- Le `ApiKataDto` déclarait `description: string` au lieu de `consigne: string`. Corrigé.
+- Les niveaux du DTO étaient `string` générique au lieu de `'FACILE' | 'MOYEN' | 'DIFFICILE'`. Corrigé avec une union typée.
+- Le mapper faisait `dto.niveau as NiveauKata` sans conversion — désormais il utilise une `niveauMap` explicite qui convertit `FACILE → debutant`, `MOYEN → intermediaire`, `DIFFICILE → avance`.
+- `toDto()` fait l'inverse avec une `niveauBackMap`.
+- Les données de test du mapper, du use case, du store et du composable UI ont été mises à jour pour utiliser `consigne` et les bonnes valeurs de niveau.
+
+**5. Liens de branche de solution inopérants corrigés**
+Les `<a href="../index.html"><code>KS-soluce-phase-2-etape-X</code></a>` (qui pointaient vers l'index local) ont été remplacés par un texte simple `Branche de référence : <code>KS-soluce-phase-2-etape-X</code>`.
+
+### Bugs restants non traités dans cette session
+
+Ces bugs restent présents et devront être adressés lors d'une prochaine session ou lors de la réécriture complète éventuelle :
+
+- La section déploiement utilise `fly deploy` sans Dockerfile ni setup Fly.io documenté — identique aux autres phases, à traiter globalement.
+- Les branches de référence (`KS-soluce-phase-2-etape-X`) pointent vers un repo qui n'est jamais cité — à documenter quand le repo de référence sera disponible.
