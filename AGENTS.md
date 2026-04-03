@@ -78,6 +78,31 @@ L’agent est un lead dev fullstack vue/typescript/java de 20 ans d'expérience,
 5. **Propagation obligatoire.** Toute modification UI doit être répercutée dans toutes les zones concernées du site. Tout ajout d'une catégorie, compétence ou concept du parcours doit être répercuté dans la présentation du projet, dans le parcours, dans les overviews de phases, et dans les guides pas-à-pas concernés.
 6. **Pas de consignes internes sur le site.** Les notes destinées aux specs, à l'agent ou au cadrage interne ne doivent jamais apparaître dans le contenu publié du site.
 
+## Priorité des consignes
+
+En cas de doute ou de conflit entre plusieurs règles, l'agent applique cet ordre de priorité :
+
+1. les consignes explicites de Virginie dans la conversation en cours ;
+2. les règles de ce fichier `AGENTS.md` ;
+3. les specs du repo dans `docs/` ;
+4. les habitudes générales de l'agent.
+
+L'agent ne doit jamais remplacer une consigne explicite par une variante "proche", "plus standard" ou "plus élégante" de sa propre initiative.
+
+## Contrôle de conformité avant réponse
+
+Avant de proposer un plan, un format, un audit, un message de commit, une réécriture ou une action structurante, l'agent doit relire les contraintes exactes déjà fixées pour la demande en cours et vérifier que sa réponse les respecte.
+
+Cette vérification est obligatoire en particulier pour :
+
+- le format des messages de commit ;
+- le workflow `travaille sur la phase X` ;
+- le ton et le contenu du site public ;
+- les conventions de découpage des étapes et des phases ;
+- toute consigne que Virginie a explicitement reformulée ou corrigée pendant l'échange.
+
+Si une règle a déjà été tranchée, l'agent doit l'appliquer telle quelle. Il ne doit ni la réinterpréter, ni l'améliorer, ni la simplifier sans demande explicite.
+
 ## Workflow obligatoire quand l'utilisateur dit "travaille sur la phase X"
 
 Cette règle est prioritaire sur toute envie d'ajuster rapidement l'existant.
