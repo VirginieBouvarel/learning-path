@@ -2,6 +2,14 @@
 
 Ce fichier sert de mémo interne pour écrire les phases détaillées sans laisser ces consignes dans les pages publiques du site.
 
+## Conventions clés
+
+- **Langue** : contenu en français, identifiants de code sans accents
+- **Ubiquitous Language (ADR 001)** : classe métier en français + suffixe technique en anglais (`RequestIndiceUseCase`)
+- **Commits** : `type(contexte): description en français` (feat, fix, refactor, test, docs, chore)
+- **CSS** : `<style scoped>` + BEM pour les composants métier ; `PrimeVue` autorisé comme bibliothèque de composants ; pas Tailwind, pas CSS Modules
+- **Tests** : dossier `tests/` miroir de `src/`
+
 ## Structure éditoriale du site
 
 Le learning path n'a que 2 niveaux :
@@ -21,7 +29,7 @@ Il n'existe pas de niveau intermédiaire `overview de phase`.
   - nos hésitations
   - nos itérations de conception du learning path
   - des formulations du type `on a décidé`, `pour ne pas alourdir`, `on écrit ceci à part`, `dans cette version du parcours`
-- les autres fichiers du repo (`docs/`, audits, notes, backlog inter-phases, sources héritées `content/`) sont des supports internes qui reflètent nos réflexions itératives pour construire correctement cette partie publique
+- les autres fichiers du repo (`docs/`, audits, notes, backlog inter-phases) sont des supports internes qui reflètent nos réflexions itératives pour construire correctement cette partie publique
 - ces fichiers internes servent à préparer, cadrer, auditer et corriger le learning path, mais leur logique ne doit pas fuiter dans le contenu public
 
 ### Règle de relecture
@@ -64,15 +72,6 @@ Il n'existe pas de niveau intermédiaire `overview de phase`.
 - la trame validée de référence pour toutes les futures phases est décrite dans `docs/TRAME.md`
 - la page `public/phases/phase-1.html` sert de référence concrète de structure et de niveau de détail tant qu'une autre trame n'a pas été explicitement validée
 - la règle de fin de phase est : validation locale + déploiement réel adapté à l'incrément de la phase
-
-## Sources héritées à relire avant réécriture
-
-- avant de réécrire une phase, il faut relire systématiquement dans `content/` les deux sources correspondant à cette phase :
-  - le dossier dont le nom commence par `Phase X`
-  - le fichier `.md` dont le nom commence par `Phase X`
-- ces sources servent de mémoire du travail de réflexion déjà mené
-- elles peuvent contenir de la redondance, une structure ancienne ou des formulations à réécrire, mais elles ne doivent pas être ignorées
-- leur rôle est d'aider à récupérer le fond utile sans recopier mécaniquement la forme héritée de Notion
 
 ## Audit de phase avant réécriture
 

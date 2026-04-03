@@ -5,7 +5,7 @@ Ce document fixe la trame éditoriale à réutiliser pour toutes les phases dét
 Références :
 
 - la spec de rédaction reste `docs/STEP_BY_STEP_GUIDE_SPEC.md`
-- la référence concrète de rendu est `public/phases/phase-1.html`
+- la référence concrète de rendu est `public/phases/phase-1.html` tant qu'une autre trame n'a pas été explicitement validée
 
 Rappel de frontière :
 

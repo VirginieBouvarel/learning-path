@@ -30,6 +30,7 @@ Cet audit n'est pas un livrable optionnel. Il fait partie du workflow normal de 
 
 - OS concerné : `Windows 11 + WSL2` avec la dernière version d'Ubuntu
 - terminal à ouvrir : `WSL` ou un terminal Ubuntu / Unix compatible
+- si une étape nécessite un terminal Windows au tout début, cela doit être dit explicitement
 - ne jamais supposer `PowerShell` si ce n'est pas explicitement compatible
 
 ## Principes pédagogiques obligatoires
@@ -53,6 +54,8 @@ Cet audit n'est pas un livrable optionnel. Il fait partie du workflow normal de 
 - toute phase doit viser une valeur utilisateur visible, sauf phase 0 où une valeur technique minimale observable est acceptable
 - le guide publié ne doit jamais commenter sa propre fabrication, ses reports éditoriaux ou les décisions internes de cadrage
 - le guide publié ne doit pas contenir d'hésitations, d'évocations de choses non vérifiées ou de formulations qui laissent la lectrice arbitrer seule un point qui devrait être déjà tranché
+- ne jamais enrichir superficiellement un résumé en le faisant passer pour un vrai guide pas-à-pas
+- raisonner comme si la phase devait pouvoir être exécutée seule, sans aide humaine
 
 ## Règles anti-implicite
 
@@ -229,6 +232,8 @@ Le guide est mauvais si :
 - il suppose l'existence d'un repo ou d'un dossier sans le dire
 - il saute directement à une commande sans préciser le contexte
 - il demande un gros bloc d'implémentation d'un coup
+- une étape reste trop implicite, trop grosse ou trop abstraite
+- une micro-étape ressemble à une simple liste d'ordres sans mode d'emploi concret
 - il pose des questions sans avoir enseigné le concept juste avant
 - il n'y a pas de preuve observable de réussite
 - il n'y a pas de solution détaillée
