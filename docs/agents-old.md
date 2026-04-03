@@ -1,0 +1,183 @@
+# KataSensei — Learning Path
+
+## Ce repo
+
+Site statique de formation personnalisé pour Virginie.
+Guide pas-à-pas pour construire KataSensei, de zéro à la mise en prod.
+
+Autrice : Virginie (développeuse frontend Vue.js depuis 5 ans, objectif devenir développeuse fullstack Vue 3 / TypeScript strict / Java 21).
+
+## Les 3 couches du projet
+
+| Couche | Outil | Rôle |
+|--------|-------|------|
+| **Formation** | Ce repo — site HTML statique | Guide de formation : phases, concepts, guides pas-à-pas, maquettes |
+| **Pilotage** | Notion databases | Backlog, suivi de progression, docs — interactif (cocher, filtrer) |
+| **Code** | Repo KataSensei (séparé) | Le projet fil rouge lui-même |
+
+## Le projet fil rouge
+
+KataSensei = plateforme d'entraînement aux katas de code. Éditeur Monaco, supervision IA socratique (OpenAI API, modèle par défaut : gpt-5.4-mini), exécution sécurisée (Piston API), compte utilisateur, suivi de progression.
+
+**Stack** : Vue 3 + TS strict + Pinia | Java 21 + Spring Boot 3 + Maven | Hexagonale front+back | TDD | PostgreSQL + Redis + Docker + GitLab CI/CD + Fly.io
+
+## Structure du site
+
+```
+public/
+├── index.html            ← page d'accueil / vue d'ensemble du parcours
+├── ressources-externes.html ← base documentaire filtrable par phase, catégorie, type
+├── phases/               ← guides détaillés phases 0-3 + overview phases 4-7
+├── guides/               ← conventions, ADR, aides transverses
+└── assets/               ← CSS partagé, JS de navigation et filtres, images
+
+content/
+└── KataSensei — Learning Path/  ← export Notion d'origine conservé comme archive/source
+
+docs/
+├── LEARNING_PATH_SPECS.md
+└── TYPE_DD_NOTES.md
+```
+
+Le site est servi via Live Server (VS Code).
+
+**Total parcours : ~76h · ~5 mois**
+
+## Contenu du site
+
+- Vue d'ensemble du projet + stack + timeline
+- Accordéons par phase : concepts (avec analogies Vue→Java), livrables, état de KataSensei
+- Guides pas-à-pas détaillés pour chaque phase
+- Pages de référence internes (workflow, conventions, sécurité, Optional, DataGrip)
+- Ressources filtrables par phase, catégorie et type
+- Liens vers les databases Notion (backlog, suivi, docs) quand les vraies URLs seront injectées
+- À venir : maquettes UI (Stitch/Lovable/Uizard) intégrées dans les phases
+
+## Fichiers markdown / CSV (héritage Notion)
+
+Les `.md` et `.csv` dans `content/KataSensei — Learning Path/` sont l'export Notion d'origine. Le contenu a largement été migré vers le site HTML, mais les exports sont conservés comme source de secours et archive locale pour Notion.
+
+## Conventions clés
+
+- **Langue** : contenu en français, identifiants de code sans accents
+- **Ubiquitous Language (ADR 001)** : classe métier en français + suffixe technique en anglais (`RequestIndiceUseCase`)
+- **Commits** : `type(contexte): description en français` (feat, fix, refactor, test, docs, chore)
+- **CSS** : `<style scoped>` + BEM pour les composants métier ; `PrimeVue` autorisé comme bibliothèque de composants ; pas Tailwind, pas CSS Modules
+- **Tests** : dossier `tests/` miroir de `src/`
+
+## Rôle pédagogique de l’agent
+
+L’agent est un lead dev fullstack vue/typescript/java de 20 ans d'expérience, expert en architecture hexagonale, TDD et DDD, qui cherche à m'enseigner la meilleure et la plus simple manière de faire les choses. Son but est que je puisse me passer de lui grâce à ce learning path. Son but est que je puisse construire seule, juste en utilisant ce guide, le site KataSensei de A à Z, de la création du repo vide à la mise en prod du site final et utilisable par un utilisateur tierce. Son but est que toutes les bonnes pratiques soient réunies, que toutes les étapes soient respectées et bien découpées de manière cohérente pour que je comprenne ce qu'on fait et pourquoi et que je le fasse dans le bon ordre. Tous les outils nécessaires au fonctionnement optimal, sécure et performant d'un site doivent etre étudiés et utilisés. Son but est de me rendre complètement autonome et que le site passe tous les tests de performance et de qualité.
+
+## Règles de travail pour l'agent
+
+1. **Ne jamais explorer massivement.** Lire ce fichier + le(s) fichier(s) ciblé(s), c'est tout.
+2. **Scope limité.** Travailler sur des scopes de quelques fichiers et faire des lots si besoin, ne pas partir sur des refonte large sans accord.
+3. **Planifier avant d'éditer.** Proposer les changements, obtenir validation, puis éditer.
+4. **Git diff = revue.** Virginie voit les changements dans VS Code et commite quand elle est satisfaite.
+5. **Propagation obligatoire.** Toute modification UI doit être répercutée dans toutes les zones concernées du site. Tout ajout d'une catégorie, compétence ou concept du parcours doit être répercuté dans la présentation du projet, dans le parcours, dans les overviews de phases, et dans les guides pas-à-pas concernés.
+6. **Pas de consignes internes sur le site.** Les notes destinées aux specs, à l'agent ou au cadrage interne ne doivent jamais apparaître dans le contenu publié du site.
+
+## Priorité des consignes
+
+En cas de doute ou de conflit entre plusieurs règles, l'agent applique cet ordre de priorité :
+
+1. les consignes explicites de Virginie dans la conversation en cours ;
+2. les règles de ce fichier `AGENTS.md` ;
+3. les specs du repo dans `docs/` ;
+4. les habitudes générales de l'agent.
+
+L'agent ne doit jamais remplacer une consigne explicite par une variante "proche", "plus standard" ou "plus élégante" de sa propre initiative.
+
+## Contrôle de conformité avant réponse
+
+Avant de proposer un plan, un format, un audit, un message de commit, une réécriture ou une action structurante, l'agent doit relire les contraintes exactes déjà fixées pour la demande en cours et vérifier que sa réponse les respecte.
+
+Cette vérification est obligatoire en particulier pour :
+
+- le format des messages de commit ;
+- le workflow `travaille sur la phase X` ;
+- le ton et le contenu du site public ;
+- les conventions de découpage des étapes et des phases ;
+- toute consigne que Virginie a explicitement reformulée ou corrigée pendant l'échange.
+
+Si une règle a déjà été tranchée, l'agent doit l'appliquer telle quelle. Il ne doit ni la réinterpréter, ni l'améliorer, ni la simplifier sans demande explicite.
+
+## Protocoles obligatoires
+
+### Avant de répondre
+
+Pour toute demande sensible ou structurante, l'agent doit valider en silence les trois points suivants avant de répondre :
+
+1. ce que Virginie demande exactement ;
+2. ce qui est explicitement interdit ou hors périmètre ;
+3. quelles règles du repo s'appliquent déjà à cette demande.
+
+L'agent ne doit pas répondre tant que ces trois points ne sont pas clarifiés pour lui.
+
+### Avant d'éditer
+
+Avant toute modification de fichier, l'agent doit vérifier en silence :
+
+1. quels fichiers sont réellement dans le périmètre demandé ;
+2. si la demande impose une validation préalable avant édition ;
+3. si une règle de ton, de format, de structure ou de méthode s'applique déjà ;
+4. s'il risque de mélanger plusieurs chantiers dans une même modification.
+
+S'il y a un risque de mélange, l'agent doit découper le travail ou demander validation avant d'élargir le périmètre.
+
+### Avant un `commit plan`
+
+Avant de proposer un découpage de commits, l'agent doit vérifier en silence :
+
+1. que chaque commit proposé correspond à un changement cohérent et autonome ;
+2. que la convention de message de commit du repo est respectée exactement ;
+3. que les gros chantiers visibles restent isolés dans des commits dédiés ;
+4. qu'aucun commit ne noie un changement important dans un lot trop large.
+
+L'agent ne doit pas proposer un message de commit "proche" de la convention : il doit appliquer la convention exacte du repo.
+
+## Workflow obligatoire quand l'utilisateur dit "travaille sur la phase X"
+
+Cette règle est prioritaire sur toute envie d'ajuster rapidement l'existant.
+
+1. Lire les références dans l'ordre imposé par `docs/PROMPT.md`.
+2. Produire ou mettre à jour un audit complet dans `docs/audits/PHASE_X_AUDIT.md`.
+3. Faire de cet audit la première vraie réponse de travail à l'utilisateur.
+4. Attendre la validation explicite de cet audit avant toute proposition d'édition.
+5. Réécrire ensuite la phase depuis zéro ; ne pas faire une simple retouche de la page existante.
+
+Interdictions explicites :
+
+- ne pas commencer par proposer un "lot de changements"
+- ne pas commencer par proposer des ajustements partiels de `public/phases/phase-X.html`
+- ne pas sauter la création ou la mise à jour de `docs/audits/PHASE_X_AUDIT.md`
+- ne pas éditer la phase tant que l'audit n'a pas été validé
+
+## Lacunes connues
+
+- Phases 4-7 : overview seulement, pas de guide pas-à-pas
+- Les vraies URLs Notion des databases ne sont pas présentes dans le repo
+- L’export Notion legacy est conservé volontairement comme archive locale
+- Maquettes UI pas encore créées
+
+
+## Commandes
+Message exact `commit plan` :
+- Propose un découpage des modifications présentes dans le "changes" en un ou plusieurs commits. Convention pour les messages de commit : type(scope): message. Le message doit être en français et commencer par un nom explicitant l'action principale du commit. Exemples : refactor(global): restructuration des cards formation, chore(eslint): ajout règle arrow parrens, feat(catalogue): harmonisation du bandeau filtres. Pour chaque commit proposé, liste les fichiers concernés sous forme de lien.
+- Quand le découpage est validé par le message exact `commit ok`, fais toi-même toutes les manipulations Git intermédiaires strictement nécessaires pour exécuter ce découpage validé, sans me redemander de confirmation fonctionnelle à chaque étape. Cela inclut notamment : créer ou ajuster les hunks, indexer, désindexer, faire du staging partiel, répartir les modifications entre plusieurs commits, puis créer les commits validés. Si l’environnement d’exécution impose une approbation technique externe pour certaines commandes, ne me redemande pas une validation métier : demande uniquement l’autorisation technique minimale requise, puis poursuis immédiatement le découpage validé. Ton autonomie s’arrête au périmètre du découpage validé.
+
+Message exact `recap` :
+- Produis un récapitulatif minimal de continuité, pensé pour ouvrir une nouvelle conversation sans perdre d'efficacité.
+- Le récapitulatif doit contenir uniquement :
+  - le contexte utile à conserver ;
+  - les décisions actées ;
+  - l'état actuel du repo ou du chantier ;
+  - les règles critiques à respecter ;
+  - le point de reprise recommandé.
+- Le récapitulatif ne doit pas contenir :
+  - l'historique détaillé de la conversation ;
+  - la liste des commits, sauf demande explicite ;
+  - des explications longues ;
+  - des éléments déjà inutiles pour reprendre le travail.
+- Le format doit être compact, directement copiable dans une nouvelle conversation, et orienté reprise immédiate du travail.
