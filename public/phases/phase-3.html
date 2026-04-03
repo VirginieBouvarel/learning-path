@@ -1427,15 +1427,15 @@ npm run lint:css</code></pre>
       <p>1. Pourquoi installer `Stylelint` maintenant et pas à une phase beaucoup plus tardive ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que la dette CSS commence précisément quand plusieurs composants UI apparaissent. Attendre davantage reviendrait à laisser les écarts de style se multiplier.</p></details>
       <p>2. Pourquoi `postcss-html` est-il utile dans un projet Vue ?</p>
-      <details><summary>Réponse attendue</summary><p>Parce qu'il permet à `Stylelint` de comprendre les blocs `<style>` contenus dans les Single File Components Vue.</p></details>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il permet à `Stylelint` de comprendre les blocs `style` contenus dans les Single File Components Vue.</p></details>
       <p>3. Pourquoi garder une règle explicite sur les classes BEM dans le linter ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une convention qui n'est jamais vérifiée finit vite par devenir une simple intention. Le linter la rend réellement applicable.</p></details>
 
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `stylelint.config.mjs` existe.</li>
-        <li><input type="checkbox"> `lint:css` existe dans `package.json`.</li>
-        <li><input type="checkbox"> `lint:css:fix` existe dans `package.json`.</li>
+        <li><input type="checkbox"> `lint:css` existe dans `package.json`</li>
+        <li><input type="checkbox"> `lint:css:fix` existe dans `package.json`</li>
         <li><input type="checkbox"> `npm run lint:css` est vert.</li>
       </ul>
 
@@ -1508,8 +1508,8 @@ fly deploy</code></pre>
       <h3>Exercice</h3>
       <p>Vérifie publiquement que tu ne regardes pas un cache local. Ouvre l'URL publique du frontend dans une fenêtre privée du navigateur et contrôle à nouveau :</p>
       <ul>
-        <li>le titre du catalogue ;</li>
-        <li>au moins une carte de kata ;</li>
+        <li>le titre du catalogue</li>
+        <li>au moins une carte de kata</li>
         <li>au moins un badge de niveau.</li>
       </ul>
       <details class="solution">
