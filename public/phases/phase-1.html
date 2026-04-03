@@ -51,7 +51,7 @@
           <div class="notion-card__link-desc">Timeline et phases détaillées</div>
         </div>
       </a>
-      <a href="../ressources.html" class="notion-card__link">
+      <a href="../ressources-externes.html" class="notion-card__link">
         <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
           <svg viewBox="0 0 20 20">
             <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
@@ -60,8 +60,8 @@
           </svg>
         </span>
         <div>
-          <div>Ressources</div>
-          <div class="notion-card__link-desc">Ressources filtrables par phase</div>
+          <div>Ressources externes</div>
+          <div class="notion-card__link-desc">Ressources externes filtrables par phase</div>
         </div>
       </a>
     </div>
@@ -254,10 +254,8 @@ curl http://localhost:8080/api/ping</code></pre>
         <li>Ouvre un terminal Ubuntu et place-toi à la racine du repo :
           <pre><code class="language-bash">cd ~/workspace/katasensei</code></pre>
         </li>
-        <li>Vérifie si un fichier `docker-compose.yml` existe déjà :
-          <pre><code class="language-bash">ls
-ls docker-compose.yml</code></pre>
-          Si le fichier n'existe pas, crée-le à la racine du repo.
+        <li>Crée le fichier `docker-compose.yml` à la racine du repo :
+          <pre><code class="language-bash">touch docker-compose.yml</code></pre>
         </li>
         <li>Écris le contenu minimal suivant dans `docker-compose.yml` :
           <pre><code class="language-yaml">services:
@@ -408,7 +406,7 @@ INSERT INTO kata (id, titre, consigne, niveau) VALUES
       <h3>Erreurs fréquentes</h3>
       <ul>
         <li>Si la table n'apparaît pas, relis d'abord les logs Spring pour voir si Flyway a vraiment tourné.</li>
-        <li>Si tu modifies `V1` après exécution, Flyway peut signaler une incohérence. En local, si tu es seule sur la base, le plus simple est souvent de repartir d'une base propre pendant l'apprentissage.</li>
+        <li>Si tu modifies `V1` après exécution, Flyway signale une incohérence. En local, repars d'une base propre puis relance la migration au lieu d'éditer une migration déjà jouée.</li>
         <li>Si `niveau` accepte n'importe quelle valeur, tu repousses un problème de cohérence. Garde dès maintenant un ensemble simple de valeurs métier.</li>
       </ul>
 
@@ -524,7 +522,7 @@ class KataControllerWebTest {
         </li>
         <li>Lance les tests :
           <pre><code class="language-bash">./mvnw test</code></pre>
-          Résultat attendu : le test échoue, probablement parce que `KataController`, `KataService` et `KataResponse` n'existent pas encore.
+          Résultat attendu : le test échoue parce que `KataController`, `KataService` et `KataResponse` n'existent pas encore.
         </li>
         <li>Crée le fichier `src/main/java/dev/katasensei/kata/KataResponse.java` :
           <pre><code class="language-java">package dev.katasensei.kata;
@@ -716,7 +714,7 @@ class KataServiceIntegrationTest {
 
       <h3>Erreurs fréquentes</h3>
       <ul>
-        <li>Si `MockMvc` ou `WebMvcTest` est introuvable, la dépendance `spring-boot-starter-test` manque probablement dans `pom.xml`.</li>
+        <li>Si `MockMvc` ou `WebMvcTest` est introuvable, ajoute la dépendance `spring-boot-starter-test` dans `pom.xml` puis relance Maven.</li>
         <li>Si le test web passe mais que `curl /katas` échoue, le problème se situe sans doute dans la lecture réelle de la base.</li>
         <li>Si `relation "kata" does not exist`, la migration n'a pas été appliquée à la bonne base.</li>
       </ul>
@@ -1173,7 +1171,7 @@ curl http://localhost:8080/katas/99999999-9999-9999-9999-999999999999</code></pr
       <p><strong>Objectif</strong><br>Afficher dans le navigateur la liste réelle des katas renvoyés par l'API.</p>
       <p><strong>Pourquoi cette étape existe maintenant</strong><br>La phase doit se terminer sur une valeur visible côté produit, pas seulement sur des endpoints testés en terminal.</p>
       <p><strong>État de départ exact</strong><br>Le backend sait déjà lister, créer et lire un kata. Le frontend existe mais n'affiche pas encore le catalogue réel.</p>
-      <p><strong>Choix visuel de cette étape</strong><br>L'affichage reste volontairement minimaliste. On n'introduit pas encore `shadcn-vue` ici, parce que l'objectif de la phase 1 est d'abord de sécuriser le flux de données front/back. Les composants UI plus riches viendront dans une phase ultérieure dédiée au raffinement de l'interface.</p>
+      <p><strong>Info parcours</strong><br>L'affichage reste volontairement minimaliste. Cette étape sert d'abord à sécuriser le flux de données front/back avant d'enrichir l'interface.</p>
 
       <h3>Avant de commencer : vocabulaire minimum</h3>
       <p><strong>Contrat HTTP</strong> = la forme exacte du JSON que le backend renvoie.</p>
@@ -1412,7 +1410,7 @@ description = action principale du commit</code></pre>
 feat(front): affichage du catalogue de katas
 chore(qualite): ajout verifications minimales avant commit</code></pre>
         </li>
-        <li>À partir d'ici, le socle qualité minimal de phase 1 est en place. La suite du parcours ajoutera plus tard des outils plus avancés, comme une structuration de tests plus stricte, des règles de style plus fines et une CI complète, mais seulement quand le projet aura assez de matière pour que ces outils aient un vrai sens pédagogique.</li>
+        <li>À partir d'ici, le socle qualité minimal de phase 1 est en place. Tu poses d'abord les garde-fous qui protègent le flux métier déjà construit. Les outils plus avancés viendront quand le projet aura suffisamment de matière pour leur donner un rôle concret.</li>
       </ol>
 
       <h3>Erreurs fréquentes</h3>
@@ -1444,7 +1442,7 @@ cd ~/workspace/katasensei/katasensei-back
       <details><summary>Réponse attendue</summary><p>Parce qu'un outil protège quelque chose. Avant d'avoir un vrai flux métier, il risque surtout d'alourdir le parcours sans bénéfice concret perceptible.</p></details>
       <p>2. Pourquoi un hook Git doit-il rester léger au début ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'un garde-fou trop coûteux finit souvent par être désactivé ou contourné.</p></details>
-      <p>3. Pourquoi certains sujets comme la CI/CD complète ou Checkstyle détaillé peuvent-ils rester reportés ?</p>
+      <p>3. Pourquoi certains sujets comme la CI/CD complète ou Checkstyle détaillé peuvent-ils être reportés à plus tard ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'ils seront plus utiles quand l'architecture et les conventions du projet seront plus stables. Ici, l'objectif est d'abord de sécuriser le premier incrément métier.</p></details>
 
       <h3>Definition of Done de l'étape</h3>
@@ -1496,16 +1494,21 @@ cd ~/workspace/katasensei/katasensei-back
 
     <section class="guide-step" id="deploiement">
       <h2>Stratégie de déploiement de fin de phase</h2>
-      <p>Cette phase ne pousse pas encore à un déploiement complet sur Fly.io. Le projet vient seulement de livrer son premier incrément métier local cohérent. En revanche, cette phase prépare correctement la suite :</p>
+      <p>Cette phase 1 doit se terminer par un redéploiement du premier vrai incrément métier visible. L'objectif n'est plus seulement d'avoir un flux local cohérent, mais de prouver qu'un premier catalogue KataSensei fonctionne aussi sur un environnement public.</p>
       <ul>
-        <li>la base locale est explicite ;</li>
-        <li>les variables d'environnement sont connues ;</li>
-        <li>le schéma SQL est versionné ;</li>
-        <li>les principaux endpoints métiers existent ;</li>
-        <li>le frontend dépend maintenant d'un contrat HTTP réel ;</li>
-        <li>les premières vérifications automatiques existent déjà.</li>
+        <li>Avant déploiement : vérifie les tests minimaux de la phase, le démarrage local du backend, le démarrage local du frontend et le bon fonctionnement du catalogue.</li>
+        <li>Redéploie ensuite l'application avec le premier flux métier complet de la phase :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+fly deploy
+
+cd ~/workspace/katasensei/katasensei-front
+fly deploy</code></pre>
+        </li>
+        <li>Après déploiement : ouvre l'URL publique et vérifie que la liste des katas s'affiche bien.</li>
+        <li>Après déploiement : vérifie qu'un identifiant absent renvoie toujours un comportement cohérent côté API et qu'un backend indisponible produit encore un état d'erreur simple côté frontend.</li>
+        <li>La preuve attendue en fin de phase est claire : le premier incrément métier KataSensei est accessible sur une URL publique et reste compréhensible pour un utilisateur tiers.</li>
       </ul>
-      <p>La phase suivante pourra donc renforcer l'architecture, le découpage du code et la qualité sans repartir d'un flux métier flou.</p>
+      <p>La phase suivante pourra alors refactoriser l'architecture front sans perdre la capacité à livrer.</p>
     </section>
 
     <section class="guide-step" id="ressources">

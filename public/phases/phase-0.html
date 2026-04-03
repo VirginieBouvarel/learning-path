@@ -51,7 +51,7 @@
           <div class="notion-card__link-desc">Timeline et phases détaillées</div>
         </div>
       </a>
-      <a href="../ressources.html" class="notion-card__link">
+      <a href="../ressources-externes.html" class="notion-card__link">
         <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
           <svg viewBox="0 0 20 20">
             <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
@@ -60,8 +60,8 @@
           </svg>
         </span>
         <div>
-          <div>Ressources</div>
-          <div class="notion-card__link-desc">Ressources filtrables par phase</div>
+          <div>Ressources externes</div>
+          <div class="notion-card__link-desc">Ressources externes filtrables par phase</div>
         </div>
       </a>
     </div>
@@ -170,7 +170,7 @@
         <li>Ouvre <strong>Windows Terminal</strong> ou <strong>l'invite de commandes Windows</strong> en mode administrateur. Cette étape se fait côté Windows, pas encore dans Ubuntu.</li>
         <li>Lance l'installation standard de WSL :
           <pre><code class="language-bash">wsl --install</code></pre>
-          Résultat attendu : Windows indique qu'il active WSL, installe Ubuntu et demande un redémarrage si nécessaire.
+          Résultat attendu : Windows indique qu'il active WSL, installe Ubuntu et demande un redémarrage.
         </li>
         <li>Redémarre la machine si Windows le demande, puis ouvre Ubuntu depuis le menu Démarrer.</li>
         <li>Lors du premier lancement d'Ubuntu, choisis ton nom d'utilisateur Linux et ton mot de passe. Résultat attendu : un terminal Ubuntu s'ouvre avec un prompt de type <code>virginie@machine:~$</code>.</li>
@@ -303,7 +303,7 @@ npm -v</code></pre>
       <h3>Erreurs fréquentes</h3>
       <ul>
         <li><code>pwd</code> retourne un chemin qui commence par <code>/mnt/c/</code> : tu es dans le système de fichiers Windows. Reviens dans ton home Linux avec <code>cd ~</code>, puis repars dans <code>~/workspace</code>.</li>
-        <li><code>sudo: command not found</code> : ton terminal n'est probablement pas Ubuntu. Ferme-le et ouvre explicitement la distribution Ubuntu de WSL.</li>
+        <li><code>sudo: command not found</code> : ton terminal n'est pas Ubuntu. Ferme-le et ouvre explicitement la distribution Ubuntu de WSL.</li>
         <li><code>git: command not found</code> : installe Git avec <code>sudo apt install -y git</code>.</li>
       </ul>
 
@@ -408,8 +408,8 @@ Monorepo initial du projet fil rouge.
 
       <h3>Erreurs fréquentes</h3>
       <ul>
-        <li><code>mkdir: cannot create directory 'katasensei': File exists</code> : le dossier existe déjà. Vérifie son contenu avec <code>ls</code> et décide consciemment si tu le réutilises ou si tu repars de zéro.</li>
-        <li><code>git init</code> exécuté dans le mauvais dossier : vérifie avec <code>pwd</code>. Si besoin, supprime le dossier `.git` créé au mauvais endroit seulement si tu es certaine du dossier concerné.</li>
+        <li><code>mkdir: cannot create directory 'katasensei': File exists</code> : supprime le dossier `~/workspace/katasensei` créé par un essai précédent, puis recrée-le pour repartir sur une base propre.</li>
+        <li><code>git init</code> exécuté dans le mauvais dossier : affiche `pwd`, place-toi dans `~/workspace/katasensei`, puis supprime le dossier `.git` créé au mauvais endroit avant de relancer `git init` au bon emplacement.</li>
         <li>Le nom de branche n'est pas `main` : relance <code>git branch -M main</code> depuis la racine du repo.</li>
       </ul>
 
@@ -487,7 +487,7 @@ Monorepo initial du projet fil rouge.
 
       <h3>Micro-étapes</h3>
       <ol>
-        <li>Depuis le terminal Ubuntu ouvert à la racine du repo, installe SDKMAN si ce n'est pas déjà fait :
+        <li>Depuis le terminal Ubuntu ouvert à la racine du repo, installe SDKMAN :
           <pre><code class="language-bash">curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"</code></pre>
           Résultat attendu : la commande <code>sdk version</code> doit fonctionner.
@@ -719,7 +719,7 @@ management.endpoints.web.exposure.include=health</code></pre>
 
       <h3>Micro-étapes</h3>
       <ol>
-        <li>Dans un terminal Ubuntu placé à la racine du repo, installe NVM si nécessaire :
+        <li>Dans un terminal Ubuntu placé à la racine du repo, installe NVM :
           <pre><code class="language-bash">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] &amp;&amp; \. "$NVM_DIR/nvm.sh"</code></pre>
@@ -1016,14 +1016,28 @@ main {
 
     <section class="guide-step" id="deploiement">
       <h2>Stratégie de déploiement de fin de phase</h2>
-      <p>Cette phase 0 ne cherche pas encore une mise en production complète. Ce serait prématuré tant que la structure du projet, les conventions de qualité et la stratégie d'infrastructure ne sont pas encore posées. En revanche, la préparation est immédiatement exploitable :</p>
+      <p>Cette phase 0 doit déjà se terminer par un premier déploiement minimal. L'objectif n'est pas de livrer KataSensei complet, mais de prouver qu'un squelette fullstack simple peut vivre hors du poste local.</p>
       <ul>
-        <li>les ports sont connus et stables en local ;</li>
-        <li>le backend possède déjà un health check ;</li>
-        <li>le frontend sait déjà appeler le backend ;</li>
-        <li>le repo est initialisé proprement pour accueillir la suite du workflow.</li>
+        <li>Avant déploiement : vérifie que le backend démarre, que le frontend démarre et que l'appel front vers le backend fonctionne bien en local.</li>
+        <li>Initialise d'abord les deux applications Fly.io du projet :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+fly launch --name katasensei-back --no-deploy
+
+cd ~/workspace/katasensei/katasensei-front
+fly launch --name katasensei-front --no-deploy</code></pre>
+        </li>
+        <li>Déploie ensuite le squelette minimal de la phase :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+fly deploy
+
+cd ~/workspace/katasensei/katasensei-front
+fly deploy</code></pre>
+        </li>
+        <li>Après déploiement : ouvre l'URL publique du frontend et vérifie qu'elle charge sans erreur bloquante.</li>
+        <li>Après déploiement : vérifie que le frontend déployé peut toujours atteindre le backend déployé sur le point d'entrée minimal prévu par la phase.</li>
+        <li>La preuve attendue en fin de phase est simple : une URL publique existe et montre le squelette KataSensei vivant avec une communication front/back observable.</li>
       </ul>
-      <p>La phase suivante pourra donc introduire les premières conventions de qualité, la structuration du code et une stratégie de déploiement sans repartir d'un setup fragile.</p>
+      <p>La phase suivante pourra alors enrichir le produit sans repartir d'un projet purement local.</p>
     </section>
 
     <section class="guide-step" id="ressources">
