@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phase 3 — Auth JWT + SOLID · KataSensei</title>
+  <title>Phase 3 — PrimeVue, UI métier, LogService et Stylelint · KataSensei</title>
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/guide.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
@@ -17,7 +17,7 @@
   <span class="breadcrumb__separator">›</span>
   <a href="../parcours.html">Parcours</a>
   <span class="breadcrumb__separator">›</span>
-  <span>Phase 3 — Auth JWT + SOLID</span>
+  <span>Phase 3 — PrimeVue, UI métier, LogService et Stylelint</span>
 </nav>
 
 <div class="layout layout--phase">
@@ -72,1119 +72,1629 @@
       <p class="toc__title">Dans ce guide</p>
       <ul class="toc__list">
         <li><a href="#top">Présentation</a></li>
-        <li><a href="#etape-1">1 — Comprendre ce qu'on construit</a></li>
-        <li><a href="#etape-2">2 — Value Objects Java</a></li>
-        <li><a href="#etape-3">3 — SOLID dans KataSensei</a></li>
-        <li><a href="#etape-4">4 — Spring Security + JWT</a></li>
-        <li><a href="#etape-5">5 — Gestion d'erreurs exhaustive</a></li>
-        <li><a href="#etape-6">6 — Bean Validation avancée</a></li>
-        <li><a href="#etape-7">7 — Grand refactoring back</a></li>
-        <li><a href="#etape-8">8 — ADR 005</a></li>
-        <li><a href="#checklist">Checklist finale</a></li>
-        <li><a href="#erreurs">Erreurs fréquentes</a></li>
+        <li><a href="#etape-1">1 — Repartir du catalogue actuel</a></li>
+        <li><a href="#etape-2">2 — Installer PrimeVue et créer KataCard</a></li>
+        <li><a href="#etape-3">3 — Construire KataListState</a></li>
+        <li><a href="#etape-4">4 — Tester la vue du catalogue</a></li>
+        <li><a href="#etape-5">5 — Créer LogService</a></li>
+        <li><a href="#etape-6">6 — Brancher LogService dans le flux du catalogue</a></li>
+        <li><a href="#etape-7">7 — Installer Stylelint</a></li>
+        <li><a href="#etape-8">8 — Valider localement et redéployer le frontend</a></li>
+        <li><a href="#phase-dod">Definition of Done</a></li>
+        <li><a href="#checklist">Checklist de phase</a></li>
+        <li><a href="#deploiement">Déploiement</a></li>
+        <li><a href="#ressources">Ressources utiles</a></li>
       </ul>
     </nav>
   </aside>
 
   <main class="layout__main">
-
     <div class="guide-header" id="presentation">
       <span class="guide-header__phase-badge" style="background: var(--phase-3);">Phase 3</span>
-      <h1 class="guide-header__title">Auth JWT, SOLID, Value Objects + erreurs exhaustives</h1>
-      <p class="guide-header__meta">Durée estimée : ~10h réparties sur 2 semaines</p>
-      <p class="guide-header__intro">Sécuriser KataSensei avec JWT, appliquer SOLID sur du vrai code, créer les Value Objects Java qui mirroient tes branded types TS, et mettre en place une gestion d'erreurs exhaustive des deux côtés. À la fin, tu refactoriseras tout le code naïf du back de la phase 1.</p>
+      <h1 class="guide-header__title">PrimeVue, composants métier du catalogue, LogService et Stylelint</h1>
+      <p class="guide-header__meta">Durée estimée : ~10h à ~12h réparties sur 2 semaines</p>
+      <p class="guide-header__intro">
+        La phase 2 a sécurisé le flux de données du catalogue. La phase 3 transforme ce socle en une vraie interface produit : une vue lisible, des états d'écran clairs, des composants métier front, une journalisation centralisée et un CSS enfin contrôlé par un linter.
+      </p>
       <div class="tags">
-        <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span>
-        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
-        <span class="tag tag--cat-errors"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Gestion des erreurs</span></span>
-        <span class="tag tag--cat-tdd"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">TDD</span></span>
-        <span class="tag tag--cat-refactor"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Refactoring</span></span>
+        <span class="tag tag--cat-front"><span class="tag__dot" aria-hidden="true">🟠</span><span class="tag__label">UI métier</span></span>
+        <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Composants</span></span>
+        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Architecture front</span></span>
+        <span class="tag tag--cat-tests"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Qualité</span></span>
       </div>
     </div>
 
-    <div class="callout--info">
-      <strong>Promesse test de la phase</strong><br>Sécuriser l'auth par des tests ciblés sur JWT, accès refusé, expiration des tokens et endpoints d'authentification, puis s'appuyer sur cette base pour refactorer le back sans casser le comportement.
-    </div>
+    <section class="guide-step">
+      <h2>Objectif de phase</h2>
+      <p>Refondre l'affichage du catalogue de katas avec `PrimeVue`, introduire des composants métier front, centraliser les logs via `LogService`, puis encadrer le CSS avec `Stylelint`.</p>
+
+      <h2>État de départ exact</h2>
+      <ul>
+        <li>Tu travailles sur Windows 11, mais toutes les commandes du projet se font dans Ubuntu via WSL2.</li>
+        <li>La phase 2 est terminée et le frontend possède déjà `KataRepository`, `GetKatasUseCase`, `useKataStore` et `useKataList`.</li>
+        <li>Le catalogue s'affiche déjà, mais il reste textuel et peu rassurant visuellement.</li>
+        <li>Les états `loading`, `error`, `success` et `idle` existent déjà dans le flux front.</li>
+        <li>Le frontend n'utilise pas encore `PrimeVue`.</li>
+        <li>Le frontend n'a pas encore de `LogService` ni de `Stylelint`.</li>
+      </ul>
+
+      <h2>Résultat attendu en fin de phase</h2>
+      <ul>
+        <li>`PrimeVue` est installé et configuré dans le frontend.</li>
+        <li>Le catalogue affiche un vrai titre, des cartes de katas lisibles et des badges de niveau.</li>
+        <li>Le catalogue possède un composant `KataListState` pour `loading`, `empty` et `error`.</li>
+        <li>`GetKatasUseCase` journalise via `LogService` au lieu de dépendre de `console` partout.</li>
+        <li>`Stylelint` contrôle les styles `.vue`, `.css` et `.scss` du frontend.</li>
+        <li>Le frontend est validé localement puis redéployé sur son environnement public.</li>
+      </ul>
+
+      <h2>Valeur livrée à la personne qui utilise KataSensei</h2>
+      <p>Le catalogue devient plus lisible, plus rassurant et plus cohérent. Il reste utile même pendant le chargement ou en cas d'erreur, au lieu de retomber sur un rendu brut de développement.</p>
+
+      <h2>Prérequis</h2>
+      <ul>
+        <li>La phase 2 est terminée et le catalogue se charge encore localement.</li>
+        <li>Tu sais relancer le backend et le frontend depuis Ubuntu dans WSL.</li>
+        <li>Tu sais déjà lancer `npm run type-check`, `npm run test` et `npm run build` dans le frontend.</li>
+      </ul>
+
+      <h2>Outils mobilisés</h2>
+      <ul>
+        <li>Terminal Ubuntu dans WSL</li>
+        <li>VS Code</li>
+        <li>Vue 3</li>
+        <li>TypeScript strict</li>
+        <li>Pinia</li>
+        <li>Vitest et Vue Test Utils</li>
+        <li>PrimeVue</li>
+        <li>Stylelint</li>
+        <li>Fly.io pour le redéploiement frontend</li>
+      </ul>
+    </section>
 
     <div class="callout--info">
-      <strong>ADR 001 s'applique encore ici</strong><br>Garde le vocabulaire métier français pour le domaine. <code>Niveau</code> remplace <code>Difficulty</code>, <code>Indice</code> remplace <code>Hint</code>, et <code>Tentative</code> remplace <code>Session</code> quand il s'agit du métier.
+      <strong>Info parcours</strong><br>Cette phase reste centrée sur le catalogue déjà construit. On n'ajoute pas un nouveau flux métier. On améliore l'interface, les composants front, la stratégie de logs et la qualité CSS sur une fonctionnalité déjà vivante.
     </div>
 
-    <!-- Étape 1 -->
     <section class="guide-step" id="etape-1">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">1</div>
-        <h2 class="guide-step__title">Comprendre ce qu'on va construire</h2>
+        <h2 class="guide-step__title">Repartir du catalogue actuel</h2>
       </div>
 
-      <p>Avant de toucher au clavier, relis <code>KataService.java</code> de la phase 1 et réponds par écrit :</p>
+      <p><strong>Objectif</strong><br>Relancer le catalogue hérité de la phase 2, vérifier ses états exacts et poser une première structure d'écran visible.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>La phase 3 doit améliorer un écran existant, pas partir d'une page imaginaire. Il faut donc repartir du catalogue réel, puis lui donner immédiatement une structure de page plus claire.</p>
+      <p><strong>État de départ exact</strong><br>Le flux du catalogue fonctionne déjà, mais la vue reste brute et la hiérarchie visuelle de l'écran est encore faible.</p>
+
+      <h3>Avant de commencer : recherche de logs</h3>
+      <p>Dans VS Code, la recherche globale <code>Ctrl+Shift+F</code> avec <code>console.</code> suffit pour repérer les logs directs.</p>
+      <p>En terminal, la commande ci-dessous fait la même chose. `rg` signifie "ripgrep" et <code>-n</code> affiche les numéros de ligne :</p>
+      <pre><code class="language-bash">rg -n "console\\.(log|info|warn|error|debug)" src tests</code></pre>
+
+      <h3>Étapes</h3>
       <ol>
-        <li>Qu'est-ce qui empêche de passer un <code>UUID</code> d'utilisateur là où un <code>UUID</code> de kata est attendu ?</li>
-        <li>Si <code>KataService</code> gérait aussi les emails de bienvenue, quel principe SOLID serait violé ?</li>
-        <li>Comment tester <code>KataService</code> sans Spring ni base de données ?</li>
-        <li>Si tu ajoutes un nouveau type d'erreur, combien de fichiers dois-tu modifier ?</li>
+        <li>Ouvre un premier terminal Ubuntu dans WSL et place-toi dans le frontend :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+pwd
+ls</code></pre>
+          Résultat attendu : `pwd` affiche le dossier du frontend et `ls` montre au minimum `src`, `tests` et `package.json`.
+        </li>
+        <li>Démarre le frontend :
+          <pre><code class="language-bash">npm run dev</code></pre>
+          Résultat attendu : Vite écoute sur `http://localhost:5173`.
+        </li>
+        <li>Ouvre un second terminal Ubuntu et démarre le backend :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+./mvnw spring-boot:run</code></pre>
+          Résultat attendu : Spring Boot démarre sans erreur fatale et l'API du catalogue répond encore.
+        </li>
+        <li>Ouvre `http://localhost:5173` dans le navigateur.
+          Résultat attendu : le catalogue s'affiche encore avec la version textuelle héritée de la phase 2.
+        </li>
+        <li>Ouvre `src/ui/views/KataListView.vue`.
+          Vérifie noir sur blanc que la vue branche encore exactement les quatre statuts hérités de phase 2 :
+          <ul>
+            <li>`idle`</li>
+            <li>`loading`</li>
+            <li>`error`</li>
+            <li>`success`</li>
+          </ul>
+        </li>
+        <li>Dans ce même fichier, remplace le début du `<code>&lt;template&gt;</code>` par ce bloc afin de donner immédiatement une vraie structure à l'écran :
+          <pre><code class="language-html">&lt;section class="kata-list-view"&gt;
+  &lt;header class="kata-list-view__header"&gt;
+    &lt;h1 class="kata-list-view__title"&gt;Catalogue de katas&lt;/h1&gt;
+    &lt;p class="kata-list-view__subtitle"&gt;
+      Choisis un kata et entraîne-toi sur une difficulté adaptée à ton niveau actuel.
+    &lt;/p&gt;
+  &lt;/header&gt;
+
+  &lt;!-- le reste de la vue continue ici --&gt;
+&lt;/section&gt;</code></pre>
+        </li>
+        <li>Ajoute aussi ce style minimal dans le bloc `<code>&lt;style scoped&gt;</code>` de `KataListView.vue` :
+          <pre><code class="language-css">.kata-list-view {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.kata-list-view__header {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.kata-list-view__title,
+.kata-list-view__subtitle {
+  margin: 0;
+}</code></pre>
+          Résultat attendu : le catalogue possède déjà un vrai titre et une structure de page plus claire, même avant l'arrivée des composants `PrimeVue`.
+        </li>
+        <li>Repère enfin les usages directs de `console` avec la recherche VS Code ou avec la commande `rg` donnée plus haut.
+          Résultat attendu : tu sais déjà quels fichiers seront concernés plus tard par `LogService`.
+        </li>
       </ol>
-      <div class="callout--tip">Ces quatre douleurs ont chacune une réponse dans cette phase. Garde tes réponses — elles te serviront de motivation pendant les exercices.</div>
-      <h3>Réponses attendues</h3>
-      <p><strong>Question 1.1 :</strong> qu'est-ce qui empêche de passer un mauvais UUID au mauvais endroit ?</p>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne commence pas par installer `PrimeVue` si le catalogue ne s'affiche plus. Corrige d'abord le point de départ.</li>
+        <li>Ne change pas le nom des statuts hérités de la phase 2. Cette phase améliore l'UI, elle ne redéfinit pas le contrat de `AsyncState`.</li>
+        <li>Ne supprime pas le contenu existant de la vue tant que le frontend n'affiche pas encore ton nouvel en-tête correctement.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Dans `KataListView.vue`, traite `idle` comme le premier chargement utile de l'écran. Remplace le message hérité de phase 2 par le même rendu que `loading` :</p>
+      <pre><code class="language-html">&lt;p v-if="state.status === 'loading' || state.status === 'idle'" role="status"&gt;
+  Chargement du catalogue...
+&lt;/p&gt;</code></pre>
       <details class="solution">
-        <summary>Réponse attendue</summary>
+        <summary>Solution - A consulter après 20 min</summary>
         <div class="solution__content">
-          <p>Rien, tant qu'on reste sur des <code>UUID</code> bruts. Le compilateur Java voit seulement des objets du même type, pas leur intention métier. C'est exactement ce que les Value Objects vont corriger.</p>
-        </div>
-      </details>
-      <p><strong>Question 1.2 :</strong> quel principe SOLID serait violé si <code>KataService</code> gérait aussi des emails ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Le principe S de Single Responsibility. La classe aurait au moins deux raisons de changer : la logique métier des katas et la mécanique d'envoi d'emails.</p>
-        </div>
-      </details>
-      <p><strong>Question 1.3 :</strong> comment tester <code>KataService</code> sans Spring ni base ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>En injectant des doubles simples sur ses dépendances : repository fake, publisher fake, etc. Si la classe dépend d'interfaces et de types simples, elle reste testable en pur JUnit.</p>
+          <p>Le bon comportement en phase 3 est de traiter `idle` comme une attente de premier chargement, pas comme un cinquième état d'écran à part.</p>
+          <p>Le remplacement utile est donc bien :</p>
+          <pre><code class="language-html">&lt;p v-if="state.status === 'loading' || state.status === 'idle'" role="status"&gt;
+  Chargement du catalogue...
+&lt;/p&gt;</code></pre>
         </div>
       </details>
 
-      <div class="commit-suggestion">commit suggestion → refactor(kata): analyse du code naïf de la phase 1</div>
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi repartir du catalogue actuel au lieu de créer directement des composants UI nouveaux ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que la phase 3 améliore une fonctionnalité déjà existante. Il faut d'abord relire ce qui est en place pour savoir précisément ce que l'on corrige.</p></details>
+      <p>2. Pourquoi garder exactement les statuts `idle`, `loading`, `error` et `success` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que ce contrat existe déjà dans la phase 2. La phase 3 doit construire au-dessus de ce socle, pas réinventer son modèle d'état.</p></details>
+      <p>3. Pourquoi ajouter un vrai en-tête avant d'installer une bibliothèque UI ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une meilleure interface commence par une meilleure structure d'écran. La hiérarchie visuelle ne dépend pas d'abord d'une bibliothèque, mais d'un rendu plus clair.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le frontend et le backend redémarrent encore.</li>
+        <li>La vue du catalogue utilise toujours les quatre statuts hérités de la phase 2.</li>
+        <li>Le catalogue affiche déjà un vrai titre et un sous-titre visibles dans le navigateur.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> J'ai relancé le frontend.</li>
+        <li><input type="checkbox"> J'ai relancé le backend.</li>
+        <li><input type="checkbox"> Le titre `Catalogue de katas` est visible.</li>
+        <li><input type="checkbox"> J'ai repéré les usages directs de `console`.</li>
+      </ul>
     </section>
 
-    <!-- Étape 2 -->
     <section class="guide-step" id="etape-2">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">2</div>
-        <h2 class="guide-step__title">Value Objects Java : les branded types du back</h2>
+        <h2 class="guide-step__title">Installer PrimeVue et créer KataCard</h2>
       </div>
 
-      <div class="callout--info">En phase 1, tous les identifiants sont des <code>UUID</code> bruts. Rien n'empêche de passer un <code>userId</code> là où un <code>kataId</code> est attendu — le compilateur Java ne voit que deux <code>UUID</code>. C'est exactement le problème que les branded types TS ont résolu en phase 2. Les Value Objects Java sont la même solution.</div>
+      <p><strong>Objectif</strong><br>Installer `PrimeVue`, brancher le thème global, puis remplacer la liste brute du cas nominal par un vrai composant `KataCard`.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le problème concret est maintenant visible : la vue a une structure, mais le cas nominal reste trop brut. C'est le bon moment pour installer `PrimeVue` et améliorer d'abord ce rendu-là.</p>
+      <p><strong>État de départ exact</strong><br>Le catalogue possède maintenant une structure de page plus claire, mais il affiche encore sa liste de façon textuelle.</p>
 
-      <div class="exercise">
-        <h3>Exercice 2.1 — Crée KataId</h3>
-        <p>Crée <code>src/main/java/dev/katasensei/kata/domain/KataId.java</code>.</p>
-        <ul>
-          <li>C'est un <strong>record Java</strong> : <code>record KataId(UUID value)</code></li>
-          <li>Une méthode factory statique <code>of(String s)</code> qui parse un UUID depuis une string</li>
-          <li>Une méthode factory statique <code>generate()</code> qui crée un nouveau KataId aléatoire</li>
-          <li>La classe est dans le package <code>domain</code> — elle ne dépend de rien d'autre</li>
-        </ul>
-        <p><strong>Question de réflexion :</strong> pourquoi un record plutôt qu'une classe normale ?</p>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">package dev.katasensei.kata.domain;
+      <h3>Étapes</h3>
+      <ol>
+        <li>Dans un terminal Ubuntu placé dans `~/workspace/katasensei/katasensei-front`, installe `PrimeVue` et son preset de thème :
+          <pre><code class="language-bash">npm install primevue @primeuix/themes</code></pre>
+          Résultat attendu : `primevue` et `@primeuix/themes` apparaissent dans `package.json`.
+        </li>
+        <li>Ouvre `src/main.ts` et ajoute exactement ces deux imports :
+          <pre><code class="language-typescript">import PrimeVue from 'primevue/config'
+import Aura from '@primeuix/themes/aura'</code></pre>
+        </li>
+        <li>Dans ce même fichier, juste avant `app.mount('#app')`, ajoute :
+          <pre><code class="language-typescript">app.use(PrimeVue, {
+  theme: {
+    preset: Aura
+  }
+})</code></pre>
+          Résultat attendu : `PrimeVue` est branché avec le thème `Aura`.
+        </li>
+        <li>Crée `src/ui/components/KataCard.vue` avec ce contenu complet :
+          <pre><code class="language-html">&lt;script setup lang="ts"&gt;
+import Card from 'primevue/card'
+import Tag from 'primevue/tag'
+import type { Kata } from '@/domain/models/Kata'
 
-import java.util.UUID;
+defineProps&lt;{
+  kata: Kata
+}&gt;()
 
-public record KataId(UUID value) {
+const severityByLevel = {
+  debutant: 'success',
+  intermediaire: 'warn',
+  avance: 'danger'
+} as const
 
-    public static KataId of(String s) {
-        return new KataId(UUID.fromString(s));
-    }
+const labelByLevel = {
+  debutant: 'Débutant',
+  intermediaire: 'Intermédiaire',
+  avance: 'Avancé'
+} as const
+&lt;/script&gt;
 
-    public static KataId generate() {
-        return new KataId(UUID.randomUUID());
-    }
+&lt;template&gt;
+  &lt;Card class="kata-card"&gt;
+    &lt;template #title&gt;
+      {{ kata.titre }}
+    &lt;/template&gt;
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-}</code></pre>
-            <p><strong>Réponse :</strong> un record Java est immutable par défaut, génère automatiquement <code>equals()</code>, <code>hashCode()</code> et <code>toString()</code>. C'est l'équivalent d'une interface TypeScript en lecture seule — précisément ce qu'on veut pour un Value Object qui ne doit jamais changer après création.</p>
-          </div>
-        </details>
-      </div>
+    &lt;template #subtitle&gt;
+      &lt;Tag
+        :value="labelByLevel[kata.niveau]"
+        :severity="severityByLevel[kata.niveau]"
+        rounded
+      /&gt;
+    &lt;/template&gt;
 
-      <div class="exercise">
-        <h3>Exercice 2.2 — Crée UserId et Email</h3>
-        <p><code>UserId</code> sur le même modèle que <code>KataId</code>. Pour <code>Email</code> :</p>
-        <ul>
-          <li>Le constructeur valide que la string contient bien <code>@</code> — sinon lève une <code>InvalidEmailException</code></li>
-          <li><code>InvalidEmailException</code> étend <code>DomainException</code> (créée en phase 1)</li>
-          <li>Une méthode <code>domain()</code> qui retourne la partie après le <code>@</code></li>
-        </ul>
-        <p><strong>Écris d'abord les tests :</strong></p>
-        <pre><code class="language-java">@Test
-void should_throwException_when_emailIsInvalid() {
-    assertThatThrownBy(() -> new Email("pasunemail"))
-        .isInstanceOf(InvalidEmailException.class);
+    &lt;template #content&gt;
+      &lt;p class="kata-card__description"&gt;
+        {{ kata.description }}
+      &lt;/p&gt;
+    &lt;/template&gt;
+  &lt;/Card&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.kata-card {
+  height: 100%;
 }
 
-@Test
-void should_returnDomain_when_emailIsValid() {
-    var email = new Email("alice@katasensei.dev");
-    assertThat(email.domain()).isEqualTo("katasensei.dev");
-}</code></pre>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">public record UserId(UUID value) {
-    public static UserId of(String s) { return new UserId(UUID.fromString(s)); }
-    public static UserId generate()   { return new UserId(UUID.randomUUID()); }
-}</code></pre>
-            <pre><code class="language-java">public class InvalidEmailException extends DomainException {
-    public InvalidEmailException(String email) {
-        super("Email invalide : " + email);
-    }
-}</code></pre>
-            <pre><code class="language-java">public record Email(String value) {
+.kata-card__description {
+  margin: 0;
+  line-height: 1.5;
+}
+&lt;/style&gt;</code></pre>
+        </li>
+        <li>Ouvre ensuite `src/ui/views/KataListView.vue` et remplace la branche `success` textuelle par celle-ci :
+          <pre><code class="language-html">&lt;script setup lang="ts"&gt;
+import KataCard from '@/ui/components/KataCard.vue'
+import { useKataList } from '@/ui/composables/useKataList'
 
-    public Email {
-        if (!value.contains("@")) {
-            throw new InvalidEmailException(value);
-        }
-    }
+const { state } = useKataList()
+&lt;/script&gt;
 
-    public String domain() {
-        return value.substring(value.indexOf('@') + 1);
-    }
-}</code></pre>
-            <div class="callout--info">Le bloc <code>public Email { }</code> sans parenthèses est le <strong>compact constructor</strong> des records Java 16+. Il s'exécute à la création et peut valider les paramètres avant qu'ils soient assignés.</div>
-          </div>
-        </details>
-      </div>
+&lt;template&gt;
+  &lt;section class="kata-list-view"&gt;
+    &lt;header class="kata-list-view__header"&gt;
+      &lt;h1 class="kata-list-view__title"&gt;Catalogue de katas&lt;/h1&gt;
+      &lt;p class="kata-list-view__subtitle"&gt;
+        Choisis un kata et entraîne-toi sur une difficulté adaptée à ton niveau actuel.
+      &lt;/p&gt;
+    &lt;/header&gt;
 
-      <div class="exercise">
-        <h3>Exercice 2.3 — Mets à jour Kata et KataService</h3>
-        <p>Remplace les <code>UUID</code> bruts par les Value Objects dans <code>Kata.java</code> et <code>KataService.java</code>.</p>
-        <ul>
-          <li><code>Kata.getId()</code> retourne <code>KataId</code>, pas <code>UUID</code></li>
-          <li><code>KataService.findById(KataId id)</code> prend un <code>KataId</code>, pas un <code>UUID</code></li>
-          <li>Le contrôleur extrait le <code>KataId</code> depuis le <code>@PathVariable</code> String</li>
-          <li><code>mvn test</code> doit rester vert — les tests existants guident le refactoring</li>
-        </ul>
-        <div class="callout--tip">Lance <code>mvn compile</code> après chaque changement — le compilateur te dit exactement où les types ne correspondent plus. C'est le compilateur qui guide le refactoring, exactement comme <code>tsc --noEmit</code> en TypeScript.</div>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">// Dans KataController
-@GetMapping("/{id}")
-public KataDto findById(@PathVariable String id) {
-    return kataService.findById(KataId.of(id));
-    // KataId.of() lève une exception si l'UUID est malformé
-    // — GlobalExceptionHandler la catchera automatiquement
+    &lt;p v-if="state.status === 'loading' || state.status === 'idle'" role="status"&gt;
+      Chargement du catalogue...
+    &lt;/p&gt;
+
+    &lt;p v-else-if="state.status === 'error'" role="alert"&gt;
+      {{ state.message }}
+    &lt;/p&gt;
+
+    &lt;ul v-else-if="state.status === 'success'" class="kata-list-view__grid"&gt;
+      &lt;li
+        v-for="kata in state.data"
+        :key="kata.id"
+        class="kata-list-view__item"
+      &gt;
+        &lt;KataCard :kata="kata" /&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.kata-list-view {
+  display: grid;
+  gap: 1.5rem;
 }
 
-// Dans KataService
-public KataDto findById(KataId id) {
-    return kataRepository.findById(id.value())
-        .map(this::toDto)
-        .orElseThrow(() -> new KataNotFoundException(id));
-}</code></pre>
-          </div>
-        </details>
-      </div>
+.kata-list-view__header {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.kata-list-view__title,
+.kata-list-view__subtitle {
+  margin: 0;
+}
+
+.kata-list-view__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kata-list-view__item {
+  min-height: 100%;
+}
+&lt;/style&gt;</code></pre>
+          Résultat attendu : le cas nominal du catalogue s'affiche sous forme de cartes, plus sous forme de liste brute.
+        </li>
+        <li>Crée `tests/ui/components/KataCard.test.ts` :
+          <pre><code class="language-typescript">import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import type { Kata } from '@/domain/models/Kata'
+import type { KataId } from '@/domain/types/branded'
+import KataCard from '@/ui/components/KataCard.vue'
+
+describe('KataCard', () => {
+  it('affiche le titre, la description et le niveau', () => {
+    const kata: Kata = {
+      id: 'kata-1' as KataId,
+      titre: 'FizzBuzz',
+      description: 'Ecris FizzBuzz',
+      niveau: 'debutant'
+    }
+
+    const wrapper = mount(KataCard, {
+      props: { kata }
+    })
+
+    expect(wrapper.text()).toContain('FizzBuzz')
+    expect(wrapper.text()).toContain('Débutant')
+    expect(wrapper.text()).toContain('Ecris FizzBuzz')
+  })
+})</code></pre>
+        </li>
+        <li>Lance le test ciblé :
+          <pre><code class="language-bash">npm run test -- tests/ui/components/KataCard.test.ts</code></pre>
+          Résultat attendu : le test passe.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne remplace pas tout `main.ts`. Ajoute seulement `PrimeVue` au même niveau que les autres plugins déjà présents.</li>
+        <li>Ne recrée pas un type `Kata` local dans `KataCard.vue`. Le composant doit consommer le type de domaine déjà posé en phase 2.</li>
+        <li>Ne saute pas le test de `KataCard`. C'est la première preuve durable que le rendu nominal du catalogue change vraiment.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Ajoute un deuxième test à `tests/ui/components/KataCard.test.ts` pour vérifier le niveau `avance`. Colle ce bloc sous le premier test :</p>
+      <pre><code class="language-typescript">it('affiche Avancé pour un kata de niveau avance', () => {
+  const kata: Kata = {
+    id: 'kata-2' as KataId,
+    titre: 'Roman numerals',
+    description: 'Convertis des nombres en chiffres romains',
+    niveau: 'avance'
+  }
+
+  const wrapper = mount(KataCard, {
+    props: { kata }
+  })
+
+  expect(wrapper.text()).toContain('Avancé')
+})</code></pre>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Ce test passe si `KataCard.vue` contient toujours cette table de correspondance :</p>
+          <pre><code class="language-typescript">const labelByLevel = {
+  debutant: 'Débutant',
+  intermediaire: 'Intermédiaire',
+  avance: 'Avancé'
+} as const</code></pre>
+        </div>
+      </details>
+
       <h3>Questions théoriques</h3>
-      <p><strong>Question 2.1 :</strong> qu'est-ce qu'un Value Object apporte que <code>UUID</code> seul n'apporte pas ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Il apporte du sens métier, de la validation locale et une protection de type. Deux valeurs techniquement similaires deviennent distinguables par le compilateur et par le lecteur.</p>
-        </div>
-      </details>
-      <p><strong>Question 2.2 :</strong> pourquoi valider l'email dans le Value Object et pas directement dans le service ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce qu'un objet invalide ne devrait jamais exister. En plaçant l'invariant au plus près de la donnée, tout le reste du code peut manipuler un type déjà sécurisé.</p>
-        </div>
-      </details>
-      <p><strong>Question 2.3 :</strong> pourquoi le compilateur est-il ton meilleur allié pendant ce refactoring ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce qu'il signale immédiatement tous les points encore restés en <code>UUID</code> brut. Le refactoring est alors guidé par les erreurs de type, au lieu de dépendre d'une recherche manuelle incertaine.</p>
-        </div>
-      </details>
+      <p>1. Pourquoi installer `PrimeVue` maintenant et pas en phase 0 ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une bibliothèque UI n'a de valeur que lorsqu'un écran concret existe déjà et a besoin d'un meilleur rendu. Avant cela, elle ajouterait surtout de la complexité prématurée.</p></details>
+      <p>2. Pourquoi commencer par améliorer le cas nominal avec `KataCard` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le cas nominal est le chemin principal de lecture du catalogue. L'améliorer d'abord rend immédiatement visible la valeur de la phase.</p></details>
+      <p>3. Pourquoi utiliser `PrimeVue` directement dans `KataCard` à ce stade ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'aucune duplication de configuration n'est encore prouvée. Il est plus simple et plus pédagogique de partir d'un composant métier clair que d'anticiper des wrappers locaux trop tôt.</p></details>
 
-      <div class="commit-suggestion">commit suggestion → refactor(kata): remplacement UUID bruts par Value Objects KataId UserId Email</div>
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>`PrimeVue` est installé et branché.</li>
+        <li>`KataCard.vue` existe et utilise `PrimeVue`.</li>
+        <li>Le cas nominal du catalogue s'affiche sous forme de cartes.</li>
+        <li>Le test de `KataCard` passe.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `PrimeVue` apparaît dans `package.json`.</li>
+        <li><input type="checkbox"> `src/main.ts` branche `PrimeVue` avec `Aura`.</li>
+        <li><input type="checkbox"> Le cas nominal du catalogue affiche des cartes.</li>
+        <li><input type="checkbox"> Le test de `KataCard` est vert.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <p><strong>Commit</strong><br>C'est le bon moment pour commit : `PrimeVue` est installé, `KataCard` existe, et le cas nominal du catalogue a déjà changé de façon visible.</p>
+        <p><strong>À commit maintenant</strong></p>
+        <ul>
+          <li>`package.json` et le lockfile du frontend</li>
+          <li>`src/main.ts`</li>
+          <li>`src/ui/components/KataCard.vue`</li>
+          <li>`src/ui/views/KataListView.vue`</li>
+          <li>`tests/ui/components/KataCard.test.ts`</li>
+        </ul>
+        <p><strong>Message suggéré</strong><br><code>feat(catalogue): installation de primevue et ajout du composant katacard</code></p>
+      </div>
     </section>
 
-    <!-- Étape 3 -->
     <section class="guide-step" id="etape-3">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">3</div>
-        <h2 class="guide-step__title">SOLID dans KataSensei : pas dans un livre</h2>
+        <h2 class="guide-step__title">Construire KataListState</h2>
       </div>
 
-      <div class="exercise">
-        <h3>Exercice 3.1 — S : Single Responsibility</h3>
-        <p>Imagine que <code>KataService</code> gérait aussi l'envoi d'un email de confirmation à chaque nouveau kata créé.</p>
-        <p><strong>Question :</strong> combien de raisons de changer aurait <code>KataService</code> ? Nomme-les.</p>
-        <p><strong>Exercice :</strong> si tu devais ajouter "envoyer un email quand un kata est créé", comment l'organiserais-tu pour que <code>KataService</code> ne sache pas que les emails existent ?</p>
-        <p><em>Indice : pense aux Spring Events de la phase 5 — ici, une simple interface <code>KataEventPublisher</code> suffit.</em></p>
-        <details class="solution">
-          <summary>Réponse et solution</summary>
-          <div class="solution__content">
-            <p><strong>Réponse :</strong> <code>KataService</code> aurait deux raisons de changer : 1) la logique métier des katas change, 2) la façon d'envoyer les emails change. Deux raisons = violation de S.</p>
-            <pre><code class="language-java">// Port sortant — dans domain/
-public interface KataEventPublisher {
-    void publishKataCreated(KataId kataId, String titre);
+      <p><strong>Objectif</strong><br>Remplacer les messages bruts du `loading`, du `empty` et du `error` par un vrai composant d'état d'écran.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le cas nominal est maintenant crédible. Il faut maintenant traiter sérieusement les cas dégradés, qui faisaient encore très "développement" dans la vue de phase 2.</p>
+      <p><strong>État de départ exact</strong><br>Le catalogue affiche déjà des cartes en cas de succès, mais les autres états sont encore rendus directement dans `KataListView.vue`.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée `src/ui/components/KataListState.vue` avec ce contenu complet :
+          <pre><code class="language-html">&lt;script setup lang="ts"&gt;
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import Skeleton from 'primevue/skeleton'
+
+withDefaults(
+  defineProps&lt;{
+    status: 'loading' | 'empty' | 'error'
+    message?: string
+  }&gt;(),
+  {
+    message: 'Le catalogue n’a pas pu être chargé.'
+  }
+)
+
+const emit = defineEmits&lt;{
+  retry: []
+}&gt;()
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div
+    v-if="status === 'loading'"
+    class="kata-list-state kata-list-state--loading"
+    aria-live="polite"
+  &gt;
+    &lt;div
+      v-for="index in 3"
+      :key="index"
+      class="kata-list-state__skeleton-card"
+    &gt;
+      &lt;Skeleton width="12rem" height="1.5rem" /&gt;
+      &lt;Skeleton width="7rem" height="1rem" /&gt;
+      &lt;Skeleton width="100%" height="4rem" /&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;Message
+    v-else-if="status === 'empty'"
+    severity="info"
+    class="kata-list-state"
+  &gt;
+    Aucun kata disponible pour le moment.
+  &lt;/Message&gt;
+
+  &lt;div v-else class="kata-list-state kata-list-state--error"&gt;
+    &lt;Message severity="error"&gt;
+      {{ message }}
+    &lt;/Message&gt;
+
+    &lt;Button
+      label="Réessayer"
+      severity="secondary"
+      @click="emit('retry')"
+    /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.kata-list-state {
+  display: grid;
+  gap: 1rem;
 }
 
-// KataService reçoit le publisher par injection
-// Il publie un événement — il ne sait pas ce qui se passe ensuite
-public KataDto create(CreateKataRequest request) {
-    var kata = new Kata(request.titre(), request.consigne(), request.niveau());
-    var saved = kataRepository.save(kata);
-    eventPublisher.publishKataCreated(saved.getId(), saved.getTitre());
-    return toDto(saved);
-}</code></pre>
-          </div>
-        </details>
-      </div>
-
-      <div class="exercise">
-        <h3>Exercice 3.2 — O : Open/Closed</h3>
-        <p>Scénario : tu dois ajouter un niveau <code>EXPERT</code> avec un score bonus x2.</p>
-        <p>Observe ce code problématique :</p>
-        <pre><code class="language-java">public int calculateScore(Kata kata, int baseScore) {
-    if (kata.getNiveau() == Niveau.FACILE)   return baseScore;
-    if (kata.getNiveau() == Niveau.MOYEN)    return baseScore * 2;
-    if (kata.getNiveau() == Niveau.DIFFICILE) return baseScore * 3;
-    throw new IllegalArgumentException("Niveau inconnu");
-}</code></pre>
-        <p><strong>Question :</strong> que faut-il modifier pour ajouter <code>EXPERT</code> ? Combien de fichiers ?</p>
-        <p><strong>Exercice :</strong> réécris ce calcul pour qu'ajouter <code>EXPERT</code> ne nécessite de modifier <strong>aucune classe existante</strong>. Indice : l'enum <code>Niveau</code> peut avoir des méthodes.</p>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">public enum Niveau {
-    FACILE(1), MOYEN(2), DIFFICILE(3), EXPERT(5);
-
-    private final int multiplier;
-
-    Niveau(int multiplier) {
-        this.multiplier = multiplier;
-    }
-
-    public int applyTo(int baseScore) {
-        return baseScore * multiplier;
-    }
+.kata-list-state--loading {
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
-// KataScorer devient trivial — et n'a plus besoin de changer pour EXPERT
-public int calculateScore(Kata kata, int baseScore) {
-    return kata.getNiveau().applyTo(baseScore);
-}</code></pre>
-            <p>Ajouter <code>EXPERT(5)</code> dans l'enum n'ouvre aucun autre fichier. C'est le principe O.</p>
-          </div>
-        </details>
-      </div>
+.kata-list-state__skeleton-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color, #dcdcdc);
+  border-radius: 0.75rem;
+}
 
-      <div class="exercise">
-        <h3>Exercice 3.3 — L, I, D en contexte KataSensei</h3>
+.kata-list-state--error {
+  justify-items: start;
+}
+&lt;/style&gt;</code></pre>
+        </li>
+        <li>Ouvre `src/ui/views/KataListView.vue` et remplace les branches de rendu d'état par celles-ci :
+          <pre><code class="language-html">&lt;script setup lang="ts"&gt;
+import { computed } from 'vue'
+import KataCard from '@/ui/components/KataCard.vue'
+import KataListState from '@/ui/components/KataListState.vue'
+import { useKataList } from '@/ui/composables/useKataList'
+import { useKataStore } from '@/stores/useKataStore'
 
-        <h4>Liskov (L)</h4>
-        <pre><code class="language-java">public interface AiSensei {
-    Indice generateIndice(KataId kataId, String code, int indicesDejaUtilises);
-}</code></pre>
-        <p><strong>Question :</strong> <code>ApiIaSensei</code> et <code>MockAiSensei</code> doivent tous les deux implémenter cette interface. Qu'est-ce que ça garantit pour le code qui appelle <code>AiSensei</code> ?</p>
+const { state } = useKataList()
+const kataStore = useKataStore()
 
-        <h4>Interface Segregation (I)</h4>
-        <pre><code class="language-java">// Mauvaise version
-public interface AiService {
-    Indice generateIndice(KataId kataId, String code, int indicesUtilises);
-    CodeReview reviewCode(String code, String language);
-    String translateKata(String consigne, String targetLanguage);
-}</code></pre>
-        <p><strong>Question :</strong> qu'est-ce qui ne va pas ? Réécris en 3 interfaces séparées.</p>
+const katas = computed(() => {
+  return state.value.status === 'success' ? state.value.data : []
+})
 
-        <h4>Dependency Inversion (D)</h4>
-        <p><strong>Exercice :</strong> dessine (ou écris en texte) le graphe de dépendances entre <code>KataController</code>, <code>KataService</code>, <code>KataRepository</code> (interface), et <code>JpaKataRepository</code> (implémentation). Qui dépend de qui ?</p>
+const errorMessage = computed(() => {
+  return state.value.status === 'error'
+    ? state.value.message
+    : 'Le catalogue n’a pas pu être chargé.'
+})
 
-        <details class="solution">
-          <summary>Réponses</summary>
-          <div class="solution__content">
-            <p><strong>Liskov :</strong> <code>ApiIaSensei</code> et <code>MockAiSensei</code> sont <strong>substituables</strong> — le code qui appelle <code>AiSensei</code> n'a pas besoin de savoir lequel il utilise. En test on injecte <code>MockAiSensei</code>, en prod <code>ApiIaSensei</code>.</p>
-            <pre><code class="language-java">// Interface Segregation
-public interface AiSensei       { Indice generateIndice(...); }
-public interface CodeReviewer  { CodeReview reviewCode(...); }
-public interface KataTranslator { String translateKata(...); }</code></pre>
-            <p>Un use case qui n'a besoin que des indices ne dépend pas de <code>translateKata</code>.</p>
-            <pre><code class="language-bash"># Dependency Inversion
-KataController → KataService → KataRepository (interface)
-                                      ↑
-                              JpaKataRepository (implémentation)</code></pre>
-            <p>La règle : les modules de haut niveau (Service) ne dépendent pas des modules de bas niveau (JPA). Les deux dépendent d'une abstraction (l'interface). C'est le principe D — et c'est exactement la règle de dépendance de l'archi hexagonale.</p>
-          </div>
-        </details>
-      </div>
+function rechargerCatalogue() {
+  void kataStore.chargerKatas()
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;section class="kata-list-view"&gt;
+    &lt;header class="kata-list-view__header"&gt;
+      &lt;h1 class="kata-list-view__title"&gt;Catalogue de katas&lt;/h1&gt;
+      &lt;p class="kata-list-view__subtitle"&gt;
+        Choisis un kata et entraîne-toi sur une difficulté adaptée à ton niveau actuel.
+      &lt;/p&gt;
+    &lt;/header&gt;
+
+    &lt;KataListState
+      v-if="state.status === 'loading' || state.status === 'idle'"
+      status="loading"
+    /&gt;
+
+    &lt;KataListState
+      v-else-if="state.status === 'error'"
+      status="error"
+      :message="errorMessage"
+      @retry="rechargerCatalogue"
+    /&gt;
+
+    &lt;KataListState
+      v-else-if="state.status === 'success' &amp;&amp; katas.length === 0"
+      status="empty"
+    /&gt;
+
+    &lt;ul v-else class="kata-list-view__grid"&gt;
+      &lt;li
+        v-for="kata in katas"
+        :key="kata.id"
+        class="kata-list-view__item"
+      &gt;
+        &lt;KataCard :kata="kata" /&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+&lt;/template&gt;</code></pre>
+          Résultat attendu : la vue n'affiche plus directement les messages d'état. Elle délègue maintenant tout cela à `KataListState`.
+        </li>
+        <li>Crée `tests/ui/components/KataListState.test.ts` :
+          <pre><code class="language-typescript">import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import KataListState from '@/ui/components/KataListState.vue'
+
+describe('KataListState', () => {
+  it('affiche un message vide explicite', () => {
+    const wrapper = mount(KataListState, {
+      props: { status: 'empty' }
+    })
+
+    expect(wrapper.text()).toContain('Aucun kata disponible')
+  })
+
+  it('affiche le message d erreur et le bouton Reessayer', () => {
+    const wrapper = mount(KataListState, {
+      props: {
+        status: 'error',
+        message: 'API hors ligne'
+      }
+    })
+
+    expect(wrapper.text()).toContain('API hors ligne')
+    expect(wrapper.text()).toContain('Réessayer')
+  })
+
+  it('affiche trois cartes squelette pendant le chargement', () => {
+    const wrapper = mount(KataListState, {
+      props: { status: 'loading' }
+    })
+
+    expect(wrapper.findAll('.kata-list-state__skeleton-card')).toHaveLength(3)
+  })
+})</code></pre>
+        </li>
+        <li>Lance les tests ciblés :
+          <pre><code class="language-bash">npm run test -- tests/ui/components/KataCard.test.ts tests/ui/components/KataListState.test.ts</code></pre>
+          Résultat attendu : les deux fichiers passent.
+        </li>
+        <li>Recharge le navigateur.
+          Résultat attendu : le cas nominal affiche les cartes, et les cas `loading`, `empty` et `error` passent tous par un composant d'état dédié.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne remets pas de messages d'état directement dans `KataListView.vue` une fois `KataListState` créé.</li>
+        <li>Ne fais pas de `KataListState` un composant qui appelle l'API. Son rôle est uniquement d'afficher l'état d'écran et d'émettre `retry`.</li>
+        <li>Ne laisse pas le cas `success` avec liste vide tomber dans la même branche que la grille de cartes.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Ajoute à `tests/ui/components/KataListState.test.ts` ce test qui prouve l'émission de `retry` :</p>
+      <pre><code class="language-typescript">it('emet retry quand on clique sur Reessayer', async () => {
+  const wrapper = mount(KataListState, {
+    props: {
+      status: 'error',
+      message: 'API hors ligne'
+    }
+  })
+
+  await wrapper.get('button').trigger('click')
+
+  expect(wrapper.emitted('retry')).toHaveLength(1)
+})</code></pre>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Le test passe avec ce bouton :</p>
+          <pre><code class="language-html">&lt;Button
+  label="Réessayer"
+  severity="secondary"
+  @click="emit('retry')"
+/&gt;</code></pre>
+          <p>Il prouve qu'un état d'erreur utile ne se contente pas d'afficher un problème : il offre aussi une action de reprise.</p>
+        </div>
+      </details>
+
       <h3>Questions théoriques</h3>
-      <p><strong>Question 3.4 :</strong> pourquoi apprendre SOLID sur ton vrai code vaut-il mieux que sur des exemples abstraits ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce que tu vois immédiatement les conséquences concrètes sur le design, les tests et le coût de modification. Le principe cesse d'être une définition à réciter et devient un outil de décision.</p>
-        </div>
-      </details>
-      <p><strong>Question 3.5 :</strong> quel principe SOLID est le plus proche de la règle de dépendance de l'architecture hexagonale ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Le D de Dependency Inversion. Les couches haut niveau et bas niveau dépendent d'abstractions plutôt que d'implémentations concrètes.</p>
-        </div>
-      </details>
-      <p><strong>Question 3.6 :</strong> quel signe montre qu'une interface viole l'Interface Segregation Principle ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Quand des clients sont forcés de dépendre de méthodes qu'ils n'utilisent pas. L'interface devient alors un paquetage de responsabilités hétérogènes au lieu d'un contrat précis.</p>
-        </div>
-      </details>
+      <p>1. Pourquoi le cas `empty` mérite-t-il son propre rendu et pas seulement une liste vide ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une liste vide sans message laisse planer un doute : est-ce un bug, un chargement inachevé ou un vrai catalogue vide ? Un état explicite enlève cette ambiguïté.</p></details>
+      <p>2. Pourquoi traiter `idle` comme `loading` dans cette phase ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que `idle` correspond ici à l'attente du premier chargement. Pour la personne qui regarde l'écran, le bon rendu est donc le même que pendant `loading`.</p></details>
+      <p>3. Pourquoi laisser l'action `retry` remonter jusqu'à la vue ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que `KataListState` reste un composant d'affichage. La décision de recharger le catalogue appartient toujours à la vue et au store.</p></details>
 
-      <div class="commit-suggestion">commit suggestion → docs(kata): documentation principes SOLID appliqués au projet</div>
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>`KataListState.vue` existe.</li>
+        <li>La vue du catalogue délègue ses états d'écran à `KataListState`.</li>
+        <li>Les tests de `KataCard` et `KataListState` passent.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le catalogue affiche trois squelettes en chargement.</li>
+        <li><input type="checkbox"> Le catalogue affiche un vrai message quand il est vide.</li>
+        <li><input type="checkbox"> Le catalogue affiche un message d'erreur avec `Réessayer`.</li>
+        <li><input type="checkbox"> La vue n'affiche plus elle-même les messages d'état.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <p><strong>Commit</strong><br>C'est le bon moment pour commit : les cas `loading`, `empty` et `error` sont maintenant pris en charge par un composant dédié et testés.</p>
+        <p><strong>À commit maintenant</strong></p>
+        <ul>
+          <li>`src/ui/components/KataListState.vue`</li>
+          <li>`src/ui/views/KataListView.vue`</li>
+          <li>`tests/ui/components/KataListState.test.ts`</li>
+        </ul>
+        <p><strong>Message suggéré</strong><br><code>feat(catalogue): ajout du composant d etat du catalogue</code></p>
+      </div>
     </section>
 
-    <!-- Étape 4 -->
     <section class="guide-step" id="etape-4">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">4</div>
-        <h2 class="guide-step__title">Spring Security + JWT</h2>
+        <h2 class="guide-step__title">Tester la vue du catalogue</h2>
       </div>
 
-      <div class="callout--info">Un token JWT c'est un objet JSON signé avec une clé secrète. Le front Vue l'obtient à la connexion et l'envoie dans chaque requête via <code>Authorization: Bearer &lt;token&gt;</code>. Spring intercepte chaque requête, vérifie la signature, et peuple le contexte de sécurité — tout ça avant que ton code métier ne soit appelé.</div>
+      <p><strong>Objectif</strong><br>Ajouter un test de vue qui vérifie les cas utiles du catalogue sans dépendre d'un vrai `fetch` ni d'un backend réel.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Les composants métier existent. Il faut maintenant vérifier que `KataListView` orchestre correctement ces composants selon les statuts du flux.</p>
+      <p><strong>État de départ exact</strong><br>Le catalogue possède ses composants visibles, mais la vue elle-même n'a pas encore de test dédié sur ses états d'écran.</p>
 
-      <div class="exercise">
-        <h3>Exercice 4.1 — Ajoute les dépendances JWT</h3>
-        <p>Ajoute la librairie <code>jjwt</code> dans <code>pom.xml</code> :</p>
-        <pre><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
-    &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
-    &lt;version&gt;0.12.6&lt;/version&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
-    &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
-    &lt;version&gt;0.12.6&lt;/version&gt;
-    &lt;scope&gt;runtime&lt;/scope&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
-    &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
-    &lt;version&gt;0.12.6&lt;/version&gt;
-    &lt;scope&gt;runtime&lt;/scope&gt;
-&lt;/dependency&gt;</code></pre>
-        <p>Et dans <code>application.yml</code> :</p>
-        <pre><code class="language-yaml">app:
-  jwt:
-    secret: ${JWT_SECRET}
-    expiration-ms: 86400000  # 24 heures</code></pre>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <p>Le résultat attendu est simplement un <code>pom.xml</code> qui contient les 3 dépendances <code>jjwt</code> et une config externalisée dans <code>application.yml</code>. Ne code pas encore le service JWT tant que la dépendance et la config ne compilent pas proprement.</p>
-          </div>
-        </details>
-      </div>
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée `tests/ui/views/KataListView.test.ts` avec ce contenu complet :
+          <pre><code class="language-typescript">import { computed } from 'vue'
+import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import type { KataId } from '@/domain/types/branded'
+import KataListView from '@/ui/views/KataListView.vue'
+import { useKataList } from '@/ui/composables/useKataList'
+import { useKataStore } from '@/stores/useKataStore'
 
-      <div class="exercise">
-        <h3>Exercice 4.2 — Crée JwtService (🔴 RED d'abord)</h3>
-        <p>Écris les tests avant d'implémenter :</p>
-        <pre><code class="language-java">@Test
-void should_generateToken_and_extractUserId() {
-    var userId = UserId.generate();
-    var token = jwtService.generateToken(userId);
-    assertThat(jwtService.extractUserId(token)).isEqualTo(userId);
-}
+vi.mock('@/ui/composables/useKataList', () => ({
+  useKataList: vi.fn()
+}))
 
-@Test
-void should_returnFalse_when_tokenIsExpired() {
-    // Indice : injecte un service avec une expiration de -1ms
-}</code></pre>
-        <p><strong>Question de réflexion :</strong> comment tester qu'un token est expiré sans attendre 24 heures ?</p>
-        <p>Puis implémente <code>JwtService</code> avec <code>generateToken</code>, <code>extractUserId</code>, <code>isTokenValid</code>.</p>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">@Service
-public class JwtService {
+vi.mock('@/stores/useKataStore', () => ({
+  useKataStore: vi.fn()
+}))
 
-    private final SecretKey secretKey;
-    private final long expirationMs;
+describe('KataListView', () => {
+  it('affiche les cartes quand le catalogue est charge', () => {
+    vi.mocked(useKataStore).mockReturnValue({
+      chargerKatas: vi.fn()
+    } as never)
 
-    public JwtService(
-        @Value("${app.jwt.secret}") String secret,
-        @Value("${app.jwt.expiration-ms}") long expirationMs
-    ) {
-        this.secretKey   = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expirationMs = expirationMs;
-    }
+    vi.mocked(useKataList).mockReturnValue({
+      state: computed(() => ({
+        status: 'success',
+        data: [
+          {
+            id: 'kata-1' as KataId,
+            titre: 'FizzBuzz',
+            description: 'Ecris FizzBuzz',
+            niveau: 'debutant'
+          }
+        ]
+      }))
+    })
 
-    public String generateToken(UserId userId) {
-        return Jwts.builder()
-            .subject(userId.value().toString())
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + expirationMs))
-            .signWith(secretKey)
-            .compact();
-    }
+    const wrapper = mount(KataListView)
 
-    public UserId extractUserId(String token) {
-        var subject = parseClaims(token).getSubject();
-        return UserId.of(subject);
-    }
+    expect(wrapper.text()).toContain('Catalogue de katas')
+    expect(wrapper.text()).toContain('FizzBuzz')
+  })
 
-    public boolean isTokenValid(String token) {
-        try {
-            parseClaims(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
-    }
+  it('affiche l etat vide quand aucun kata n est disponible', () => {
+    vi.mocked(useKataStore).mockReturnValue({
+      chargerKatas: vi.fn()
+    } as never)
 
-    private Claims parseClaims(String token) {
-        return Jwts.parser()
-            .verifyWith(secretKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
-    }
-}</code></pre>
-            <p><strong>Réponse sur les tokens expirés :</strong> passe <code>expirationMs = -1</code> au constructeur dans le test — le token sera créé déjà expiré. C'est pourquoi l'injection par constructeur est indispensable : ça permet de contrôler le comportement dans les tests.</p>
-          </div>
-        </details>
-      </div>
+    vi.mocked(useKataList).mockReturnValue({
+      state: computed(() => ({
+        status: 'success',
+        data: []
+      }))
+    })
 
-      <div class="exercise">
-        <h3>Exercice 4.3 — Filtre JWT + configuration Spring Security (🔴 RED)</h3>
-        <p>Tests à écrire d'abord :</p>
-        <pre><code class="language-java">@Test
-void should_return401_when_noTokenProvided() throws Exception {
-    mockMvc.perform(get("/katas"))
-        .andExpect(status().isUnauthorized());
-}
+    const wrapper = mount(KataListView)
 
-@Test
-void should_return200_when_validTokenProvided() throws Exception {
-    var token = jwtService.generateToken(UserId.generate());
+    expect(wrapper.text()).toContain('Aucun kata disponible')
+  })
 
-    mockMvc.perform(get("/katas")
-            .header("Authorization", "Bearer " + token))
-        .andExpect(status().isOk());
-}</code></pre>
-        <p>Lance les tests — ils échouent car Spring Security n'est pas configuré. 🔴</p>
-        <p>Puis crée :</p>
-        <ol>
-          <li><code>JwtAuthenticationFilter extends OncePerRequestFilter</code> — extrait le token du header, valide, peuple <code>SecurityContextHolder</code></li>
-          <li><code>SecurityConfig</code> — configure les routes publiques (<code>/auth/**</code>) et protégées (tout le reste)</li>
-        </ol>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+  it('affiche l etat d erreur quand le chargement echoue', () => {
+    vi.mocked(useKataStore).mockReturnValue({
+      chargerKatas: vi.fn()
+    } as never)
 
-    private final JwtService jwtService;
+    vi.mocked(useKataList).mockReturnValue({
+      state: computed(() => ({
+        status: 'error',
+        message: 'API hors ligne'
+      }))
+    })
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
+    const wrapper = mount(KataListView)
 
-    @Override
-    protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain chain
-    ) throws ServletException, IOException {
+    expect(wrapper.text()).toContain('API hors ligne')
+    expect(wrapper.text()).toContain('Réessayer')
+  })
+})</code></pre>
+        </li>
+        <li>Lance le test de vue :
+          <pre><code class="language-bash">npm run test -- tests/ui/views/KataListView.test.ts</code></pre>
+          Résultat attendu : les trois cas `success`, `empty` et `error` passent.
+        </li>
+        <li>Recharge ensuite le navigateur local.
+          Résultat attendu : le comportement visible du catalogue correspond bien à ce qui vient d'être vérifié en test.
+        </li>
+      </ol>
 
-        var header = request.getHeader("Authorization");
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne mocke pas `fetch` dans ce test. Ici, on teste la vue, pas le repository.</li>
+        <li>Ne réécris pas les composants `KataCard` ou `KataListState` dans le test. La vue doit simplement les utiliser.</li>
+        <li>Ne saute pas le cas `empty`. C'est précisément l'un des apports visibles de la phase 3.</li>
+      </ul>
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            chain.doFilter(request, response);
-            return;
-        }
+      <h3>Exercice</h3>
+      <p>Ajoute un quatrième test à `tests/ui/views/KataListView.test.ts` pour vérifier que l'état `loading` affiche bien les squelettes. Ajoute ce bloc :</p>
+      <pre><code class="language-typescript">it('affiche les squelettes pendant le chargement', () => {
+  vi.mocked(useKataStore).mockReturnValue({
+    chargerKatas: vi.fn()
+  } as never)
 
-        var token = header.substring(7);
+  vi.mocked(useKataList).mockReturnValue({
+    state: computed(() => ({
+      status: 'loading'
+    }))
+  })
 
-        if (jwtService.isTokenValid(token)) {
-            var userId = jwtService.extractUserId(token);
-            var auth = new UsernamePasswordAuthenticationToken(
-                userId, null, List.of()
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
-        }
+  const wrapper = mount(KataListView)
 
-        chain.doFilter(request, response);
-    }
-}</code></pre>
-            <pre><code class="language-java">@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+  expect(wrapper.findAll('.kata-list-state__skeleton-card')).toHaveLength(3)
+})</code></pre>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Le test passe lorsque `KataListView` branche :</p>
+          <pre><code class="language-html">&lt;KataListState
+  v-if="state.status === 'loading' || state.status === 'idle'"
+  status="loading"
+/&gt;</code></pre>
+        </div>
+      </details>
 
-    private final JwtAuthenticationFilter jwtFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/actuator/health").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}</code></pre>
-          </div>
-        </details>
-      </div>
-
-      <div class="exercise">
-        <h3>Exercice 4.4 — Endpoints d'auth : POST /auth/register et POST /auth/login</h3>
-        <p>Crée en TDD :</p>
-        <ol>
-          <li><code>UserEntity</code> (entité JPA) avec <code>id</code> (UserId), <code>email</code> (Email), <code>passwordHash</code> (String)</li>
-          <li>Migration Flyway <code>V2__create_user_table.sql</code></li>
-          <li><code>AuthController</code> avec <code>POST /auth/register</code> et <code>POST /auth/login</code></li>
-          <li><code>AuthService</code> avec <code>register(RegisterRequest)</code> et <code>login(LoginRequest): String</code></li>
-        </ol>
-        <p><strong>Tests minimaux à écrire d'abord :</strong></p>
-        <pre><code class="language-java">@Test void should_return201_when_registrationIsValid()
-@Test void should_return400_when_emailAlreadyExists()
-@Test void should_returnToken_when_credentialsAreCorrect()
-@Test void should_return401_when_passwordIsWrong()</code></pre>
-        <details class="solution">
-          <summary>Solution migration SQL — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-sql">CREATE TABLE app_user (
-    id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-    email         VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at    TIMESTAMP    NOT NULL DEFAULT now()
-);</code></pre>
-            <div class="callout--warning"><strong>Pourquoi <code>app_user</code> et pas <code>user</code> ?</strong> <code>user</code> est un mot réservé en SQL. Ce genre de piège classique mérite d'être dans tes notes.</div>
-          </div>
-        </details>
-        <details class="solution">
-          <summary>Solution AuthService — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">@Service
-public class AuthService {
-
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-
-    // injection par constructeur
-
-    public void register(RegisterRequest request) {
-        var email = new Email(request.email()); // validation via Value Object
-        if (userRepository.existsByEmail(email.value())) {
-            throw new EmailAlreadyExistsException(email);
-        }
-        var hash = passwordEncoder.encode(request.password());
-        userRepository.save(new UserEntity(UserId.generate(), email.value(), hash));
-    }
-
-    public String login(LoginRequest request) {
-        var user = userRepository.findByEmail(request.email())
-            .orElseThrow(() -> new InvalidCredentialsException());
-
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new InvalidCredentialsException();
-        }
-
-        return jwtService.generateToken(UserId.of(user.getId().toString()));
-    }
-}</code></pre>
-            <div class="callout--warning"><strong>Sécurité :</strong> <code>InvalidCredentialsException</code> est la même exception pour "email inconnu" et "mauvais mot de passe". On ne donne jamais à un attaquant l'information que l'email existe.</div>
-          </div>
-        </details>
-      </div>
       <h3>Questions théoriques</h3>
-      <p><strong>Question 4.1 :</strong> pourquoi stocker la clé JWT dans une variable d'environnement et pas en dur dans le code ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce qu'un secret ne doit pas vivre dans le dépôt Git. L'externalisation permet aussi de changer la valeur selon l'environnement sans recompiler l'application.</p>
-        </div>
-      </details>
-      <p><strong>Question 4.2 :</strong> pourquoi une API JWT bien configurée est-elle dite <code>stateless</code> ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce que le serveur ne garde pas de session utilisateur en mémoire. Chaque requête apporte elle-même la preuve d'authentification via le token signé.</p>
-        </div>
-      </details>
-      <p><strong>Question 4.3 :</strong> pourquoi commencer par les tests sur <code>JwtService</code> et la sécurité HTTP ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce que l'authentification est facile à casser de manière discrète. Les tests fixent immédiatement le comportement attendu pour la génération, l'expiration et l'accès protégé.</p>
-        </div>
-      </details>
+      <p>1. Pourquoi tester la vue avec `useKataList` mocké plutôt qu'avec un vrai backend ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que ce test doit vérifier le comportement de la vue, pas la couche HTTP. Mocker le composable permet d'isoler exactement la responsabilité de la vue.</p></details>
+      <p>2. Pourquoi garder un test de vue alors que `KataCard` et `KataListState` ont déjà leurs propres tests ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que la vue a encore une responsabilité propre : choisir quel composant afficher selon l'état du flux.</p></details>
+      <p>3. Pourquoi ce test de vue est-il plus utile qu'un simple contrôle manuel ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il verrouille les cas utiles du catalogue pour les prochaines phases. Il évite de perdre silencieusement `empty` ou `error` lors d'un futur refactoring.</p></details>
 
-      <div class="commit-suggestion">commit suggestion → feat(auth): ajout JwtService avec tests token génération et validation</div>
-      <div class="commit-suggestion">commit suggestion → feat(secu): configuration Spring Security JWT stateless</div>
-      <div class="commit-suggestion">commit suggestion → feat(auth): ajout endpoints POST /auth/register et POST /auth/login</div>
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Un test de vue couvre au moins `success`, `empty` et `error`.</li>
+        <li>Le comportement visible du catalogue correspond à ces tests.</li>
+        <li>La vue reste découplée du réseau dans ses tests.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le test de vue du catalogue existe.</li>
+        <li><input type="checkbox"> Le test couvre au moins trois états utiles.</li>
+        <li><input type="checkbox"> Le test ne dépend pas d'un vrai `fetch`.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <p><strong>Commit</strong><br>C'est le bon moment pour commit : la vue du catalogue est maintenant verrouillée par des tests sur ses états visibles.</p>
+        <p><strong>À commit maintenant</strong></p>
+        <ul>
+          <li>`tests/ui/views/KataListView.test.ts`</li>
+        </ul>
+        <p><strong>Message suggéré</strong><br><code>test(catalogue): ajout des tests de vue du catalogue</code></p>
+      </div>
     </section>
 
-    <!-- Étape 5 -->
     <section class="guide-step" id="etape-5">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">5</div>
-        <h2 class="guide-step__title">Gestion d'erreurs exhaustive : AppError côté back et front</h2>
+        <h2 class="guide-step__title">Créer LogService</h2>
       </div>
 
-      <div class="exercise">
-        <h3>Exercice 5.1 — Enrichis la hiérarchie d'exceptions</h3>
-        <p>Crée toutes les exceptions domaine de KataSensei :</p>
-        <ul>
-          <li>Toutes étendent <code>DomainException</code> (phase 1)</li>
-          <li><code>KataNotFoundException(KataId id)</code> — déjà créée</li>
-          <li><code>EmailAlreadyExistsException(Email email)</code></li>
-          <li><code>InvalidCredentialsException()</code> — message générique volontairement vague</li>
-          <li><code>InvalidEmailException(String email)</code> — déjà créée</li>
-          <li><code>UnauthorizedException(String action)</code> — pour les actions non permises</li>
-        </ul>
-        <p>Puis mets à jour <code>GlobalExceptionHandler</code> pour gérer chacune.</p>
-        <p><strong>Question de réflexion :</strong> combien de fichiers modifies-tu pour ajouter un nouveau type d'erreur ?</p>
-        <details class="solution">
-          <summary>Solution GlobalExceptionHandler enrichi — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">@ExceptionHandler(EmailAlreadyExistsException.class)
-ProblemDetail handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-    var problem = ProblemDetail.forStatusAndDetail(
-        HttpStatus.CONFLICT, ex.getMessage()
-    );
-    problem.setTitle("Email already exists");
-    problem.setType(URI.create("https://katasensei.dev/errors/email-conflict"));
-    return problem;
+      <p><strong>Objectif</strong><br>Poser un vrai port `LogService` et une implémentation `ConsoleLogService` pour centraliser la stratégie de logs frontend.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le catalogue est maintenant visible et testable. Il faut maintenant éviter que la journalisation reste dispersée dans `console` au fil des prochains changements.</p>
+      <p><strong>État de départ exact</strong><br>Le flux principal du catalogue fonctionne, mais la stratégie de logs n'est pas encore centralisée derrière une abstraction dédiée.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée le port `src/domain/ports/LogService.ts` :
+          <pre><code class="language-typescript">export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
+
+export interface LogContext {
+  feature: string
+  action: string
+  [key: string]: unknown
 }
 
-@ExceptionHandler(InvalidCredentialsException.class)
-ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
-    var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-    problem.setTitle("Invalid credentials");
-    problem.setType(URI.create("https://katasensei.dev/errors/invalid-credentials"));
-    return problem;
-}
-
-@ExceptionHandler(InvalidEmailException.class)
-ProblemDetail handleInvalidEmail(InvalidEmailException ex) {
-    var problem = ProblemDetail.forStatusAndDetail(
-        HttpStatus.BAD_REQUEST, ex.getMessage()
-    );
-    problem.setTitle("Invalid email format");
-    problem.setType(URI.create("https://katasensei.dev/errors/invalid-email"));
-    return problem;
+export interface LogService {
+  debug(message: string, context: LogContext): void
+  info(message: string, context: LogContext): void
+  warn(message: string, context: LogContext): void
+  error(message: string, context: LogContext): void
 }</code></pre>
-            <p><strong>Réponse :</strong> exactement <strong>2 fichiers</strong> — l'exception elle-même + un <code>@ExceptionHandler</code> dans <code>GlobalExceptionHandler</code>. Le front Vue ne change pas, il reçoit toujours du Problem Details RFC 7807.</p>
-          </div>
-        </details>
-      </div>
+        </li>
+        <li>Crée l'implémentation `src/infrastructure/logging/ConsoleLogService.ts` :
+          <pre><code class="language-typescript">import type { LogContext, LogLevel, LogService } from '@/domain/ports/LogService'
 
-      <div class="exercise">
-        <h3>Exercice 5.2 — Mirror côté front : compléter AppError TS</h3>
-        <p>Mets à jour <code>src/domain/types/errors.ts</code> pour ajouter les erreurs liées à l'auth :</p>
-        <ul>
-          <li>Ajouter <code>ConflictError : { kind: 'conflict'; resource: string }</code></li>
-          <li>Mettre à jour <code>toUserMessage</code> pour couvrir le nouveau cas</li>
-          <li>Mettre à jour <code>isAppError</code> dans <code>guards.ts</code></li>
-          <li>Mettre à jour <code>ApiKataRepository</code> pour mapper les 401 vers <code>UnauthorizedError</code></li>
-        </ul>
-        <p><strong>Question de réflexion :</strong> que se passe-t-il si tu oublies de gérer <code>ConflictError</code> dans <code>toUserMessage</code> ?</p>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-typescript">export type ConflictError = { kind: 'conflict'; resource: string }
+const SENSITIVE_KEYS = ['token', 'authorization', 'password']
 
-export type AppError =
-  | NetworkError | NotFoundError | ValidationError
-  | UnauthorizedError | ConflictError | UnexpectedError
+function sanitizeContext(context: LogContext) {
+  return Object.fromEntries(
+    Object.entries(context).map(([key, value]) => {
+      if (SENSITIVE_KEYS.includes(key.toLowerCase())) {
+        return [key, '[redacted]']
+      }
 
-export function toUserMessage(error: AppError): string {
-  switch (error.kind) {
-    case 'network':      return 'Problème de connexion.'
-    case 'not-found':   return `${error.resource} introuvable.`
-    case 'validation':  return 'Certains champs sont invalides.'
-    case 'unauthorized': return 'Tu dois être connecté.'
-    case 'conflict':    return `${error.resource} existe déjà.`
-    case 'unexpected':  return 'Une erreur inattendue est survenue.'
-    // Si tu oublies 'conflict', TypeScript affiche une erreur ici
-    // car le type de retour ne couvre pas tous les cas
+      return [key, value]
+    })
+  )
+}
+
+export class ConsoleLogService implements LogService {
+  constructor(private readonly environment: string = import.meta.env.MODE) {}
+
+  debug(message: string, context: LogContext) {
+    if (this.environment === 'production') {
+      return
+    }
+
+    this.write('debug', message, context)
+  }
+
+  info(message: string, context: LogContext) {
+    this.write('info', message, context)
+  }
+
+  warn(message: string, context: LogContext) {
+    this.write('warn', message, context)
+  }
+
+  error(message: string, context: LogContext) {
+    this.write('error', message, context)
+  }
+
+  private write(level: LogLevel, message: string, context: LogContext) {
+    const payload = {
+      level,
+      message,
+      timestamp: new Date().toISOString(),
+      ...sanitizeContext(context)
+    }
+
+    const target =
+      level === 'error'
+        ? console.error
+        : level === 'warn'
+          ? console.warn
+          : level === 'info'
+            ? console.info
+            : console.debug
+
+    target(payload)
   }
 }</code></pre>
-            <p><strong>Réponse :</strong> TypeScript détecte l'oubli ! La fonction déclare <code>string</code> comme type de retour. Si un cas du switch n'est pas couvert, TS signale que la fonction peut retourner <code>undefined</code> — incompatible avec <code>string</code>. Le compilateur est ton filet de sécurité.</p>
-          </div>
-        </details>
-      </div>
-      <h3>Questions théoriques</h3>
-      <p><strong>Question 5.1 :</strong> pourquoi garder une hiérarchie d'erreurs cohérente entre back et front ?</p>
+        </li>
+        <li>Crée la fabrique `src/infrastructure/logging/createLogService.ts` :
+          <pre><code class="language-typescript">import type { LogService } from '@/domain/ports/LogService'
+import { ConsoleLogService } from '@/infrastructure/logging/ConsoleLogService'
+
+export function createLogService(): LogService {
+  return new ConsoleLogService(import.meta.env.MODE)
+}</code></pre>
+        </li>
+        <li>Crée `tests/infrastructure/logging/ConsoleLogService.test.ts` :
+          <pre><code class="language-typescript">import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ConsoleLogService } from '@/infrastructure/logging/ConsoleLogService'
+
+describe('ConsoleLogService', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('n ecrit pas de debug en production', () => {
+    const consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => undefined)
+    const logService = new ConsoleLogService('production')
+
+    logService.debug('Catalogue charge', {
+      feature: 'catalogue',
+      action: 'load',
+      token: 'secret-token'
+    })
+
+    expect(consoleDebugSpy).not.toHaveBeenCalled()
+  })
+
+  it('masque les champs sensibles', () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const logService = new ConsoleLogService('development')
+
+    logService.error('Echec du chargement du catalogue', {
+      feature: 'catalogue',
+      action: 'load-error',
+      token: 'secret-token'
+    })
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        token: '[redacted]'
+      })
+    )
+  })
+})</code></pre>
+        </li>
+        <li>Lance le test du logger :
+          <pre><code class="language-bash">npm run test -- tests/infrastructure/logging/ConsoleLogService.test.ts</code></pre>
+          Résultat attendu : les deux tests passent.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne mets pas `LogService` dans `src/ui`. Sa place est au niveau du port de domaine, car il décrit une dépendance sortante du frontend.</li>
+        <li>Ne laisse pas `ConsoleLogService` exposer des données sensibles brutes alors que tu peux les masquer au même endroit.</li>
+        <li>Ne garde pas un logger uniquement en `debug` si tu veux aussi journaliser succès et erreur avec des niveaux distincts.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Ajoute un troisième test à `tests/infrastructure/logging/ConsoleLogService.test.ts` pour vérifier que le champ `authorization` est aussi masqué. Ajoute ce bloc :</p>
+      <pre><code class="language-typescript">it('masque aussi authorization', () => {
+  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+  const logService = new ConsoleLogService('development')
+
+  logService.warn('Jeton refusé', {
+    feature: 'catalogue',
+    action: 'auth-warning',
+    authorization: 'Bearer secret'
+  })
+
+  expect(consoleWarnSpy).toHaveBeenCalledWith(
+    expect.objectContaining({
+      authorization: '[redacted]'
+    })
+  )
+})</code></pre>
       <details class="solution">
-        <summary>Réponse attendue</summary>
+        <summary>Solution - A consulter après 20 min</summary>
         <div class="solution__content">
-          <p>Parce que le backend exprime des problèmes techniques et métier que le front doit traduire proprement. Une taxonomie cohérente évite les ifs ad hoc et les messages inconsistants.</p>
-        </div>
-      </details>
-      <p><strong>Question 5.2 :</strong> pourquoi <code>InvalidCredentialsException</code> doit-elle rester volontairement vague ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Pour ne pas révéler à un attaquant si l'email existe déjà ou non. On protège ainsi contre l'énumération d'utilisateurs.</p>
-        </div>
-      </details>
-      <p><strong>Question 5.3 :</strong> quel intérêt a le format RFC 7807 pour les erreurs HTTP ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Il fournit une structure standard et prévisible pour les erreurs. Le front peut alors parser et mapper les réponses sans deviner le format à chaque endpoint.</p>
+          <p>Le test passe avec cette constante :</p>
+          <pre><code class="language-typescript">const SENSITIVE_KEYS = ['token', 'authorization', 'password']</code></pre>
         </div>
       </details>
 
-      <div class="commit-suggestion">commit suggestion → refactor(erreur): enrichissement GlobalExceptionHandler et AppError TS</div>
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi `LogService` est-il un port sortant front ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il représente une dépendance vers l'extérieur : ici, la manière de journaliser les événements du frontend. Le domaine le consomme sans dépendre directement de `console`.</p></details>
+      <p>2. Pourquoi une stratégie de logs utile doit-elle distinguer `debug`, `info`, `warn` et `error` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que tous les événements n'ont pas la même gravité ni le même intérêt en production. Ces niveaux permettent de filtrer et de lire les logs plus efficacement.</p></details>
+      <p>3. Pourquoi masquer les champs sensibles dans le logger lui-même ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'un point centralisé est précisément l'endroit où appliquer une politique commune. Si chaque appelant devait y penser seul, les oublis seraient inévitables.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le port `LogService` existe dans le domaine.</li>
+        <li>`ConsoleLogService` existe dans l'infrastructure.</li>
+        <li>Les tests ciblés du logger passent.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `LogService` existe dans `src/domain/ports`.</li>
+        <li><input type="checkbox"> `ConsoleLogService` existe dans `src/infrastructure/logging`.</li>
+        <li><input type="checkbox"> Les champs sensibles sont masqués dans les tests.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <p><strong>Commit</strong><br>C'est le bon moment pour commit : le port `LogService`, son implémentation console et leurs tests forment maintenant un incrément autonome.</p>
+        <p><strong>À commit maintenant</strong></p>
+        <ul>
+          <li>`src/domain/ports/LogService.ts`</li>
+          <li>`src/infrastructure/logging/ConsoleLogService.ts`</li>
+          <li>`src/infrastructure/logging/createLogService.ts`</li>
+          <li>`tests/infrastructure/logging/ConsoleLogService.test.ts`</li>
+        </ul>
+        <p><strong>Message suggéré</strong><br><code>feat(front): ajout du logservice frontend</code></p>
+      </div>
     </section>
 
-    <!-- Étape 6 -->
     <section class="guide-step" id="etape-6">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">6</div>
-        <h2 class="guide-step__title">Bean Validation avancée</h2>
+        <h2 class="guide-step__title">Brancher LogService dans le flux du catalogue</h2>
       </div>
 
-      <div class="exercise">
-        <h3>Exercice 6.1 — Crée RegisterRequest et LoginRequest</h3>
-        <p>DTOs de requête avec validation Bean Validation.</p>
-        <p><strong>Contraintes pour <code>RegisterRequest</code> :</strong></p>
-        <ul>
-          <li><code>email</code> : <code>@Email</code> (annotation Jakarta) + <code>@NotBlank</code></li>
-          <li><code>password</code> : <code>@NotBlank</code> + <code>@Size(min = 8, message = "...")</code></li>
-          <li><code>confirmPassword</code> : <code>@NotBlank</code></li>
-          <li>Une annotation custom <code>@PasswordsMatch</code> au niveau de la classe</li>
-        </ul>
-        <p><strong>Question de réflexion :</strong> pourquoi une annotation class-level plutôt qu'une vérification dans le service ?</p>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-java">// L'annotation
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PasswordsMatchValidator.class)
-public @interface PasswordsMatch {
-    String message() default "Les mots de passe ne correspondent pas";
-    Class&lt;?&gt;[] groups() default {};
-    Class&lt;? extends Payload&gt;[] payload() default {};
-}</code></pre>
-            <pre><code class="language-java">// Le validator
-public class PasswordsMatchValidator
-    implements ConstraintValidator&lt;PasswordsMatch, RegisterRequest&gt; {
+      <p><strong>Objectif</strong><br>Utiliser `LogService` dans `GetKatasUseCase` puis l'injecter depuis le store du catalogue.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le logger existe maintenant. Il faut l'appliquer à un vrai flux métier du frontend pour qu'il remplace réellement les `console` dispersés.</p>
+      <p><strong>État de départ exact</strong><br>Le logger est prêt, mais le flux du catalogue n'en dépend pas encore.</p>
 
-    @Override
-    public boolean isValid(RegisterRequest req, ConstraintValidatorContext ctx) {
-        if (req.password() == null || req.confirmPassword() == null) return true;
-        return req.password().equals(req.confirmPassword());
+      <h3>Étapes</h3>
+      <ol>
+        <li>Ouvre `src/domain/usecases/GetKatasUseCase.ts` et remplace sa version de phase 2 par celle-ci :
+          <pre><code class="language-typescript">import type { KataRepository } from '@/domain/ports/KataRepository'
+import type { LogService } from '@/domain/ports/LogService'
+import type { Kata } from '@/domain/models/Kata'
+import type { AppError } from '@/domain/types/AppError'
+import type { Result } from '@/domain/types/Result'
+
+export class GetKatasUseCase {
+  constructor(
+    private readonly kataRepository: KataRepository,
+    private readonly logService: LogService
+  ) {}
+
+  async execute(): Promise&lt;Result&lt;Kata[], AppError&gt;&gt; {
+    this.logService.debug('Demande de chargement du catalogue', {
+      feature: 'catalogue',
+      action: 'load-start'
+    })
+
+    const result = await this.kataRepository.findAll()
+
+    if (result.ok) {
+      this.logService.info('Catalogue charge', {
+        feature: 'catalogue',
+        action: 'load-success',
+        total: result.value.length
+      })
+
+      return result
     }
+
+    this.logService.error('Echec du chargement du catalogue', {
+      feature: 'catalogue',
+      action: 'load-error',
+      errorKind: result.error.kind
+    })
+
+    return result
+  }
 }</code></pre>
-            <pre><code class="language-java">@PasswordsMatch
-public record RegisterRequest(
-    @NotBlank @Email String email,
-    @NotBlank @Size(min = 8, message = "8 caractères minimum") String password,
-    @NotBlank String confirmPassword
-) {}</code></pre>
-            <p><strong>Réponse :</strong> une annotation class-level est déclarative et réutilisable. Bean Validation l'intègre au Problem Details automatiquement — si tu mets la vérification dans le service, tu dois écrire le message d'erreur et le format à la main.</p>
-          </div>
-        </details>
-      </div>
-      <h3>Questions théoriques</h3>
-      <p><strong>Question 6.1 :</strong> pourquoi Bean Validation est-elle utile avant même d'entrer dans le service métier ?</p>
+        </li>
+        <li>Ouvre `src/stores/useKataStore.ts`.
+          Ajoute cet import :
+          <pre><code class="language-typescript">import { createLogService } from '@/infrastructure/logging/createLogService'</code></pre>
+        </li>
+        <li>Dans ce même fichier, remplace l'instanciation du use case par ceci :
+          <pre><code class="language-typescript">const kataRepository = createKataRepository()
+const logService = createLogService()
+const getKatasUseCase = new GetKatasUseCase(kataRepository, logService)</code></pre>
+          Résultat attendu : le store fournit la dépendance logger au use case, mais ne journalise pas lui-même le métier.
+        </li>
+        <li>Complète `tests/domain/usecases/GetKatasUseCase.test.ts` avec ce bloc :
+          <pre><code class="language-typescript">import type { LogContext, LogService } from '@/domain/ports/LogService'
+import { err } from '@/domain/types/Result'
+
+class FakeFailingKataRepository implements KataRepository {
+  async findAll() {
+    return err({ kind: 'network', message: 'offline' })
+  }
+
+  async findById() {
+    return err({ kind: 'unexpected', message: 'unused' })
+  }
+}
+
+class FakeLogService implements LogService {
+  calls: Array&lt;{ level: string; message: string; context: LogContext }&gt; = []
+
+  debug(message: string, context: LogContext) {
+    this.calls.push({ level: 'debug', message, context })
+  }
+
+  info(message: string, context: LogContext) {
+    this.calls.push({ level: 'info', message, context })
+  }
+
+  warn(message: string, context: LogContext) {
+    this.calls.push({ level: 'warn', message, context })
+  }
+
+  error(message: string, context: LogContext) {
+    this.calls.push({ level: 'error', message, context })
+  }
+}
+
+it('journalise une erreur quand le repository echoue', async () => {
+  const logService = new FakeLogService()
+  const useCase = new GetKatasUseCase(new FakeFailingKataRepository(), logService)
+
+  const result = await useCase.execute()
+
+  expect(result.ok).toBe(false)
+  expect(logService.calls).toContainEqual(
+    expect.objectContaining({
+      level: 'error',
+      message: 'Echec du chargement du catalogue'
+    })
+  )
+})</code></pre>
+        </li>
+        <li>Lance les tests utiles :
+          <pre><code class="language-bash">npm run test -- tests/domain/usecases/GetKatasUseCase.test.ts tests/infrastructure/logging/ConsoleLogService.test.ts</code></pre>
+          Résultat attendu : les tests du use case et du logger passent.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne mets pas les appels à `LogService` dans `KataCard.vue` ou `KataListState.vue`. La stratégie principale de logs n'appartient pas aux composants d'affichage.</li>
+        <li>Ne laisse pas `GetKatasUseCase` dépendre à la fois de `LogService` et de `console`. Une fois l'abstraction posée, il faut l'utiliser vraiment.</li>
+        <li>Ne fais pas du store un centre de logs métier. Son rôle reste de gérer l'état partagé de l'UI.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Ajoute un test de succès dans `tests/domain/usecases/GetKatasUseCase.test.ts` pour vérifier que le use case journalise aussi un `info` quand le catalogue est chargé. Ajoute ce bloc :</p>
+      <pre><code class="language-typescript">it('journalise un succes quand le repository repond', async () => {
+  const kata: Kata = {
+    id: 'kata-1' as KataId,
+    titre: 'FizzBuzz',
+    description: 'Ecris FizzBuzz',
+    niveau: 'debutant'
+  }
+
+  const logService = new FakeLogService()
+  const useCase = new GetKatasUseCase(new FakeKataRepository([kata]), logService)
+
+  const result = await useCase.execute()
+
+  expect(result.ok).toBe(true)
+  expect(logService.calls).toContainEqual(
+    expect.objectContaining({
+      level: 'info',
+      message: 'Catalogue charge'
+    })
+  )
+})</code></pre>
       <details class="solution">
-        <summary>Réponse attendue</summary>
+        <summary>Solution - A consulter après 20 min</summary>
         <div class="solution__content">
-          <p>Parce qu'elle filtre très tôt les données incohérentes et standardise la réponse d'erreur. Le service peut alors se concentrer sur la logique métier plutôt que sur la plomberie de validation de format.</p>
-        </div>
-      </details>
-      <p><strong>Question 6.2 :</strong> quelle différence entre une contrainte champ par champ et une contrainte au niveau de la classe ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Une contrainte de champ valide une propriété isolée. Une contrainte de classe compare plusieurs champs entre eux, par exemple <code>password</code> et <code>confirmPassword</code>.</p>
-        </div>
-      </details>
-      <p><strong>Question 6.3 :</strong> pourquoi une annotation custom est-elle préférable à un <code>if</code> éparpillé dans le service ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce qu'elle rend la règle déclarative, réutilisable et intégrée au mécanisme standard de validation. Le service reste plus court et plus concentré sur son vrai rôle.</p>
+          <p>Le test passe lorsque `GetKatasUseCase.execute()` contient cette branche :</p>
+          <pre><code class="language-typescript">if (result.ok) {
+  this.logService.info('Catalogue charge', {
+    feature: 'catalogue',
+    action: 'load-success',
+    total: result.value.length
+  })
+
+  return result
+}</code></pre>
         </div>
       </details>
 
-      <div class="commit-suggestion">commit suggestion → feat(auth): ajout annotation @PasswordsMatch et RegisterRequest</div>
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi brancher `LogService` dans `GetKatasUseCase` plutôt que dans `KataListView.vue` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le use case orchestre le flux applicatif du catalogue. C'est à ce niveau que le début, le succès et l'échec du chargement ont un sens métier et technique.</p></details>
+      <p>2. Pourquoi le store crée-t-il le logger sans pour autant devenir responsable de la journalisation métier ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que fournir une dépendance n'est pas la même chose que porter la logique. Le store compose le flux, mais c'est le use case qui décide quoi journaliser.</p></details>
+      <p>3. Pourquoi cette étape ne touche-t-elle pas aux composants d'affichage ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que la journalisation principale est une préoccupation transverse du flux applicatif, pas du rendu visuel. Mélanger les deux rendrait les composants plus bavards et plus fragiles.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>`GetKatasUseCase` dépend de `LogService`.</li>
+        <li>Le store injecte `LogService` au use case.</li>
+        <li>Les tests du logger et du use case passent.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le use case journalise le démarrage du chargement.</li>
+        <li><input type="checkbox"> Le use case journalise le succès et l'erreur.</li>
+        <li><input type="checkbox"> Les composants Vue n'ont pas récupéré la stratégie principale de logs.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <p><strong>Commit</strong><br>C'est le bon moment pour commit : le logger est maintenant branché dans le vrai flux du catalogue et couvert par des tests du use case.</p>
+        <p><strong>À commit maintenant</strong></p>
+        <ul>
+          <li>`src/domain/usecases/GetKatasUseCase.ts`</li>
+          <li>`src/stores/useKataStore.ts`</li>
+          <li>`tests/domain/usecases/GetKatasUseCase.test.ts`</li>
+        </ul>
+        <p><strong>Message suggéré</strong><br><code>feat(front): branchement du logservice dans le flux du catalogue</code></p>
+      </div>
     </section>
 
-    <!-- Étape 7 -->
     <section class="guide-step" id="etape-7">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">7</div>
-        <h2 class="guide-step__title">Grand refactoring du back phase 1</h2>
+        <h2 class="guide-step__title">Installer Stylelint</h2>
       </div>
 
-      <div class="exercise">
-        <h3>Exercice 7.1 — Remplace tous les UUID bruts</h3>
-        <p>Scanner tout le code du back et remplacer chaque <code>UUID</code> brut par le bon Value Object.</p>
-        <p><strong>Méthode :</strong></p>
-        <ol>
-          <li>Dans IntelliJ : <code>Edit &gt; Find &gt; Find in Files</code> → cherche <code>UUID</code> dans <code>src/main/java</code></li>
-          <li>Pour chaque occurrence : est-ce un id de kata ? → <code>KataId</code>. D'utilisateur ? → <code>UserId</code></li>
-          <li><code>mvn compile</code> après chaque remplacement — le compilateur guide</li>
-          <li><code>mvn test</code> à la fin — aucun test ne doit casser</li>
-        </ol>
-        <div class="callout--tip">C'est le refactoring guidé par les types. Le compilateur Java se comporte exactement comme <code>tsc --noEmit</code> côté TypeScript.</div>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <p>Le résultat attendu n'est pas un snippet unique mais un codebase où chaque identité métier importante passe par un Value Object dédié. Pour vérifier que tu es au bon niveau, une recherche globale de <code>UUID</code> ne doit plus laisser que les implémentations internes des Value Objects et les entités techniques qui en ont encore besoin ponctuellement.</p>
-          </div>
-        </details>
-      </div>
+      <p><strong>Objectif</strong><br>Ajouter un linter CSS robuste qui comprend les fichiers Vue du frontend.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Les composants UI se sont multipliés dans cette phase. C'est maintenant qu'il faut verrouiller les conventions de style du projet au lieu de laisser la dette s'installer.</p>
+      <p><strong>État de départ exact</strong><br>Le catalogue possède ses nouveaux composants, mais aucun contrôle automatique ne vérifie encore les styles.</p>
 
-      <div class="exercise">
-        <h3>Exercice 7.2 — Vérifie SOLID dans chaque classe</h3>
-        <p>Passe en revue chaque classe de service :</p>
-        <table>
-          <thead>
-            <tr><th>Classe</th><th>S : une seule responsabilité ?</th><th>D : dépend d'interfaces ?</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><code>KataService</code></td><td></td><td></td></tr>
-            <tr><td><code>AuthService</code></td><td></td><td></td></tr>
-            <tr><td><code>JwtService</code></td><td></td><td></td></tr>
-            <tr><td><code>GlobalExceptionHandler</code></td><td></td><td></td></tr>
-          </tbody>
-        </table>
-        <p>Si une réponse est non : refactorise et documente le changement dans un commentaire <code>// SOLID: S - extraction de X</code>.</p>
-        <details class="solution">
-          <summary>Solution — ouvre seulement si bloquée après 20 min</summary>
-          <div class="solution__content">
-            <p><strong>Exemple d'attendu :</strong> <code>KataService</code> dépend d'abstractions, <code>AuthService</code> ne gère pas la sécurité HTTP, <code>JwtService</code> ne parle ni JPA ni contrôleur, et <code>GlobalExceptionHandler</code> centralise seulement la traduction exception → réponse HTTP.</p>
-          </div>
-        </details>
-      </div>
+      <h3>Étapes</h3>
+      <ol>
+        <li>Dans un terminal Ubuntu placé dans `~/workspace/katasensei/katasensei-front`, installe `Stylelint` et les syntaxes utiles aux fichiers Vue :
+          <pre><code class="language-bash">npm install -D stylelint stylelint-config-standard-scss postcss-html postcss-scss</code></pre>
+          Résultat attendu : ces dépendances apparaissent dans `devDependencies`.
+        </li>
+        <li>Crée `stylelint.config.mjs` à la racine du frontend avec ce contenu :
+          <pre><code class="language-javascript">/** @type {import('stylelint').Config} */
+export default {
+  extends: ['stylelint-config-standard-scss'],
+  overrides: [
+    {
+      files: ['**/*.vue'],
+      customSyntax: 'postcss-html'
+    }
+  ],
+  ignoreFiles: ['dist/**', 'coverage/**'],
+  rules: {
+    'selector-class-pattern': [
+      '^(?:[a-z0-9]+(?:-[a-z0-9]+)*)(?:__(?:[a-z0-9]+(?:-[a-z0-9]+)*))?(?:--(?:[a-z0-9]+(?:-[a-z0-9]+)*))?$',
+      {
+        resolveNestedSelectors: true,
+        message: 'Utilise une classe simple en kebab-case ou au format BEM.'
+      }
+    ],
+    'max-nesting-depth': 3,
+    'no-descending-specificity': null
+  }
+}</code></pre>
+        </li>
+        <li>Ouvre `package.json` et ajoute ces deux scripts dans `scripts` :
+          <pre><code class="language-json">{
+  "scripts": {
+    "lint:css": "stylelint \"src/**/*.{css,scss,vue}\"",
+    "lint:css:fix": "stylelint \"src/**/*.{css,scss,vue}\" --fix"
+  }
+}</code></pre>
+        </li>
+        <li>Lance le lint CSS :
+          <pre><code class="language-bash">npm run lint:css</code></pre>
+          Résultat attendu : la commande produit un diagnostic exploitable, avec zéro erreur ou une liste précise d'écarts à corriger dans les composants de cette phase.
+        </li>
+        <li>Corrige les écarts remontés puis relance :
+          <pre><code class="language-bash">npm run lint:css</code></pre>
+          Résultat attendu : la commande passe entièrement.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne te contente pas d'installer `Stylelint` sans ajouter de scripts. Un outil qu'on ne lance jamais ne protège rien.</li>
+        <li>Ne laisse pas `Stylelint` ignorer les fichiers `.vue`. Cette phase travaille justement dans des composants Vue.</li>
+        <li>Ne contourne pas la convention BEM avec des classes approximatives. Le linter doit justement verrouiller ce point.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Lance les deux scripts l'un après l'autre depuis `~/workspace/katasensei/katasensei-front` :</p>
+      <pre><code class="language-bash">npm run lint:css:fix
+npm run lint:css</code></pre>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Le résultat utile est simple :</p>
+          <ul>
+            <li>le premier script corrige automatiquement certains écarts mineurs ;</li>
+            <li>le second doit finir vert et confirmer que plus aucun problème bloquant ne reste.</li>
+          </ul>
+          <p>Garder les deux scripts est utile : `lint:css` contrôle, `lint:css:fix` accélère la correction.</p>
+        </div>
+      </details>
+
       <h3>Questions théoriques</h3>
-      <p><strong>Question 7.1 :</strong> pourquoi un grand refactoring doit-il être guidé par le compilateur et les tests, pas par intuition ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce qu'au-delà de quelques fichiers, la mémoire seule n'est plus fiable. Le compilateur détecte les incompatibilités de type et les tests protègent le comportement observable.</p>
-        </div>
-      </details>
-      <p><strong>Question 7.2 :</strong> à quel moment un commentaire <code>// SOLID: ...</code> est-il utile ici ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Comme aide pédagogique temporaire pour expliciter le sens du refactoring. Ce n'est pas une fin en soi, mais un appui pour comprendre pourquoi la classe a été découpée.</p>
-        </div>
-      </details>
-      <p><strong>Question 7.3 :</strong> quel risque y a-t-il à remplacer tous les <code>UUID</code> "d'un coup" sans vérification intermédiaire ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Tu accumules trop de changements silencieux et tu perds la capacité d'identifier rapidement l'origine d'une erreur. Mieux vaut avancer par petits lots avec compilation fréquente.</p>
-        </div>
-      </details>
+      <p>1. Pourquoi installer `Stylelint` maintenant et pas à une phase beaucoup plus tardive ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que la dette CSS commence précisément quand plusieurs composants UI apparaissent. Attendre davantage reviendrait à laisser les écarts de style se multiplier.</p></details>
+      <p>2. Pourquoi `postcss-html` est-il utile dans un projet Vue ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il permet à `Stylelint` de comprendre les blocs `<style>` contenus dans les Single File Components Vue.</p></details>
+      <p>3. Pourquoi garder une règle explicite sur les classes BEM dans le linter ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une convention qui n'est jamais vérifiée finit vite par devenir une simple intention. Le linter la rend réellement applicable.</p></details>
 
-      <div class="commit-suggestion">commit suggestion → refactor(back): grand refactoring UUID vers Value Objects tests verts</div>
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>`Stylelint` est installé.</li>
+        <li>`stylelint.config.mjs` existe.</li>
+        <li>`lint:css` et `lint:css:fix` existent dans `package.json`.</li>
+        <li>`npm run lint:css` passe.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `stylelint.config.mjs` existe.</li>
+        <li><input type="checkbox"> `lint:css` existe dans `package.json`.</li>
+        <li><input type="checkbox"> `lint:css:fix` existe dans `package.json`.</li>
+        <li><input type="checkbox"> `npm run lint:css` est vert.</li>
+      </ul>
+
+      <div class="commit-suggestion">
+        <p><strong>Commit</strong><br>C'est le bon moment pour commit : la qualité CSS est maintenant outillée, configurée et vérifiée sur le frontend.</p>
+        <p><strong>À commit maintenant</strong></p>
+        <ul>
+          <li>`package.json` et le lockfile du frontend</li>
+          <li>`stylelint.config.mjs`</li>
+          <li>les fichiers de composants corrigés pour passer `Stylelint`</li>
+        </ul>
+        <p><strong>Message suggéré</strong><br><code>chore(front): ajout de stylelint dans le frontend</code></p>
+      </div>
     </section>
 
-    <!-- Étape 8 -->
     <section class="guide-step" id="etape-8">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-3);">8</div>
-        <h2 class="guide-step__title">ADR 005</h2>
+        <h2 class="guide-step__title">Valider localement et redéployer le frontend</h2>
       </div>
 
-      <div class="exercise">
-        <h3>Exercice 8.1 — Documente les décisions d'auth et de Value Objects</h3>
-        <p>Crée <code>docs/adr/005-auth-jwt-value-objects.md</code>.</p>
-        <pre><code class="language-bash"># ADR 005 — Auth JWT et Value Objects
-## Date
-## Statut
-## Contexte
-## Décisions
-  ### JWT sans session serveur
-  ### Value Objects plutôt qu'UUID bruts
-  ### jjwt comme librairie JWT
-## Conséquences
-## Alternatives rejetées</code></pre>
-        <p>C'est ton document — écris-le avec tes propres mots. Copie ensuite dans <code>docs/adr/</code> de ton projet GitLab avant de committer.</p>
-        <details class="solution">
-          <summary>Solution - A consulter après 20 min</summary>
-          <div class="solution__content">
-            <pre><code class="language-markdown"># ADR 005 — Auth JWT et Value Objects
+      <p><strong>Objectif</strong><br>Vérifier la phase 3 de bout en bout puis redéployer le frontend sans toucher au backend, qui n'a pas changé dans cette phase.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Une phase UI n'est terminée que quand son rendu, ses tests et sa livraison réelle sont tous validés.</p>
+      <p><strong>État de départ exact</strong><br>Le catalogue a sa nouvelle UI, ses tests principaux, `LogService` et `Stylelint`. Il faut maintenant sécuriser l'ensemble avant livraison.</p>
 
-## Date
-2026-XX-XX
+      <h3>Étapes</h3>
+      <ol>
+        <li>Dans un terminal Ubuntu placé dans `~/workspace/katasensei/katasensei-front`, lance exactement ces commandes dans cet ordre :
+          <pre><code class="language-bash">npm run type-check
+npm run test -- tests/ui/components tests/ui/views tests/infrastructure/logging/ConsoleLogService.test.ts tests/domain/usecases/GetKatasUseCase.test.ts
+npm run lint:css
+npm run build</code></pre>
+          Résultat attendu : les quatre commandes passent.
+        </li>
+        <li>Relance le frontend en local :
+          <pre><code class="language-bash">npm run dev</code></pre>
+        </li>
+        <li>Vérifie le cas nominal dans le navigateur :
+          <ul>
+            <li>le titre `Catalogue de katas` est visible ;</li>
+            <li>les cartes de katas s'affichent ;</li>
+            <li>les badges de niveau sont visibles ;</li>
+            <li>la liste brute de phase 2 n'apparaît plus.</li>
+          </ul>
+        </li>
+        <li>Vérifie le cas d'erreur local :
+          <ul>
+            <li>arrête temporairement le backend ;</li>
+            <li>recharge la page ;</li>
+            <li>vérifie le message d'erreur et le bouton `Réessayer` ;</li>
+            <li>redémarre ensuite immédiatement le backend avec `./mvnw spring-boot:run`.</li>
+          </ul>
+        </li>
+        <li>Déploie uniquement le frontend, car le backend n'a pas changé dans cette phase :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+fly deploy</code></pre>
+          Résultat attendu : Fly.io termine le déploiement sans erreur fatale et renvoie l'URL de l'application.
+        </li>
+        <li>Ouvre l'URL publique du frontend.
+          Résultat attendu : le catalogue déployé affiche bien la nouvelle UI du cas nominal.</li>
+      </ol>
 
-## Statut
-Accepté
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne déploie pas tant que `npm run lint:css` ou `npm run build` échoue.</li>
+        <li>Ne redéploie pas le backend dans cette phase. L'incrément produit ici est frontend.</li>
+        <li>Ne confonds pas preuve locale et preuve publique. Les deux sont obligatoires.</li>
+      </ul>
 
-## Contexte
-KataSensei introduit une authentification utilisateur et commence
-à renforcer le typage du backend. Les UUID bruts et une auth implicite
-ne suffisent plus pour sécuriser le code ni clarifier les frontières.
+      <h3>Exercice</h3>
+      <p>Vérifie publiquement que tu ne regardes pas un cache local. Ouvre l'URL publique du frontend dans une fenêtre privée du navigateur et contrôle à nouveau :</p>
+      <ul>
+        <li>le titre du catalogue ;</li>
+        <li>au moins une carte de kata ;</li>
+        <li>au moins un badge de niveau.</li>
+      </ul>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>La preuve attendue en fin de phase est simple :</p>
+          <ul>
+            <li>sur l'URL publique, tu retrouves bien le titre du catalogue ;</li>
+            <li>tu vois les cartes et les badges, pas une liste texte brute ;</li>
+            <li>tu constates la même UI depuis une fenêtre privée.</li>
+          </ul>
+          <p>Cette vérification évite de confondre un rendu local ou mis en cache avec la vraie version déployée.</p>
+        </div>
+      </details>
 
-## Décisions
-
-### JWT sans session serveur
-L'API reste stateless. Chaque requête authentifiée porte un token JWT.
-
-### Value Objects plutôt qu'UUID bruts
-`KataId`, `UserId` et `Email` rendent les erreurs de type visibles
-au compilateur et documentent mieux l'intention métier.
-
-### jjwt comme librairie JWT
-La librairie est largement utilisée, simple à intégrer avec Spring
-et suffisante pour le périmètre du projet.
-
-## Conséquences
-- le frontend doit envoyer le header `Authorization`
-- les tests doivent couvrir token invalide, expiré et absent
-- les services et contrôleurs manipulent des types plus explicites
-
-## Alternatives rejetées
-- session serveur classique
-- UUID bruts partout
-- implémentation maison du format JWT</code></pre>
-          </div>
-        </details>
-      </div>
       <h3>Questions théoriques</h3>
-      <p><strong>Question 8.1 :</strong> à quoi sert un ADR une fois la feature terminée ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>À comprendre pourquoi un choix a été fait, quelles alternatives ont été rejetées et quelles conséquences accepter. Il sert de mémoire technique durable.</p>
-        </div>
-      </details>
-      <p><strong>Question 8.2 :</strong> pourquoi documenter dans le même ADR JWT et Value Objects est-il cohérent ici ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>Parce que cette phase introduit en même temps une décision de sécurité structurante et un renforcement du typage transversal. Les deux façonnent l'architecture du backend de manière durable.</p>
-        </div>
-      </details>
-      <p><strong>Question 8.3 :</strong> que manque-t-il à un "ADR" qui se contente de lister une décision sans contexte ni alternatives ?</p>
-      <details class="solution">
-        <summary>Réponse attendue</summary>
-        <div class="solution__content">
-          <p>L'essentiel. Sans contexte ni alternatives, on ne sait ni quel problème était posé ni pourquoi cette solution a été retenue plutôt qu'une autre.</p>
-        </div>
-      </details>
+      <p>1. Pourquoi lancer `type-check`, tests, lint CSS et build dans cet ordre ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que chaque commande filtre un risque différent : les types, le comportement, la qualité CSS puis la production réelle du bundle. Cet ordre permet de s'arrêter tôt au premier problème concret.</p></details>
+      <p>2. Pourquoi le backend n'a-t-il pas besoin d'être redéployé dans cette phase ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que la phase 3 ne modifie pas le contrat API ni le code Java. L'incrément de cette phase est frontend.</p></details>
+      <p>3. Pourquoi vérifier l'URL publique dans une fenêtre privée ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que cela réduit le risque de confondre la vraie version déployée avec un cache local ou une session déjà chargée.</p></details>
 
-      <div class="commit-suggestion">commit suggestion → docs(adr): ajout ADR 005 auth JWT et Value Objects</div>
-      <div class="commit-suggestion">commit suggestion → feat(auth): intégration JWT côté front Vue envoi header Authorization</div>
-    </section>
-
-    <!-- Checklist -->
-    <section class="checklist" id="checklist">
-      <h2 class="checklist__title">Checklist finale phase 3</h2>
+      <h3>Definition of Done de l'étape</h3>
       <ul>
-        <li><input type="checkbox"> <code>KataId</code>, <code>UserId</code>, <code>Email</code> créés avec tests</li>
-        <li><input type="checkbox"> <code>Kata.java</code> et <code>KataService.java</code> utilisent les Value Objects</li>
-        <li><input type="checkbox"> <code>mvn compile</code> passe après chaque remplacement de UUID</li>
-        <li><input type="checkbox"> SOLID documenté avec exemples dans le code (commentaires ou ADR)</li>
-        <li><input type="checkbox"> <code>JwtService</code> avec tests (dont token expiré)</li>
-        <li><input type="checkbox"> <code>JwtAuthenticationFilter</code> + <code>SecurityConfig</code></li>
-        <li><input type="checkbox"> Test <code>should_return401_when_noTokenProvided</code> vert</li>
-        <li><input type="checkbox"> Test <code>should_return200_when_validTokenProvided</code> vert</li>
-        <li><input type="checkbox"> <code>POST /auth/register</code> en TDD</li>
-        <li><input type="checkbox"> <code>POST /auth/login</code> en TDD</li>
-        <li><input type="checkbox"> Migration <code>V2__create_user_table.sql</code></li>
-        <li><input type="checkbox"> <code>EmailAlreadyExistsException</code>, <code>InvalidCredentialsException</code> dans <code>GlobalExceptionHandler</code></li>
-        <li><input type="checkbox"> <code>AppError</code> TS mise à jour avec <code>ConflictError</code></li>
-        <li><input type="checkbox"> <code>toUserMessage</code> exhaustif (compilateur vérifie)</li>
-        <li><input type="checkbox"> <code>@PasswordsMatch</code> annotation custom</li>
-        <li><input type="checkbox"> Grand refactoring UUID → Value Objects, tous tests verts</li>
-        <li><input type="checkbox"> SOLID checklist complète</li>
-        <li><input type="checkbox"> ADR 005 commité</li>
-        <li><input type="checkbox"> Frontend Vue envoie le token JWT dans les headers</li>
-        <li><input type="checkbox"> CI verte</li>
+        <li>Le type-check, les tests ciblés, le lint CSS et le build passent.</li>
+        <li>Le cas nominal et le cas d'erreur ont été vérifiés localement.</li>
+        <li>Le frontend a été redéployé sur Fly.io.</li>
+        <li>L'URL publique affiche bien la nouvelle UI du catalogue.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `npm run type-check` passe.</li>
+        <li><input type="checkbox"> Les tests ciblés passent.</li>
+        <li><input type="checkbox"> `npm run lint:css` passe.</li>
+        <li><input type="checkbox"> `npm run build` passe.</li>
+        <li><input type="checkbox"> J'ai vérifié le cas nominal en local.</li>
+        <li><input type="checkbox"> J'ai vérifié le cas d'erreur en local.</li>
+        <li><input type="checkbox"> J'ai vérifié l'URL publique en fenêtre privée.</li>
       </ul>
     </section>
 
-    <!-- Erreurs -->
-    <section id="erreurs">
-      <h2 style="font-size: 18px; font-weight: 700; margin: 32px 0 12px;">Erreurs fréquentes</h2>
-      <table class="errors-table">
-        <thead>
-          <tr><th>Erreur</th><th>Cause probable</th><th>Solution</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>Cannot construct instance of 'KataId'</code></td>
-            <td>Jackson ne sait pas désérialiser un record custom</td>
-            <td>Ajoute <code>@JsonCreator</code> sur le constructeur ou utilise un <code>@PathVariable String</code> converti manuellement</td>
-          </tr>
-          <tr>
-            <td><code>401</code> sur toutes les routes même /auth</td>
-            <td>Routes publiques mal configurées</td>
-            <td>Vérifie <code>requestMatchers("/auth/**").permitAll()</code> AVANT <code>.anyRequest().authenticated()</code></td>
-          </tr>
-          <tr>
-            <td><code>403</code> au lieu de <code>401</code></td>
-            <td>CSRF activé</td>
-            <td>Ajoute <code>.csrf(AbstractHttpConfigurer::disable)</code> — on est en stateless JWT</td>
-          </tr>
-          <tr>
-            <td><code>SignatureException</code></td>
-            <td>Clé JWT différente entre génération et validation</td>
-            <td>La clé vient de <code>${JWT_SECRET}</code> — vérifie que <code>.env</code> est chargé</td>
-          </tr>
-          <tr>
-            <td>Tests <code>@WebMvcTest</code> échouent avec Spring Security</td>
-            <td>Security non bypassée dans les tests</td>
-            <td>Ajoute <code>@WithMockUser</code> ou configure un <code>TestSecurityConfig</code></td>
-          </tr>
-          <tr>
-            <td><code>Table app_user doesn't exist</code></td>
-            <td>Migration Flyway non exécutée</td>
-            <td>Vérifie que le nom du fichier respecte la convention <code>V2__</code> (double underscore)</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="skills-summary">
-      <h2>Ce que tu sais faire après cette phase</h2>
+    <section class="guide-step" id="phase-dod">
+      <h2>Definition of Done de la phase</h2>
       <ul>
-        <li>Créer des Value Objects Java (records) qui mirroient les branded types TS</li>
-        <li>Appliquer les 5 principes SOLID sur du vrai code, avec exemples concrets</li>
-        <li>Configurer Spring Security avec JWT en stateless</li>
-        <li>Écrire un filtre HTTP personnalisé (<code>OncePerRequestFilter</code>)</li>
-        <li>Créer des endpoints d'authentification sécurisés en TDD</li>
-        <li>Créer des annotations Bean Validation custom (<code>@PasswordsMatch</code>)</li>
-        <li>Enrichir <code>GlobalExceptionHandler</code> pour chaque nouveau type d'erreur</li>
-        <li>Refactoriser du code guidée par le compilateur Java</li>
-        <li>Maintenir l'exhaustivité des erreurs côté TS avec le pattern <code>never</code></li>
+        <li>`PrimeVue` est installé et configuré avec `Aura`.</li>
+        <li>`KataCard.vue` et `KataListState.vue` existent et sont testés.</li>
+        <li>Le catalogue affiche des cartes, des badges et des états d'écran explicites.</li>
+        <li>`LogService` existe comme port du domaine et est utilisé dans `GetKatasUseCase`.</li>
+        <li>`Stylelint` est installé, configuré et lancé via `npm run lint:css`.</li>
+        <li>Le frontend est validé localement puis redéployé sur Fly.io.</li>
       </ul>
-      <div class="callout--tip">À retenir : les Value Objects Java et les branded types TS sont le même concept dans deux langages. SOLID et l'archi hexagonale se renforcent mutuellement — D (Dependency Inversion) <em>est</em> la règle de dépendance de l'hexagonale. Tu arrives en phase 4 avec tous les concepts théoriques vécus dans du vrai code.</div>
     </section>
 
-    <p class="footer">KataSensei Learning Path · Phase 3</p>
+    <section class="guide-step" id="checklist">
+      <h2>Checklist manuelle de phase</h2>
+      <ul>
+        <li><input type="checkbox"> `PrimeVue` est branché dans `src/main.ts`.</li>
+        <li><input type="checkbox"> `KataCard.vue` existe et affiche un badge de niveau.</li>
+        <li><input type="checkbox"> `KataListState.vue` existe et couvre `loading`, `empty` et `error`.</li>
+        <li><input type="checkbox"> `KataListView.test.ts` couvre les cas utiles de la vue.</li>
+        <li><input type="checkbox"> `LogService` existe comme port du domaine.</li>
+        <li><input type="checkbox"> `ConsoleLogService` masque les champs sensibles.</li>
+        <li><input type="checkbox"> `stylelint.config.mjs` existe.</li>
+        <li><input type="checkbox"> L'URL publique affiche bien la nouvelle UI du catalogue.</li>
+      </ul>
+    </section>
 
+    <section class="guide-step" id="deploiement">
+      <h2>Déploiement de fin de phase</h2>
+      <p><strong>Ce que tu déploies</strong><br>Le frontend KataSensei avec sa nouvelle UI de catalogue, `LogService` et `Stylelint` déjà validés localement.</p>
+      <p><strong>Ce que tu ne redéploies pas dans cette phase</strong><br>Le backend, car cette phase ne modifie pas l'API ni le code Java.</p>
+
+      <h3>Avant déploiement</h3>
+      <ol>
+        <li>Exécute :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+npm run type-check
+npm run test -- tests/ui/components tests/ui/views tests/infrastructure/logging/ConsoleLogService.test.ts tests/domain/usecases/GetKatasUseCase.test.ts
+npm run lint:css
+npm run build</code></pre>
+        </li>
+        <li>Vérifie le cas nominal local.</li>
+        <li>Vérifie le cas d'erreur local en coupant temporairement le backend.</li>
+      </ol>
+
+      <h3>Déploiement</h3>
+      <ol>
+        <li>Déploie le frontend :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+fly deploy</code></pre>
+        </li>
+        <li>Ouvre l'URL publique renvoyée par Fly.</li>
+      </ol>
+
+      <h3>Preuve visible attendue</h3>
+      <ul>
+        <li>cas nominal : cartes de katas visibles sur l'URL publique ;</li>
+        <li>preuve de fraîcheur : même rendu confirmé en fenêtre privée.</li>
+      </ul>
+    </section>
+
+    <section class="guide-step" id="ressources">
+      <h2>Ressources utiles</h2>
+      <ul>
+        <li><a href="https://primevue.org/vite/" target="_blank" rel="noopener noreferrer">PrimeVue avec Vite</a> : installation officielle utilisée dans cette phase.</li>
+        <li><a href="https://primevue.org/configuration" target="_blank" rel="noopener noreferrer">Configuration PrimeVue</a> : options globales du plugin et du thème.</li>
+        <li><a href="https://primevue.org/card/" target="_blank" rel="noopener noreferrer">PrimeVue Card</a> : composant utilisé dans `KataCard`.</li>
+        <li><a href="https://primevue.org/message/" target="_blank" rel="noopener noreferrer">PrimeVue Message</a> : composant utilisé dans `KataListState`.</li>
+        <li><a href="https://primevue.org/skeleton/" target="_blank" rel="noopener noreferrer">PrimeVue Skeleton</a> : composant utilisé pour `loading`.</li>
+        <li><a href="https://stylelint.io/user-guide/get-started/" target="_blank" rel="noopener noreferrer">Stylelint - Getting started</a> : base officielle pour l'installation et la configuration.</li>
+        <li><a href="https://www.npmjs.com/package/postcss-html" target="_blank" rel="noopener noreferrer">postcss-html</a> : syntaxe utile pour analyser les blocs `<style>` des fichiers Vue.</li>
+      </ul>
+    </section>
   </main>
 </div>
 
-<script src="../assets/js/navigation.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml-doc.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-scss.min.js"></script>
+<script src="../assets/js/navigation.js"></script>
 </body>
 </html>
