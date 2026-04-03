@@ -103,6 +103,40 @@ Cette vérification est obligatoire en particulier pour :
 
 Si une règle a déjà été tranchée, l'agent doit l'appliquer telle quelle. Il ne doit ni la réinterpréter, ni l'améliorer, ni la simplifier sans demande explicite.
 
+## Protocoles obligatoires
+
+### Avant de répondre
+
+Pour toute demande sensible ou structurante, l'agent doit valider en silence les trois points suivants avant de répondre :
+
+1. ce que Virginie demande exactement ;
+2. ce qui est explicitement interdit ou hors périmètre ;
+3. quelles règles du repo s'appliquent déjà à cette demande.
+
+L'agent ne doit pas répondre tant que ces trois points ne sont pas clarifiés pour lui.
+
+### Avant d'éditer
+
+Avant toute modification de fichier, l'agent doit vérifier en silence :
+
+1. quels fichiers sont réellement dans le périmètre demandé ;
+2. si la demande impose une validation préalable avant édition ;
+3. si une règle de ton, de format, de structure ou de méthode s'applique déjà ;
+4. s'il risque de mélanger plusieurs chantiers dans une même modification.
+
+S'il y a un risque de mélange, l'agent doit découper le travail ou demander validation avant d'élargir le périmètre.
+
+### Avant un `commit plan`
+
+Avant de proposer un découpage de commits, l'agent doit vérifier en silence :
+
+1. que chaque commit proposé correspond à un changement cohérent et autonome ;
+2. que la convention de message de commit du repo est respectée exactement ;
+3. que les gros chantiers visibles restent isolés dans des commits dédiés ;
+4. qu'aucun commit ne noie un changement important dans un lot trop large.
+
+L'agent ne doit pas proposer un message de commit "proche" de la convention : il doit appliquer la convention exacte du repo.
+
 ## Workflow obligatoire quand l'utilisateur dit "travaille sur la phase X"
 
 Cette règle est prioritaire sur toute envie d'ajuster rapidement l'existant.
