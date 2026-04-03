@@ -72,7 +72,7 @@ Chaque étape doit, quand c'est pertinent :
 
 ## Frontend et UI
 
-- si une interface minimale fonctionnelle peut être définie, elle peut être proposée, y compris avec `shadcn-vue` si cette décision est actée
+- si une interface minimale fonctionnelle peut être définie, elle peut être proposée, y compris avec `PrimeVue` si cette décision est actée
 - si la partie visuelle ne peut pas encore être définie de façon utile, créer une section ou un exercice repérable avec le texte rouge `En attente des specs et maquettes frontend`
 - dans ce cas, ajouter aussi un `TODO` dans le code ou le markup pour faciliter la reprise plus tard
 

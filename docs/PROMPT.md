@@ -11,13 +11,12 @@ Quand je te dis `travaille sur la phase X`, tu dois d'abord lire les fichiers de
 3. `docs/LEARNING_PATH_SPECS.md`
 4. `docs/LEARNING_PATH_EDITORIAL_RULES.md`
 5. `docs/NEXT_PHASE.md`
-6. `docs/PHASE_X.md` correspondant à la phase demandée
-7. `public/phases/phase-X.html`
-8. dans `content/`, les deux sources héritées correspondant à la phase demandée :
+6. `public/phases/phase-X.html`
+7. dans `content/`, les deux sources héritées correspondant à la phase demandée :
    - le dossier dont le nom commence par `Phase X`
    - le fichier `.md` dont le nom commence par `Phase X`
-9. le ou les autres fichiers de contenu déjà existants utiles au scope réel de la phase, seulement s'ils sont explicitement pointés par `docs/PHASE_X.md`
-10. le dernier audit disponible de cette phase s'il existe déjà
+8. le ou les autres fichiers de contenu déjà existants utiles au scope réel de la phase, seulement s'ils sont explicitement utiles au périmètre réel de la phase
+9. le dernier audit disponible de cette phase s'il existe déjà
     - format attendu : `docs/audits/PHASE_X_AUDIT.md`
 
 ## Références stables
@@ -89,5 +88,4 @@ Après édition :
 
 - la phase réécrite
 - la mise à jour de `docs/NEXT_PHASE.md`
-- si nécessaire, la mise à jour du fichier `docs/PHASE_X.md`
 - la mise à jour de `docs/audits/PHASE_X_AUDIT.md` si le cadrage a évolué pendant le travail

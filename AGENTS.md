@@ -62,7 +62,7 @@ Les `.md` et `.csv` dans `content/KataSensei — Learning Path/` sont l'export N
 - **Langue** : contenu en français, identifiants de code sans accents
 - **Ubiquitous Language (ADR 001)** : classe métier en français + suffixe technique en anglais (`RequestIndiceUseCase`)
 - **Commits** : `type(contexte): description en français` (feat, fix, refactor, test, docs, chore)
-- **CSS** : `<style scoped>` + BEM (pas Tailwind, pas CSS Modules)
+- **CSS** : `<style scoped>` + BEM pour les composants métier ; `PrimeVue` autorisé comme bibliothèque de composants ; pas Tailwind, pas CSS Modules
 - **Tests** : dossier `tests/` miroir de `src/`
 
 ## Rôle pédagogique de l’agent
@@ -166,3 +166,18 @@ Interdictions explicites :
 Message exact `commit plan` :
 - Propose un découpage des modifications présentes dans le "changes" en un ou plusieurs commits. Convention pour les messages de commit : type(scope): message. Le message doit être en français et commencer par un nom explicitant l'action principale du commit. Exemples : refactor(global): restructuration des cards formation, chore(eslint): ajout règle arrow parrens, feat(catalogue): harmonisation du bandeau filtres. Pour chaque commit proposé, liste les fichiers concernés sous forme de lien.
 - Quand le découpage est validé par le message exact `commit ok`, fais toi-même toutes les manipulations Git intermédiaires strictement nécessaires pour exécuter ce découpage validé, sans me redemander de confirmation fonctionnelle à chaque étape. Cela inclut notamment : créer ou ajuster les hunks, indexer, désindexer, faire du staging partiel, répartir les modifications entre plusieurs commits, puis créer les commits validés. Si l’environnement d’exécution impose une approbation technique externe pour certaines commandes, ne me redemande pas une validation métier : demande uniquement l’autorisation technique minimale requise, puis poursuis immédiatement le découpage validé. Ton autonomie s’arrête au périmètre du découpage validé.
+
+Message exact `recap` :
+- Produis un récapitulatif minimal de continuité, pensé pour ouvrir une nouvelle conversation sans perdre d'efficacité.
+- Le récapitulatif doit contenir uniquement :
+  - le contexte utile à conserver ;
+  - les décisions actées ;
+  - l'état actuel du repo ou du chantier ;
+  - les règles critiques à respecter ;
+  - le point de reprise recommandé.
+- Le récapitulatif ne doit pas contenir :
+  - l'historique détaillé de la conversation ;
+  - la liste des commits, sauf demande explicite ;
+  - des explications longues ;
+  - des éléments déjà inutiles pour reprendre le travail.
+- Le format doit être compact, directement copiable dans une nouvelle conversation, et orienté reprise immédiate du travail.

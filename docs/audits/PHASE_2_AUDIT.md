@@ -121,7 +121,7 @@ Le guide actuel laisse parfois croire que l'architecture est une fin en soi.
 
 ### Les commandes et preuves de tests sont insuffisamment contextualisées
 
-La phase mentionne `npm run type-check`, `npm run test:unit`, Vitest, `createPinia()` et parfois `npx shadcn-vue@latest add ...`, mais sans préciser :
+La phase mentionne `npm run type-check`, `npm run test:unit`, Vitest, `createPinia()` et parfois l'introduction future d'une bibliothèque de composants comme `PrimeVue`, mais sans préciser :
 
 - depuis quel dossier lancer ces commandes
 - ce qui doit déjà exister pour qu'elles passent
@@ -131,11 +131,11 @@ La phase mentionne `npm run type-check`, `npm run test:unit`, Vitest, `createPin
 
 Pour une lectrice autonome, c'est trop implicite.
 
-### Le périmètre UI introduit une incohérence potentielle
+### Le périmètre UI introduit un mélange pédagogique prématuré
 
-L'étape 11 introduit `shadcn-vue`, alors que les conventions globales du repo mettent en avant `style scoped` + BEM et excluent explicitement Tailwind. Sans décision structurante claire déjà validée dans le learning path, cet ajout est incohérent avec les conventions globales du projet.
+L'étape 11 introduit déjà le sujet de la bibliothèque de composants alors que la phase 2 doit d'abord rester centrée sur le flux de données, les types, les mappers, les use cases, le store et la vue refactorisée. Même avec une décision `PrimeVue` déjà tranchée, cet ajout reste trop tôt à ce stade du parcours.
 
-Même si `docs/LEARNING_PATH_EDITORIAL_RULES.md` autorise `shadcn-vue` si la décision est actée, cette phase ne démontre pas que cette décision est bien stabilisée à ce stade. En l'état, ce point doit être retiré, réévalué ou cadré explicitement par un ADR réel déjà validé.
+Le bon choix est donc de retirer ce sujet de la phase 2 et de le traiter explicitement dans la phase 3, là où le chantier UI devient enfin le coeur du livrable.
 
 ### Le report inter-phases n'est pas réintégré explicitement
 
@@ -427,9 +427,9 @@ Livrable :
 
 ## Éléments à retirer, déplacer ou recadrer
 
-### `shadcn-vue`
+### `PrimeVue`
 
-À retirer de la phase 2 tant que sa compatibilité avec les conventions globales n'est pas explicitement validée. En l'état, c'est un bruit pédagogique et un risque de contradiction avec les conventions CSS.
+À retirer de la phase 2 et à réserver à la phase 3. Même si `PrimeVue` est cohérent avec les conventions CSS du projet, l'introduire ici brouille le fil rouge principal de la phase.
 
 ### `LogService`
 
@@ -511,18 +511,18 @@ Pourquoi :
 - elle mélange aujourd'hui un refactoring architectural profond du front et un vrai chantier UI composant par composant
 - ces deux sujets ne produisent pas le même type de valeur pédagogique ni le même type de livrable
 - la nouvelle phase 2 doit rester centrée sur le flux de données, le typage fort, l'Anti-Corruption Layer, les ports, les use cases, le store et la réécriture de la vue de liste
-- la nouvelle phase 3 portera le chantier composants Vue avec `shadcn-vue`, l'intégration UI métier et les sujets de finition front reportés
+- la nouvelle phase 3 portera le chantier composants Vue avec `PrimeVue`, l'intégration UI métier et les sujets de finition front reportés
 
-### `shadcn-vue` est désormais une décision validée du parcours
+### `PrimeVue` est désormais une décision validée du parcours
 
 Décision actée :
 
-- `shadcn-vue` est validé
+- `PrimeVue` est validé
 - il doit être installé et utilisé pour fabriquer les composants Vue.js du projet
 
 Conséquence pédagogique :
 
-- `shadcn-vue` ne doit plus être traité comme un doute ou un point à retirer
+- `PrimeVue` ne doit plus être traité comme un doute ou un point à retirer
 - en revanche, son introduction doit être placée dans la nouvelle phase 3, là où la fabrication des composants UI devient le coeur du livrable
 
 ### La nouvelle phase 2 inclut la structure miroir de `tests/`
@@ -547,7 +547,7 @@ Décision actée :
 Pourquoi :
 
 - la nouvelle phase 2 est d'abord une phase de refactoring de flux de données et d'architecture front
-- la nouvelle phase 3 sera le vrai moment d'installation et d'usage de composants Vue basés sur `shadcn-vue`
+- la nouvelle phase 3 sera le vrai moment d'installation et d'usage de composants Vue basés sur `PrimeVue`
 - c'est donc en nouvelle phase 3 que la dette et les conventions CSS deviennent suffisamment concrètes pour justifier une étape dédiée `Stylelint`
 
 ### `LogService` n'est pas requis pour que la nouvelle phase 2 soit architecturalement complète
