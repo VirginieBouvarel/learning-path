@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 2 — Architecture front typée · KataSensei</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+<!-- Nav injectée par navigation.js -->
+
+<nav aria-label="fil d'ariane" class="breadcrumb" id="top">
+  <a href="../index.html">Accueil</a>
+  <span class="breadcrumb__separator">›</span>
+  <a href="../parcours.html">Parcours</a>
+  <span class="breadcrumb__separator">›</span>
+  <span>Phase 2 — Architecture front typée</span>
+</nav>
+
+<div class="layout layout--phase">
+
+  <aside class="layout__sidebar">
+    <div class="notion-card">
+      <div class="notion-card__title">Pilotage</div>
+      <div class="home-side-list">
+        <div class="home-side-item">
+          <div class="home-side-item__title">Backlog KataSensei</div>
+          <div class="home-side-item__desc">Database Notion à créer après stabilisation des guides.</div>
+        </div>
+        <div class="home-side-item">
+          <div class="home-side-item__title">Suivi de progression</div>
+          <div class="home-side-item__desc">Database Notion à créer pour compétences, phases et validations.</div>
+        </div>
+      </div>
+    </div>
+    <div class="notion-card">
+      <div class="notion-card__title">Accès rapide</div>
+      <a href="../parcours.html" class="notion-card__link">
+        <span class="notion-card__link-icon notion-card__link-icon--parcours" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M4 4.5h9.5l2.5 2.5V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/>
+            <path d="M13.5 4.5V7H16"/>
+            <path d="M7 9.25h5.75M7 12h3.5"/>
+          </svg>
+        </span>
+        <div>
+          <div>Parcours</div>
+          <div class="notion-card__link-desc">Timeline et phases détaillées</div>
+        </div>
+      </a>
+      <a href="../ressources-externes.html" class="notion-card__link">
+        <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
+            <path d="M12 4.5V7.5h3"/>
+            <path d="M7 10h6M7 12.75h6M7 15.5h4"/>
+          </svg>
+        </span>
+        <div>
+          <div>Ressources externes</div>
+          <div class="notion-card__link-desc">Ressources externes filtrables par phase</div>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <aside class="guide-toc">
+    <nav class="toc">
+      <p class="toc__title">Dans ce guide</p>
+      <ul class="toc__list">
+        <li><a href="#top">Présentation</a></li>
+        <li><a href="#etape-1">1 — Vérifier le point de départ front</a></li>
+        <li><a href="#etape-2">2 — Poser la structure cible et les tests miroir</a></li>
+        <li><a href="#etape-3">3 — Créer les types métier et les erreurs applicatives</a></li>
+        <li><a href="#etape-4">4 — Isoler le contrat API avec DTO et mapper</a></li>
+        <li><a href="#etape-5">5 — Sortir l'accès HTTP vers un repository</a></li>
+        <li><a href="#etape-6">6 — Écrire le use case pur et refactoriser le store</a></li>
+        <li><a href="#etape-7">7 — Réécrire le composable UI et la vue de liste</a></li>
+        <li><a href="#etape-8">8 — Vérifier la phase avant livraison</a></li>
+        <li><a href="#phase-dod">Definition of Done</a></li>
+        <li><a href="#checklist">Checklist de phase</a></li>
+        <li><a href="#deploiement">Déploiement</a></li>
+        <li><a href="#ressources">Ressources utiles</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="layout__main">
+    <div class="guide-header" id="presentation">
+      <span class="guide-header__phase-badge" style="background: var(--phase-2);">Phase 2</span>
+      <h1 class="guide-header__title">Architecture front typée pour sécuriser le catalogue de katas</h1>
+      <p class="guide-header__meta">Durée estimée : ~10h à ~12h réparties sur 2 semaines</p>
+      <p class="guide-header__intro">
+        La phase 1 a livré un premier catalogue de katas visible côté frontend, mais le flux reste encore naïf : données HTTP trop proches de l'UI, logique de chargement dispersée, types trop larges, et tests front encore peu structurés. La phase 2 refactorise ce flux de bout en bout pour obtenir un frontend Vue plus robuste, typé, testable et prêt à accueillir de vrais composants métier dans la phase suivante.
+      </p>
+      <div class="tags">
+        <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true">🟣</span><span class="tag__label">Typage fort</span></span>
+        <span class="tag tag--cat-hexa"><span class="tag__dot" aria-hidden="true">🟢</span><span class="tag__label">Hexagone front</span></span>
+        <span class="tag tag--cat-tests"><span class="tag__dot" aria-hidden="true">🔵</span><span class="tag__label">Tests</span></span>
+      </div>
+    </div>
+
+    <section class="guide-step">
+      <h2>Objectif de phase</h2>
+      <p>Refactoriser le flux de lecture des katas côté frontend pour passer d'un branchement direct UI ↔ HTTP à une architecture claire : types métier, mapper, repository, use case, store, composable UI et vue refactorisée.</p>
+
+      <h2>État de départ exact</h2>
+      <ul>
+        <li>Tu travailles dans Ubuntu via WSL2 sur Windows 11.</li>
+        <li>Le repo KataSensei existe déjà et la phase 1 est terminée.</li>
+        <li>Le backend expose déjà au minimum `GET /katas` et `GET /katas/{id}`.</li>
+        <li>Le frontend affiche déjà un catalogue de katas, mais avec une structure encore simple et peu découplée.</li>
+        <li>Le projet utilise déjà Vue 3, TypeScript strict, Pinia et Vitest.</li>
+      </ul>
+
+      <h2>Résultat attendu en fin de phase</h2>
+      <ul>
+        <li>Le frontend possède une structure `domain / infrastructure / stores / ui` explicite.</li>
+        <li>Les types métier utiles au catalogue sont introduits côté front.</li>
+        <li>Le contrat HTTP est isolé dans un DTO et un mapper.</li>
+        <li>Le chargement des katas passe par un `KataRepository`, un `GetKatasUseCase` et un store Pinia.</li>
+        <li>La vue de liste n'appelle plus `fetch` directement.</li>
+        <li>La structure miroir de `tests/` est en place pour les couches front refactorisées.</li>
+        <li>`npm run type-check` et les tests ciblés passent.</li>
+      </ul>
+
+      <h2>Valeur livrée à l'utilisateur</h2>
+      <p>Le catalogue continue à fonctionner, mais il repose désormais sur une base front beaucoup plus fiable, ce qui réduit le risque de régression et prépare la phase 3, centrée sur les composants UI métier avec `shadcn-vue`.</p>
+
+      <h2>Prérequis</h2>
+      <ul>
+        <li>La phase 1 est terminée et le catalogue de katas s'affiche encore côté frontend.</li>
+        <li>Tu sais relancer le backend et le frontend en local.</li>
+        <li>Tu sais lancer les tests unitaires front hérités des phases précédentes.</li>
+      </ul>
+
+      <h2>Outils mobilisés</h2>
+      <ul>
+        <li>Terminal Ubuntu dans WSL</li>
+        <li>Vue 3</li>
+        <li>TypeScript strict</li>
+        <li>Pinia</li>
+        <li>Vitest</li>
+        <li>Fetch API</li>
+        <li>Documentation interne du projet et `ADR 001`</li>
+      </ul>
+    </section>
+
+    <div class="callout--info">
+      <strong>Scripts frontend attendus à partir de cette phase</strong><br>Le frontend KataSensei doit exposer au minimum les scripts suivants dans <code>package.json</code>. Si <code>type-check</code> n'existe pas encore dans ton projet, ajoute-le maintenant avec exactement cette valeur.
+      <pre><code class="language-json">{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}</code></pre>
+    </div>
+
+    <div class="callout--info">
+      <strong>Info parcours</strong><br>On ne construit pas encore les composants UI métier avec `shadcn-vue`. Ici, on stabilise d'abord le flux de données et la structure front. `shadcn-vue`, `Stylelint` et `LogService` arriveront dans la phase suivante.
+    </div>
+
+    <section class="guide-step" id="etape-1">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">1</div>
+        <h2 class="guide-step__title">Vérifier le point de départ front et repérer les fichiers encore naïfs</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Constater précisément comment le catalogue est branché aujourd'hui avant de commencer le refactoring.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Une architecture utile doit résoudre une douleur réelle. Si tu ne localises pas les points faibles de la version phase 1, tu risques d'introduire des couches abstraites sans comprendre ce qu'elles améliorent.</p>
+      <p><strong>État de départ exact</strong><br>Le backend et le frontend existent déjà. Le catalogue fonctionne, mais sa structure interne peut encore mélanger UI, accès HTTP et gestion d'état.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Ouvre un terminal Ubuntu dans WSL.
+          Résultat attendu : tu travailles bien dans un shell Linux et non dans PowerShell.
+        </li>
+        <li>Place-toi dans le frontend du projet, puis vérifie ton dossier courant :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+pwd
+ls</code></pre>
+          Résultat attendu : `pwd` affiche le dossier du frontend et `ls` montre au minimum `src`, `package.json` et éventuellement `tests`.
+        </li>
+        <li>Observe la structure actuelle du code et des tests :
+          <pre><code class="language-bash">find src -maxdepth 2 -type f | sort
+find tests -maxdepth 2 -type f | sort</code></pre>
+          Résultat attendu : tu vois les dossiers et fichiers déjà présents. Si `find tests` affiche `No such file or directory`, note-le : cela confirme que la structure miroir de `tests/` fait bien partie du travail de cette phase.
+        </li>
+        <li>Repère les appels HTTP directs et les états encore dispersés :
+          <pre><code class="language-bash">rg -n "fetch\\(" src
+rg -n "isLoading|loading|error" src</code></pre>
+          Résultat attendu : tu identifies précisément quels fichiers parlent encore au réseau ou gèrent eux-mêmes l'état de chargement.
+          Ouvre ensuite au moins un fichier trouvé dans l'éditeur et vérifie si la même unité de code fait à la fois appel HTTP, transformation de données et rendu UI.
+        </li>
+        <li>Relance le frontend pour vérifier que le point de départ est encore fonctionnel :
+          <pre><code class="language-bash">npm run dev</code></pre>
+          Résultat attendu : l'application est accessible et le catalogue s'affiche encore dans le navigateur.
+          Si la commande échoue, corrige d'abord ce problème avant de refactoriser.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Si `find tests` échoue, ne panique pas : cela veut dire que le dossier n'existe pas encore, pas forcément que le projet est cassé.</li>
+        <li>Si `rg` ne trouve aucun `fetch`, cherche aussi `axios` ou une abstraction réseau déjà existante ; l'objectif est de comprendre le flux réel.</li>
+        <li>Si le frontend ne démarre plus, corrige d'abord ce problème avant tout refactoring.</li>
+      </ul>
+
+      <h3>Exercice 1.1</h3>
+      <p>Écris une phrase qui commence par <code>Le problème actuel est que...</code> et qui décrit pourquoi la vue de liste est encore trop couplée.</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Une bonne réponse ressemble à : <strong>Le problème actuel est que la vue de liste connaît trop de détails techniques, comme le chargement HTTP et la forme brute des données, ce qui la rend fragile dès qu'un contrat API ou un état de chargement change.</strong></p>
+        </div>
+      </details>
+
+      <h3>Exercice 1.2</h3>
+      <p>Dans tes notes locales, écris noir sur blanc trois douleurs du code actuel. Tu dois nommer au moins :</p>
+      <ul>
+        <li>un problème de typage ;</li>
+        <li>un problème de structure ;</li>
+        <li>un problème de testabilité.</li>
+      </ul>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Exemple de réponse attendue :</p>
+          <ul>
+            <li><strong>Typage</strong> : les réponses API circulent encore sous forme d'objets trop larges ou de `string` brutes.</li>
+            <li><strong>Structure</strong> : la vue ou le composable connaissent encore l'URL de l'API, le `fetch` et la transformation des données.</li>
+            <li><strong>Testabilité</strong> : il est difficile de tester le chargement du catalogue sans lancer Vue ou sans simuler directement le réseau.</li>
+          </ul>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi démarrer une phase de refactoring par une observation de l'existant ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'un refactoring répond à des problèmes déjà présents. Sans diagnostic concret, on risque de déplacer du code sans améliorer sa lisibilité ou sa robustesse.</p></details>
+      <p>2. Pourquoi un `fetch` direct dans une vue devient-il vite coûteux ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que la vue doit alors gérer à la fois l'affichage, le chargement, les erreurs réseau et parfois la transformation des données. Elle cumule trop de responsabilités.</p></details>
+      <p>3. Pourquoi une architecture front doit-elle rester liée à une fonctionnalité visible ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que l'objectif n'est pas de produire des couches abstraites, mais de rendre une fonctionnalité plus sûre, plus testable et plus facile à faire évoluer.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Tu as identifié les fichiers qui parlent encore directement au réseau.</li>
+        <li>Tu sais expliquer pourquoi la vue de catalogue doit être refactorisée.</li>
+        <li>Le frontend fonctionne encore au début de la phase.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> J'ai relancé le frontend et le catalogue s'affiche.</li>
+        <li><input type="checkbox"> J'ai repéré les appels HTTP directs encore présents.</li>
+        <li><input type="checkbox"> J'ai noté les douleurs principales du code actuel.</li>
+      </ul>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-1</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-2">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">2</div>
+        <h2 class="guide-step__title">Poser la structure cible et la structure miroir de tests</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Créer une arborescence claire pour le code front et ses tests avant d'y déplacer la logique.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Si tu refactorises sans structure cible explicite, tu vas simplement déplacer du code au hasard. La structure miroir de `tests/` est intégrée ici pour soutenir immédiatement les couches que tu vas introduire.</p>
+      <p><strong>État de départ exact</strong><br>Le frontend fonctionne encore, mais son organisation peut être trop plate ou mélanger plusieurs responsabilités.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Dans le terminal Ubuntu déjà ouvert, reste dans `~/workspace/katasensei/katasensei-front`.
+          Vérifie ensuite ton dossier courant :
+          <pre><code class="language-bash">pwd</code></pre>
+        </li>
+        <li>Crée l'arborescence cible côté source.
+          Copie exactement ces commandes :
+          <pre><code class="language-bash">mkdir -p src/domain/models src/domain/types src/domain/ports src/domain/usecases
+mkdir -p src/infrastructure/api/dto src/infrastructure/api/mappers
+mkdir -p src/stores
+mkdir -p src/ui/composables src/ui/views</code></pre>
+          Puis vérifie le résultat :
+          <pre><code class="language-bash">find src -maxdepth 3 -type d | sort</code></pre>
+          Résultat attendu : tu vois apparaître `src/domain`, `src/infrastructure`, `src/stores` et `src/ui` avec leurs sous-dossiers utiles à cette phase.
+        </li>
+        <li>Crée ensuite la structure miroir minimale des tests.
+          Copie :
+          <pre><code class="language-bash">mkdir -p tests/domain/types tests/domain/usecases
+mkdir -p tests/infrastructure/api/mappers tests/infrastructure/api
+mkdir -p tests/stores tests/ui/composables</code></pre>
+          Puis vérifie :
+          <pre><code class="language-bash">find tests -maxdepth 3 -type d | sort</code></pre>
+          Résultat attendu : les dossiers de tests reflètent les dossiers de code refactorisés dans cette phase.
+        </li>
+        <li>Ouvre ensuite le projet dans l'éditeur et fais un repérage concret des fichiers existants.
+          Pour chaque fichier qui participe aujourd'hui au catalogue de katas, demande-toi s'il relève :
+          <ul>
+            <li>du métier pur ;</li>
+            <li>d'un détail HTTP ;</li>
+            <li>de l'état partagé ;</li>
+            <li>ou de l'orchestration UI et du rendu.</li>
+          </ul>
+          Résultat attendu : tu sais quels fichiers devront être déplacés, réécrits ou remplacés.
+        </li>
+        <li>Ajoute un mémo simple dans tes notes locales :
+          <pre><code class="language-text">domain = metier pur
+infrastructure = details techniques externes
+stores = etat partage pour l'ui
+ui = orchestration vue et rendu</code></pre>
+          Résultat attendu : ce mémo fixe clairement l'emplacement attendu des fichiers de cette étape.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne crée pas `src/ui/components` dans cette phase. Garde le périmètre centré sur le flux de données et la structure front.</li>
+        <li>Ne range pas un DTO d'API dans `src/domain/`. Un DTO décrit un contrat externe, pas une vérité métier.</li>
+        <li>Ne crée pas une structure miroir gigantesque si tu n'as encore aucun test correspondant. Garde-la utile et proportionnée à la phase.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Dans quel dossier du projet placerais-tu les éléments suivants : <code>KataRepository</code>, <code>ApiKataDto</code>, <code>GetKatasUseCase</code>, <code>useKataList</code> ?</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <ul>
+            <li><code>KataRepository</code> : `src/domain/ports`</li>
+            <li><code>ApiKataDto</code> : `src/infrastructure/api/dto`</li>
+            <li><code>GetKatasUseCase</code> : `src/domain/usecases`</li>
+            <li><code>useKataList</code> : `src/ui/composables`</li>
+          </ul>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi la structure miroir de `tests/` aide-t-elle un refactoring ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'elle rend immédiatement visible ce qui est testé et ce qui ne l'est pas. Elle limite aussi le risque de tests fourre-tout qui mélangent plusieurs couches.</p></details>
+      <p>2. Pourquoi `useKataList` n'appartient-il pas au domaine ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il orchestre un cas d'usage pour l'UI Vue. Il dépend du cycle de vie ou de l'usage d'un store, donc il ne relève pas du métier pur.</p></details>
+      <p>3. Pourquoi faut-il éviter de créer tous les dossiers imaginables d'un coup ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une architecture utile doit rester concrète. Une arborescence trop large au départ fabrique du vide et ajoute de la confusion au lieu de clarifier.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>La structure cible du frontend est créée.</li>
+        <li>La structure miroir minimale de `tests/` existe.</li>
+        <li>Tu sais ranger les principaux objets de la phase dans la bonne couche.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Les dossiers `src/domain`, `src/infrastructure`, `src/stores` et `src/ui` existent.</li>
+        <li><input type="checkbox"> Les dossiers de tests miroir utiles existent.</li>
+        <li><input type="checkbox"> Je sais expliquer le rôle de chaque couche.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>chore(front): pose structure front et miroir de tests</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-2</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-3">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">3</div>
+        <h2 class="guide-step__title">Créer les types métier et les erreurs applicatives</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Introduire les types minimums qui sécurisent le flux du catalogue avant de brancher repository, use case et store.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Si tu repousses les types métier après le repository, tu laisses les détails techniques contaminer trop tôt le reste du front.</p>
+      <p><strong>État de départ exact</strong><br>Les dossiers sont prêts, mais le front manipule encore des `string` et des objets API trop larges.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée le modèle métier `Kata` dans `src/domain/models/Kata.ts`.
+          Ouvre ce fichier dans ton éditeur et colle d'abord ce contenu minimal :
+          <pre><code class="language-typescript">export type NiveauKata = 'debutant' | 'intermediaire' | 'avance'
+
+export interface Kata {
+  id: KataId
+  titre: string
+  description: string
+  niveau: NiveauKata
+}</code></pre>
+          Si ton éditeur signale que `KataId` est inconnu, c'est normal : tu vas le créer juste après.
+        </li>
+        <li>Crée ensuite `src/domain/types/branded.ts`.
+          Commence par un seul identifiant brandé utile à cette phase :
+          <pre><code class="language-typescript">export type KataId = string & { readonly _brand: 'KataId' }
+
+export const toKataId = (value: string): KataId => value as KataId</code></pre>
+          Retourne ensuite dans `src/domain/models/Kata.ts` et remplace le contenu précédent par cette version complète avec import :
+          <pre><code class="language-typescript">import type { KataId } from '@/domain/types/branded'
+
+export type NiveauKata = 'debutant' | 'intermediaire' | 'avance'
+
+export interface Kata {
+  id: KataId
+  titre: string
+  description: string
+  niveau: NiveauKata
+}</code></pre>
+          Résultat attendu : seul ce fichier contient le `as` nécessaire au branding et `Kata.ts` compile sans import manquant.
+        </li>
+        <li>Crée `src/domain/types/AsyncState.ts`.
+          Colle ce squelette minimal :
+          <pre><code class="language-typescript">export type AsyncState&lt;T&gt; =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; message: string }</code></pre>
+          Résultat attendu : l'état de chargement devient un contrat explicite au lieu d'être dispersé.
+        </li>
+        <li>Crée `src/domain/types/Result.ts`.
+          Colle d'abord la base suivante :
+          <pre><code class="language-typescript">export type Result&lt;T, E&gt; =
+  | { ok: true; value: T }
+  | { ok: false; error: E }
+
+export const ok = &lt;T&gt;(value: T): Result&lt;T, never&gt; => ({ ok: true, value })
+export const err = &lt;E&gt;(error: E): Result&lt;never, E&gt; => ({ ok: false, error })</code></pre>
+        </li>
+        <li>Crée `src/domain/types/AppError.ts`.
+          Commence par la structure suivante :
+          <pre><code class="language-typescript">export type AppError =
+  | { kind: 'network'; message: string }
+  | { kind: 'validation'; message: string }
+  | { kind: 'unexpected'; message: string }</code></pre>
+          N'écris pas encore `toUserMessage` au hasard : fais-le proprement dans l'exercice ci-dessous.
+        </li>
+        <li>Ajoute les trois fichiers de test ciblés dans `tests/domain/types/`.
+          Commence par `tests/domain/types/branded.test.ts` :
+          <pre><code class="language-typescript">import { describe, expect, it } from 'vitest'
+import { toKataId } from '@/domain/types/branded'
+
+describe('branded', () => {
+  it('convertit une string en KataId', () => {
+    const kataId = toKataId('kata-1')
+
+    expect(kataId).toBe('kata-1')
+  })
+})</code></pre>
+          Crée ensuite `tests/domain/types/Result.test.ts` :
+          <pre><code class="language-typescript">import { describe, expect, it } from 'vitest'
+import { err, ok } from '@/domain/types/Result'
+
+describe('Result', () => {
+  it('cree un succes avec ok()', () => {
+    expect(ok(['kata-1'])).toEqual({
+      ok: true,
+      value: ['kata-1']
+    })
+  })
+
+  it('cree un echec avec err()', () => {
+    expect(err({ kind: 'network', message: 'offline' })).toEqual({
+      ok: false,
+      error: { kind: 'network', message: 'offline' }
+    })
+  })
+})</code></pre>
+          Termine par `tests/domain/types/AppError.test.ts` :
+          <pre><code class="language-typescript">import { describe, expect, it } from 'vitest'
+import { toUserMessage } from '@/domain/types/AppError'
+
+describe('toUserMessage', () => {
+  it('retourne un message pour network', () => {
+    expect(toUserMessage({ kind: 'network', message: 'HTTP 500' }))
+      .toBe("Le serveur KataSensei est inaccessible pour le moment.")
+  })
+
+  it('retourne un message pour validation', () => {
+    expect(toUserMessage({ kind: 'validation', message: 'payload invalide' }))
+      .toBe('Les donnees recues sont invalides.')
+  })
+
+  it('retourne un message pour unexpected', () => {
+    expect(toUserMessage({ kind: 'unexpected', message: 'boom' }))
+      .toBe('Une erreur inattendue est survenue.')
+  })
+})</code></pre>
+          Résultat attendu : tu as un test dédié par fichier de type, avec tous les imports nécessaires déjà en place.
+        </li>
+        <li>Lance ensuite les vérifications de cette étape :
+          <pre><code class="language-bash">npm run type-check
+npm run test -- tests/domain/types</code></pre>
+          Résultat attendu : le typage passe et les tests ciblés passent.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne fais pas du branding sur tout et n'importe quoi. Commence par les identifiants où l'erreur de confusion est probable.</li>
+        <li>Ne mets pas un message utilisateur brut dans le type d'erreur si tu veux encore pouvoir distinguer la nature de l'erreur.</li>
+        <li>Ne garde pas un modèle `Kata` identique au DTO si tu veux vraiment protéger le domaine des variations HTTP.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Dans `src/domain/types/AppError.ts`, écris maintenant la fonction <code>toUserMessage(error: AppError): string</code>. Elle doit :</p>
+      <ul>
+        <li>recevoir un objet de type <code>AppError</code> ;</li>
+        <li>utiliser <code>switch (error.kind)</code> ;</li>
+        <li>retourner un message spécifique pour <code>network</code>, <code>validation</code> et <code>unexpected</code> ;</li>
+        <li>ajouter un bloc <code>default</code> avec une variable typée <code>never</code> pour forcer l'exhaustivité si un nouveau cas apparaît ensuite.</li>
+      </ul>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <pre><code class="language-typescript">export type AppError =
+  | { kind: 'network'; message: string }
+  | { kind: 'validation'; message: string }
+  | { kind: 'unexpected'; message: string }
+
+export function toUserMessage(error: AppError): string {
+  switch (error.kind) {
+    case 'network':
+      return "Le serveur KataSensei est inaccessible pour le moment."
+    case 'validation':
+      return "Les donnees recues sont invalides."
+    case 'unexpected':
+      return "Une erreur inattendue est survenue."
+    default: {
+      const exhaustive: never = error
+      return exhaustive
+    }
+  }
+}</code></pre>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi convertir un identifiant API en `KataId` dès l'entrée dans le front ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'on veut travailler le plus tôt possible avec un type métier sûr, au lieu de laisser une simple `string` circuler partout.</p></details>
+      <p>2. Pourquoi un `Result` explicite est-il souvent plus lisible qu'un `throw` diffus dans le flux front ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que chaque appelant voit directement dans le type qu'il doit gérer deux branches : succès ou erreur. Le contrat devient visible et testable.</p></details>
+      <p>3. Pourquoi `AsyncState` est-il préférable à trois variables comme `loading`, `data` et `error` quand le flux devient plus riche ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une union discriminée encode les états autorisés et réduit les combinaisons incohérentes, par exemple `loading=true` avec une erreur déjà affichée.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le modèle métier `Kata` existe côté domaine.</li>
+        <li>Les identifiants métier utiles sont typés.</li>
+        <li>Les erreurs applicatives utiles au catalogue sont modélisées.</li>
+        <li>Les tests ciblés des types passent.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `KataId` existe et son helper est centralisé.</li>
+        <li><input type="checkbox"> `AsyncState` et `Result` existent.</li>
+        <li><input type="checkbox"> `AppError` et `toUserMessage` existent.</li>
+        <li><input type="checkbox"> `npm run type-check` passe après cette étape.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout types metier et erreurs applicatives</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-3</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-4">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">4</div>
+        <h2 class="guide-step__title">Isoler le contrat API avec DTO et mapper</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Empêcher le format HTTP brut de contaminer le domaine et l'UI.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le mapper est le point charnière entre le monde extérieur et le langage métier. Il doit exister avant le repository concret.</p>
+      <p><strong>État de départ exact</strong><br>Les types métier du domaine existent, mais la forme de la réponse HTTP n'est pas encore isolée.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée `src/infrastructure/api/dto/ApiKataDto.ts` avec la forme exacte renvoyée par l'API backend de phase 1.
+          Si tu hésites sur les noms de champs, relis la réponse réelle du backend ou le contrat déjà présent en phase 1. Ne devine pas.
+          Colle d'abord ce fichier complet :
+          <pre><code class="language-typescript">export interface ApiKataDto {
+  id: string
+  titre: string
+  description: string
+  niveau: string
+}</code></pre>
+        </li>
+        <li>Crée `src/infrastructure/api/mappers/KataMapper.ts`.
+          Ce fichier ne doit pas redéclarer `ApiKataDto`. Colle directement ce fichier complet, imports compris :
+          <pre><code class="language-typescript">import type { Kata, NiveauKata } from '@/domain/models/Kata'
+import { toKataId } from '@/domain/types/branded'
+import type { ApiKataDto } from '@/infrastructure/api/dto/ApiKataDto'
+
+export const KataMapper = {
+  toDomain(dto: ApiKataDto): Kata {
+    return {
+      id: toKataId(dto.id),
+      titre: dto.titre,
+      description: dto.description,
+      niveau: dto.niveau as NiveauKata
+    }
+  },
+
+  toDto(kata: Kata): ApiKataDto {
+    return {
+      id: kata.id,
+      titre: kata.titre,
+      description: kata.description,
+      niveau: kata.niveau
+    }
+  }
+}</code></pre>
+          Résultat attendu : le mapper importe bien `ApiKataDto`, expose `toDomain(dto)` et `toDto(kata)`, et ne redéclare aucun type API dans le mauvais dossier.
+        </li>
+        <li>Écris les tests du mapper dans `tests/infrastructure/api/mappers/KataMapper.test.ts`.
+          Commence par un fichier réellement copiable :
+          <pre><code class="language-typescript">import { describe, expect, it } from 'vitest'
+import { KataMapper } from '@/infrastructure/api/mappers/KataMapper'
+import type { ApiKataDto } from '@/infrastructure/api/dto/ApiKataDto'
+
+describe('KataMapper', () => {
+  it('convertit un dto api en kata de domaine', () => {
+    const dto: ApiKataDto = {
+      id: 'kata-1',
+      titre: 'FizzBuzz',
+      description: 'Ecris FizzBuzz',
+      niveau: 'debutant'
+    }
+
+    const kata = KataMapper.toDomain(dto)
+
+    expect(kata.id).toBe('kata-1')
+    expect(kata.titre).toBe('FizzBuzz')
+    expect(kata.niveau).toBe('debutant')
+  })
+})</code></pre>
+        </li>
+        <li>Lance les tests de cette étape :
+          <pre><code class="language-bash">npm run test -- tests/infrastructure/api/mappers</code></pre>
+          Résultat attendu : les tests prouvent que le domaine ne dépend plus directement du format HTTP brut.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne déclare pas `ApiKataDto` dans `src/domain/`. Ce type appartient au contrat externe.</li>
+        <li>Ne laisse pas un `niveau: string` circuler jusque dans la vue. Le mapper doit normaliser cette donnée avant.</li>
+        <li>Ne mets pas de `fetch` ni de dépendance Vue dans le mapper. Il doit rester pur.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Explique en une phrase ce qui devrait changer si le backend renomme demain <code>titre</code> en <code>nom</code>.</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Une bonne réponse est : <strong>seuls le DTO et le mapper doivent changer, le domaine, le store et la vue devant rester stables.</strong></p>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi un DTO ne doit-il pas devenir le type principal du domaine ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il décrit un format d'échange technique, potentiellement instable, alors que le domaine doit exprimer le langage métier utile au produit.</p></details>
+      <p>2. Pourquoi le mapper doit-il rester une fonction pure ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une fonction pure est simple à tester, simple à comprendre et locale dans ses effets. Son rôle est de traduire, pas d'orchestrer.</p></details>
+      <p>3. Pourquoi le mapper arrive-t-il avant l'adapter HTTP ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le repository concret aura besoin d'une traduction stable entre la réponse réseau et le domaine. Sans mapper, il mélange trop de responsabilités.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le DTO API du catalogue existe.</li>
+        <li>Le mapper `ApiKataDto` → `Kata` existe.</li>
+        <li>Les tests du mapper passent.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le domaine ne dépend pas du DTO.</li>
+        <li><input type="checkbox"> Le mapper convertit l'identifiant et les champs métier utiles.</li>
+        <li><input type="checkbox"> Les tests du mapper existent et passent.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout dto api et mapper kata</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-4</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-5">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">5</div>
+        <h2 class="guide-step__title">Sortir l'accès HTTP vers un repository</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Déplacer l'accès réseau hors de l'UI et le centraliser dans un adapter concret.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le repository est le premier vrai port sortant front de la phase. C'est lui qui rend l'hexagone front déjà complet sans introduire encore un `LogService` séparé.</p>
+      <p><strong>État de départ exact</strong><br>Le domaine et le mapper existent, mais aucun contrat explicite ne relie encore le métier au monde HTTP.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée `src/domain/ports/KataRepository.ts` avec un contrat clair.
+          Ouvre le fichier et colle cette interface :
+          <pre><code class="language-typescript">import type { Kata } from '@/domain/models/Kata'
+import type { KataId } from '@/domain/types/branded'
+import type { AppError } from '@/domain/types/AppError'
+import type { Result } from '@/domain/types/Result'
+
+export interface KataRepository {
+  findAll(): Promise&lt;Result&lt;Kata[], AppError&gt;&gt;
+  findById(id: KataId): Promise&lt;Result&lt;Kata, AppError&gt;&gt;
+}</code></pre>
+          Résultat attendu : le domaine exprime enfin son besoin sans parler ni de `fetch`, ni d'URL, ni de JSON.
+        </li>
+        <li>Crée `src/infrastructure/api/ApiKataRepository.ts`.
+          Colle cette version complète pour éviter de deviner les imports :
+          <pre><code class="language-typescript">import type { Kata } from '@/domain/models/Kata'
+import type { KataId } from '@/domain/types/branded'
+import type { AppError } from '@/domain/types/AppError'
+import type { Result } from '@/domain/types/Result'
+import { err, ok } from '@/domain/types/Result'
+import type { KataRepository } from '@/domain/ports/KataRepository'
+import type { ApiKataDto } from '@/infrastructure/api/dto/ApiKataDto'
+import { KataMapper } from '@/infrastructure/api/mappers/KataMapper'
+
+export class ApiKataRepository implements KataRepository {
+  async findAll(): Promise&lt;Result&lt;Kata[], AppError&gt;&gt; {
+    try {
+      const response = await fetch('/api/katas')
+
+      if (!response.ok) {
+        return err({ kind: 'network', message: `HTTP ${response.status}` })
+      }
+
+      const data: ApiKataDto[] = await response.json()
+      return ok(data.map(KataMapper.toDomain))
+    } catch {
+      return err({ kind: 'network', message: 'Serveur inaccessible' })
+    }
+  }
+
+  async findById(id: KataId): Promise&lt;Result&lt;Kata, AppError&gt;&gt; {
+    try {
+      const response = await fetch(`/api/katas/${id}`)
+
+      if (!response.ok) {
+        return err({ kind: 'network', message: `HTTP ${response.status}` })
+      }
+
+      const data: ApiKataDto = await response.json()
+      return ok(KataMapper.toDomain(data))
+    } catch {
+      return err({ kind: 'network', message: 'Serveur inaccessible' })
+    }
+  }
+}</code></pre>
+        </li>
+        <li>Relis ensuite ce fichier ligne par ligne.
+          Vérifie en particulier :
+          <ul>
+            <li>que `findAll()` renvoie bien une liste de `Kata` et non une liste de DTO ;</li>
+            <li>que `findById(id)` retourne lui aussi un `Result` métier ;</li>
+            <li>que l'URL utilisée correspond bien à celle décidée dans le projet.</li>
+          </ul>
+        </li>
+        <li>Écris les tests utiles du repository dans `tests/infrastructure/api/ApiKataRepository.test.ts`.
+          Colle d'abord ce fichier complet :
+          <pre><code class="language-typescript">import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ApiKataRepository } from '@/infrastructure/api/ApiKataRepository'
+
+describe('ApiKataRepository', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('retourne une liste de katas quand l api repond', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { id: 'kata-1', titre: 'FizzBuzz', description: 'Ecris FizzBuzz', niveau: 'debutant' }
+      ]
+    } as Response)
+
+    const repository = new ApiKataRepository()
+    const result = await repository.findAll()
+
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value).toHaveLength(1)
+    }
+  })
+
+  it('retourne une erreur network quand la reponse http est en echec', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: false,
+      status: 500
+    } as Response)
+
+    const repository = new ApiKataRepository()
+    const result = await repository.findAll()
+
+    expect(result).toEqual({
+      ok: false,
+      error: { kind: 'network', message: 'HTTP 500' }
+    })
+  })
+
+  it('retourne une erreur network quand fetch leve une exception', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline'))
+
+    const repository = new ApiKataRepository()
+    const result = await repository.findAll()
+
+    expect(result).toEqual({
+      ok: false,
+      error: { kind: 'network', message: 'Serveur inaccessible' }
+    })
+  })
+})</code></pre>
+          Résultat attendu : tu couvres le succès, une réponse HTTP non `ok` et une vraie erreur réseau.
+        </li>
+        <li>Lance les tests de cette étape :
+          <pre><code class="language-bash">npm run test -- tests/infrastructure/api</code></pre>
+          Résultat attendu : les tests du repository passent et prouvent que le flux HTTP brut ne remonte plus jusque dans l'UI.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne retourne pas directement un `ApiKataDto[]` depuis le repository. Son contrat doit déjà être métier.</li>
+        <li>Ne mets pas de message utilisateur final dans le repository. Il doit produire une erreur typée, pas de l'affichage prêt à l'emploi.</li>
+        <li>Ne laisse pas la vue connaître l'URL de l'API une fois cette étape terminée.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Écris le squelette de la branche d'erreur réseau de <code>findAll()</code> sans utiliser <code>throw</code> comme contrat de sortie.</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <pre><code class="language-typescript">catch {
+  return err({
+    kind: 'network',
+    message: 'Serveur inaccessible'
+  })
+}</code></pre>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi le port `KataRepository` appartient-il au domaine alors que son implémentation appartient à l'infrastructure ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que c'est le domaine qui exprime son besoin de lecture des katas. L'infrastructure vient seulement fournir une manière concrète d'y répondre.</p></details>
+      <p>2. Pourquoi cette étape suffit-elle à introduire un port sortant front ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le domaine dépend déjà ici d'une abstraction vers l'extérieur. L'hexagone front n'a pas besoin d'un logger séparé pour exister architecturalement.</p></details>
+      <p>3. Pourquoi le repository ne doit-il pas devenir un mini-store ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que son rôle est d'accéder aux données et de les traduire, pas de conserver l'état partagé ou de piloter l'UI.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le port `KataRepository` existe dans le domaine.</li>
+        <li>L'adapter `ApiKataRepository` existe en infrastructure.</li>
+        <li>Le flux HTTP brut ne sort plus du repository.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le contrat du repository retourne un `Result` métier.</li>
+        <li><input type="checkbox"> Le repository utilise le mapper.</li>
+        <li><input type="checkbox"> La vue ne connaît plus directement l'URL de l'API.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout port katarepository et adapter http</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-5</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-6">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">6</div>
+        <h2 class="guide-step__title">Écrire le use case pur et refactoriser le store</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Faire passer le chargement du catalogue par une logique métier explicite, puis par un store qui ne gère plus l'accès HTTP lui-même.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Le repository seul ne suffit pas : il faut encore un endroit clair pour exprimer l'intention métier <code>lire les katas</code>, puis une source de vérité partagée pour l'UI.</p>
+      <p><strong>État de départ exact</strong><br>Le repository existe, mais le store ou la vue peuvent encore appeler l'accès HTTP ou la transformation de données trop directement.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée `src/domain/usecases/GetKatasUseCase.ts`.
+          Ouvre le fichier et colle cette première version :
+          <pre><code class="language-typescript">import type { KataRepository } from '@/domain/ports/KataRepository'
+import type { Kata } from '@/domain/models/Kata'
+import type { AppError } from '@/domain/types/AppError'
+import type { Result } from '@/domain/types/Result'
+
+export class GetKatasUseCase {
+  constructor(private readonly kataRepository: KataRepository) {}
+
+  execute(): Promise&lt;Result&lt;Kata[], AppError&gt;&gt; {
+    return this.kataRepository.findAll()
+  }
+}</code></pre>
+          Résultat attendu : l'intention métier `lire les katas` existe maintenant dans une classe pure.
+        </li>
+        <li>Crée son test dans `tests/domain/usecases/GetKatasUseCase.test.ts` avec un fake repository simple.
+          Commence par un fichier complet et copiable :
+          <pre><code class="language-typescript">import { describe, expect, it } from 'vitest'
+import type { Kata } from '@/domain/models/Kata'
+import type { KataId } from '@/domain/types/branded'
+import type { KataRepository } from '@/domain/ports/KataRepository'
+import { GetKatasUseCase } from '@/domain/usecases/GetKatasUseCase'
+import { err, ok } from '@/domain/types/Result'
+
+class FakeKataRepository implements KataRepository {
+  constructor(private readonly katas: Kata[] = []) {}
+
+  async findAll() {
+    return ok(this.katas)
+  }
+
+  async findById(id: KataId) {
+    const kata = this.katas.find(item => item.id === id)
+    return kata
+      ? ok(kata)
+      : err({ kind: 'unexpected', message: 'Kata introuvable dans le fake' })
+  }
+}
+
+describe('GetKatasUseCase', () => {
+  it('propage les katas renvoyes par le repository', async () => {
+    const kata: Kata = {
+      id: 'kata-1' as KataId,
+      titre: 'FizzBuzz',
+      description: 'Ecris FizzBuzz',
+      niveau: 'debutant'
+    }
+
+    const useCase = new GetKatasUseCase(new FakeKataRepository([kata]))
+    const result = await useCase.execute()
+
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value).toHaveLength(1)
+    }
+  })
+})</code></pre>
+        </li>
+        <li>Crée d'abord `src/infrastructure/api/createKataRepository.ts`.
+          Ce petit fichier évite d'instancier `ApiKataRepository` directement dans plusieurs endroits :
+          <pre><code class="language-typescript">import type { KataRepository } from '@/domain/ports/KataRepository'
+import { ApiKataRepository } from '@/infrastructure/api/ApiKataRepository'
+
+export function createKataRepository(): KataRepository {
+  return new ApiKataRepository()
+}</code></pre>
+        </li>
+        <li>Crée ou refactorise ensuite `src/stores/useKataStore.ts`.
+          Ton objectif est que le store :
+          <ul>
+            <li>reçoive le use case par injection ou composition adaptée au projet ;</li>
+            <li>stocke l'état sous forme de `AsyncState&lt;Kata[]&gt;` ;</li>
+            <li>n'appelle plus `fetch` directement.</li>
+          </ul>
+          Tu peux partir de ce fichier minimal complet :
+          <pre><code class="language-typescript">import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import type { Kata } from '@/domain/models/Kata'
+import type { AsyncState } from '@/domain/types/AsyncState'
+import { toUserMessage } from '@/domain/types/AppError'
+import { GetKatasUseCase } from '@/domain/usecases/GetKatasUseCase'
+import { createKataRepository } from '@/infrastructure/api/createKataRepository'
+
+export const useKataStore = defineStore('kata', () => {
+  const kataRepository = createKataRepository()
+  const getKatasUseCase = new GetKatasUseCase(kataRepository)
+  const state = ref&lt;AsyncState&lt;Kata[]&gt;&gt;({ status: 'idle' })
+
+  async function chargerKatas() {
+    state.value = { status: 'loading' }
+    const result = await getKatasUseCase.execute()
+
+    state.value = result.ok
+      ? { status: 'success', data: result.value }
+      : { status: 'error', message: toUserMessage(result.error) }
+  }
+
+  return {
+    state,
+    chargerKatas
+  }
+})</code></pre>
+        </li>
+        <li>Ajoute les tests du store dans `tests/stores/useKataStore.test.ts`.
+          Colle ce fichier complet pour tester les trois états utiles :
+          <pre><code class="language-typescript">import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { useKataStore } from '@/stores/useKataStore'
+import { createKataRepository } from '@/infrastructure/api/createKataRepository'
+
+vi.mock('@/infrastructure/api/createKataRepository', () => ({
+  createKataRepository: vi.fn()
+}))
+
+describe('useKataStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
+  })
+
+  it('demarre avec un etat idle', () => {
+    const store = useKataStore()
+
+    expect(store.state).toEqual({ status: 'idle' })
+  })
+
+  it('passe en success quand le use case renvoie des katas', async () => {
+    vi.mocked(createKataRepository).mockReturnValue({
+      findAll: vi.fn().mockResolvedValue({
+        ok: true,
+        value: [
+          { id: 'kata-1', titre: 'FizzBuzz', description: 'Ecris FizzBuzz', niveau: 'debutant' }
+        ]
+      }),
+      findById: vi.fn()
+    })
+
+    const store = useKataStore()
+    await store.chargerKatas()
+
+    expect(store.state.status).toBe('success')
+  })
+
+  it('passe en error quand le use case renvoie une erreur', async () => {
+    vi.mocked(createKataRepository).mockReturnValue({
+      findAll: vi.fn().mockResolvedValue({
+        ok: false,
+        error: { kind: 'network', message: 'offline' }
+      }),
+      findById: vi.fn()
+    })
+
+    const store = useKataStore()
+    await store.chargerKatas()
+
+    expect(store.state).toEqual({
+      status: 'error',
+      message: 'Le serveur KataSensei est inaccessible pour le moment.'
+    })
+  })
+})</code></pre>
+          Résultat attendu : le store est testé sur `idle`, `success` et `error` sans `fetch` direct dans le test.
+        </li>
+        <li>Lance les tests de cette étape :
+          <pre><code class="language-bash">npm run test -- tests/domain/usecases tests/stores</code></pre>
+          Résultat attendu : le use case et le store sont testés sans dépendre directement d'un `fetch` dans la vue.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne fais pas du use case une simple fonction qui importe directement `ApiKataRepository`. Il doit dépendre du port, pas de l'adapter concret.</li>
+        <li>Ne redonne pas au store le rôle de mapper des DTO. Cette responsabilité est déjà plus bas.</li>
+        <li>Ne retourne pas à nouveau des `loading`, `error` et `data` dispersés si tu as déjà introduit `AsyncState`.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Écris un fake repository minimal pour tester <code>GetKatasUseCase</code> sans dépendre du navigateur ni du backend.</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <pre><code class="language-typescript">class FakeKataRepository implements KataRepository {
+  constructor(private readonly katas: Kata[] = []) {}
+
+  async findAll() {
+    return ok(this.katas)
+  }
+
+  async findById(id: KataId) {
+    const kata = this.katas.find(item => item.id === id)
+    return kata
+      ? ok(kata)
+      : err({ kind: 'unexpected', message: 'Kata introuvable dans le fake' })
+  }
+}</code></pre>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi le use case doit-il dépendre d'une interface et non d'`ApiKataRepository` directement ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que cela garde le domaine testable, remplaçable et indépendant de la technique de transport réelle.</p></details>
+      <p>2. Pourquoi le store reste-t-il utile même après l'introduction d'un use case ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le use case exprime une intention métier, tandis que le store reste la source de vérité partagée pour l'UI.</p></details>
+      <p>3. Pourquoi un fake repository simple est-il plus pédagogique qu'un mock opaque complexe ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'il rend visible le comportement simulé et aide à comprendre la dépendance réelle du use case.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>`GetKatasUseCase` existe et est testé.</li>
+        <li>Le store charge les katas via le use case.</li>
+        <li>Le store ne parle plus directement HTTP.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le use case dépend bien du port `KataRepository`.</li>
+        <li><input type="checkbox"> Le store gère un état cohérent du chargement.</li>
+        <li><input type="checkbox"> Les tests du use case et du store passent.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout use case getkatas et refactorisation du store</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-6</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-7">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">7</div>
+        <h2 class="guide-step__title">Réécrire le composable UI et la vue de liste</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Terminer le refactoring visible pour l'utilisateur : la vue de liste reste fonctionnelle, mais elle ne parle plus directement au réseau.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>C'est le moment où toutes les couches précédentes deviennent utiles. La vue doit maintenant seulement orchestrer l'affichage et les interactions UI.</p>
+      <p><strong>État de départ exact</strong><br>Le domaine, le repository, le use case et le store existent. Il reste à simplifier l'UI qui affiche le catalogue.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Crée ou refactorise `src/ui/composables/useKataList.ts`.
+          Commence par une version complète avec ses imports :
+          <pre><code class="language-typescript">import { computed, onMounted } from 'vue'
+import { useKataStore } from '@/stores/useKataStore'
+
+export function useKataList() {
+  const kataStore = useKataStore()
+
+  onMounted(() => {
+    if (kataStore.state.status === 'idle') {
+      void kataStore.chargerKatas()
+    }
+  })
+
+  return {
+    state: computed(() => kataStore.state)
+  }
+}</code></pre>
+          Résultat attendu : ce composable lit le store, déclenche le chargement au bon moment et expose uniquement ce qui sert à la vue.
+        </li>
+        <li>Réécris la vue de liste, par exemple `src/ui/views/KataListView.vue`.
+          Commence par remplacer l'ancien fichier par une version minimale complète :
+          <pre><code class="language-typescript">&lt;script setup lang="ts"&gt;
+import { useKataList } from '@/ui/composables/useKataList'
+
+const { state } = useKataList()
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;section&gt;
+    &lt;p v-if="state.status === 'loading'"&gt;Chargement du catalogue...&lt;/p&gt;
+
+    &lt;p v-else-if="state.status === 'error'" role="alert"&gt;
+      {{ state.message }}
+    &lt;/p&gt;
+
+    &lt;ul v-else-if="state.status === 'success'"&gt;
+      &lt;li v-for="kata in state.data" :key="kata.id"&gt;
+        &lt;strong&gt;{{ kata.titre }}&lt;/strong&gt; - {{ kata.niveau }}
+      &lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p v-else&gt;Le catalogue n'est pas encore charge.&lt;/p&gt;
+  &lt;/section&gt;
+&lt;/template&gt;</code></pre>
+          Résultat attendu : la vue n'appelle plus `fetch` et n'interprète plus le DTO brut.
+        </li>
+        <li>Ajoute le test du composable UI dans `tests/ui/composables/useKataList.test.ts`.
+          Colle ce fichier complet :
+          <pre><code class="language-typescript">import { describe, expect, it, vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { defineComponent, nextTick } from 'vue'
+import { mount } from '@vue/test-utils'
+import type { KataId } from '@/domain/types/branded'
+import { useKataStore } from '@/stores/useKataStore'
+import { useKataList } from '@/ui/composables/useKataList'
+
+describe('useKataList', () => {
+  it('declenche chargerKatas au montage et expose l etat du store', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+
+    const kataStore = useKataStore()
+    kataStore.state = { status: 'idle' }
+    const chargerKatasSpy = vi.spyOn(kataStore, 'chargerKatas').mockResolvedValue()
+
+    const TestComponent = defineComponent({
+      setup() {
+        return useKataList()
+      },
+      template: '&lt;p&gt;{{ state.status }}&lt;/p&gt;'
+    })
+
+    const wrapper = mount(TestComponent, {
+      global: { plugins: [pinia] }
+    })
+
+    await nextTick()
+
+    expect(chargerKatasSpy).toHaveBeenCalledTimes(1)
+    expect(wrapper.text()).toContain('idle')
+
+    kataStore.state = { status: 'loading' }
+    await nextTick()
+    expect(wrapper.text()).toContain('loading')
+
+    kataStore.state = { status: 'error', message: 'Serveur inaccessible' }
+    await nextTick()
+    expect(wrapper.text()).toContain('error')
+
+    kataStore.state = {
+      status: 'success',
+      data: [
+        {
+          id: 'kata-1' as KataId,
+          titre: 'FizzBuzz',
+          description: 'Ecris FizzBuzz',
+          niveau: 'debutant'
+        }
+      ]
+    }
+    await nextTick()
+    expect(wrapper.text()).toContain('success')
+  })
+})</code></pre>
+          Résultat attendu : ce test prouve que le composable déclenche `chargerKatas()` au montage, relaie bien l'état du store, et permet ensuite à la vue d'afficher `loading`, `error` ou `success` sans logique réseau locale.
+        </li>
+        <li>Relance le frontend :
+          <pre><code class="language-bash">npm run dev</code></pre>
+          Résultat attendu : la page se recharge encore et le catalogue reste visible.
+        </li>
+        <li>Vérifie manuellement l'affichage du catalogue et le comportement en cas d'erreur.
+          Par exemple :
+          <ul>
+            <li>liste visible quand l'API répond ;</li>
+            <li>message de chargement visible au bon moment ;</li>
+            <li>message d'erreur compréhensible si l'API est indisponible.</li>
+          </ul>
+          Résultat attendu : la page continue à fonctionner avec une structure plus propre.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Ne laisse pas un `fetch` résiduel dans la vue ou dans le composable UI.</li>
+        <li>Ne refais pas du mapping DTO → domaine dans la vue si le mapper existe déjà.</li>
+        <li>Ne fais pas de la vue un second store. Elle doit lire un état, pas le reconstruire.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Relis la vue refactorisée et barre mentalement chaque ligne qui ne relève pas de l'affichage ou d'une interaction UI. S'il reste encore du réseau ou du mapping, la vue est encore trop couplée.</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Dans une vue refactorisée correcte, on doit surtout voir : lecture du composable UI, rendu conditionnel des états, liste affichée, et éventuellement un bouton de relance. Le reste doit déjà avoir été poussé plus bas.</p>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Quel est le rôle exact d'une vue après ce refactoring ?</p>
+      <details><summary>Réponse attendue</summary><p>Assembler l'UI, choisir quoi afficher selon l'état et déléguer la logique métier et technique aux couches déjà prévues pour cela.</p></details>
+      <p>2. Pourquoi un composable UI peut-il dépendre du store alors qu'un use case ne le doit pas ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'un composable UI vit au niveau de l'interface et orchestre une fonctionnalité visible. Le use case, lui, doit rester exécutable sans Vue.</p></details>
+      <p>3. Pourquoi faut-il garder cette phase sans composants métier `shadcn-vue` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le but ici est de sécuriser le flux de données et l'architecture front. Les composants UI métier auront plus de valeur une fois ce socle stabilisé.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>La vue de liste n'appelle plus le réseau directement.</li>
+        <li>Le composable UI orchestre le store proprement.</li>
+        <li>Le catalogue s'affiche toujours correctement en local.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> Le composable UI expose uniquement ce qui est utile au rendu.</li>
+        <li><input type="checkbox"> La vue ne contient plus de `fetch` ni de mapping HTTP.</li>
+        <li><input type="checkbox"> Le catalogue s'affiche encore dans le navigateur.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>refactor(front): reecriture de la vue liste sur store et composable ui</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-7</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="etape-8">
+      <div class="guide-step__heading">
+        <div class="guide-step__number" style="background: var(--phase-2);">8</div>
+        <h2 class="guide-step__title">Vérifier la phase avant livraison</h2>
+      </div>
+
+      <p><strong>Objectif</strong><br>Valider que l'incrément reste cohérent, testable et prêt à servir de base à la phase 3.</p>
+      <p><strong>Pourquoi cette étape existe maintenant</strong><br>Un refactoring n'est terminé que lorsqu'il reste visible comme une amélioration fiable et non comme un simple déplacement de code.</p>
+      <p><strong>État de départ exact</strong><br>Le catalogue est refactorisé. Il faut maintenant vérifier la cohérence globale du résultat.</p>
+
+      <h3>Étapes</h3>
+      <ol>
+        <li>Vérifie que ton frontend expose bien les scripts attendus de cette phase :
+          <pre><code class="language-json">{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}</code></pre>
+          Si `type-check` ou `build` manquent encore, ajoute-les avant de continuer.
+        </li>
+        <li>Lance le type-check complet depuis `~/workspace/katasensei/katasensei-front` :
+          <pre><code class="language-bash">npm run type-check</code></pre>
+          Résultat attendu : aucune erreur TypeScript bloquante.
+        </li>
+        <li>Lance ensuite le build frontend :
+          <pre><code class="language-bash">npm run build</code></pre>
+          Résultat attendu : Vite produit un build sans erreur bloquante.
+        </li>
+        <li>Lance les tests front utiles à cette phase :
+          <pre><code class="language-bash">npm run test -- tests/domain/types tests/domain/usecases tests/infrastructure/api tests/stores tests/ui/composables</code></pre>
+          Résultat attendu : les suites liées au domaine, au repository, au store et au composable UI passent.
+        </li>
+        <li>Relance l'application et vérifie le catalogue dans le navigateur.
+          Si nécessaire, relance aussi le backend dans un autre terminal.
+          Résultat attendu : la page charge, affiche les katas et gère proprement les états attendus.
+        </li>
+        <li>Relis rapidement l'arborescence :
+          <pre><code class="language-bash">find src -maxdepth 3 -type f | sort
+find tests -maxdepth 3 -type f | sort</code></pre>
+          Résultat attendu : l'organisation du code et des tests reflète bien les couches introduites.
+        </li>
+      </ol>
+
+      <h3>Erreurs fréquentes</h3>
+      <ul>
+        <li>Un type-check vert ne suffit pas si la vue ne fonctionne plus. Vérifie aussi le comportement visible.</li>
+        <li>Des tests trop couplés à l'implémentation peuvent casser au moindre déplacement de fichier. Vérifie qu'ils testent bien le comportement utile.</li>
+        <li>Ne remets pas en dernière minute des raccourcis techniques dans la vue pour faire passer une vérification rapide.</li>
+      </ul>
+
+      <h3>Exercice</h3>
+      <p>Écris une phrase de bilan qui commence par <code>En phase 2, j'ai remplacé...</code> et qui compare l'ancien flux front au nouveau.</p>
+      <details class="solution">
+        <summary>Solution - A consulter après 20 min</summary>
+        <div class="solution__content">
+          <p>Une bonne réponse ressemble à : <strong>En phase 2, j'ai remplacé un flux de chargement encore trop proche de la vue par une architecture front typée, testable et découpée entre domaine, infrastructure, store et UI.</strong></p>
+        </div>
+      </details>
+
+      <h3>Questions théoriques</h3>
+      <p>1. Pourquoi une phase de refactoring doit-elle se finir par une preuve utilisateur visible ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'un refactoring sert le produit. Si la fonctionnalité n'est plus observable ou n'est plus fiable, la dette technique n'a pas vraiment diminué.</p></details>
+      <p>2. Pourquoi vérifier aussi l'arborescence et pas seulement les tests ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce qu'une architecture est aussi un moyen de rendre les responsabilités visibles. Les tests valident le comportement, l'arborescence aide à garder la lisibilité du système.</p></details>
+      <p>3. Pourquoi la phase 3 peut-elle maintenant se concentrer sur `shadcn-vue` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le flux de données et les points d'extension du front sont désormais plus stables. Les composants UI métier viendront s'appuyer sur une base moins fragile.</p></details>
+
+      <h3>Definition of Done de l'étape</h3>
+      <ul>
+        <li>Le type-check complet passe.</li>
+        <li>Le build frontend passe.</li>
+        <li>Les tests ciblés de la phase passent.</li>
+        <li>Le catalogue fonctionne encore côté utilisateur.</li>
+        <li>La structure source et tests est cohérente avec l'architecture visée.</li>
+      </ul>
+
+      <h3>Checklist manuelle</h3>
+      <ul>
+        <li><input type="checkbox"> `npm run type-check` passe.</li>
+        <li><input type="checkbox"> `npm run build` passe.</li>
+        <li><input type="checkbox"> Les tests ciblés passent.</li>
+        <li><input type="checkbox"> Le catalogue est toujours visible dans le navigateur.</li>
+        <li><input type="checkbox"> Je sais expliquer la différence entre domaine, infrastructure, store et UI.</li>
+      </ul>
+
+      <div class="commit-suggestion">Commit recommandé : <code>test(front): validation finale de l architecture front typee</code></div>
+      <div class="callout--info callout--soluce">
+        <strong>Soluce</strong>
+        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-8</code></a>
+      </div>
+    </section>
+
+    <section class="guide-step" id="phase-dod">
+      <h2>Definition of Done de la phase</h2>
+      <ul>
+        <li>Le catalogue de katas reste utilisable côté frontend.</li>
+        <li>Le flux de lecture des katas passe par `KataRepository`, `GetKatasUseCase`, store et composable UI.</li>
+        <li>Le domaine front ne dépend pas directement de Vue ni du transport HTTP.</li>
+        <li>La structure miroir de `tests/` existe pour les couches refactorisées de cette phase.</li>
+        <li>Le type-check et les tests ciblés passent.</li>
+        <li>Le build frontend passe sans erreur.</li>
+      </ul>
+    </section>
+
+    <section class="checklist" id="checklist">
+      <h2 class="checklist__title">Checklist manuelle de validation — Phase 2</h2>
+      <ul>
+        <li><input type="checkbox"> `src/domain/models`, `src/domain/types`, `src/domain/ports` et `src/domain/usecases` existent et sont utilisés.</li>
+        <li><input type="checkbox"> `src/infrastructure/api/dto` et `src/infrastructure/api/mappers` existent et isolent le contrat HTTP.</li>
+        <li><input type="checkbox"> `src/stores/useKataStore.ts` ne fait plus de `fetch` direct.</li>
+        <li><input type="checkbox"> `src/ui/composables/useKataList.ts` orchestre la lecture du store.</li>
+        <li><input type="checkbox"> La vue de liste n'interprète plus directement la réponse API brute.</li>
+        <li><input type="checkbox"> La structure miroir de `tests/` existe pour les couches refactorisées.</li>
+        <li><input type="checkbox"> `npm run type-check` passe.</li>
+        <li><input type="checkbox"> `npm run build` passe.</li>
+        <li><input type="checkbox"> Les tests ciblés de phase 2 passent.</li>
+        <li><input type="checkbox"> Le catalogue est toujours visible dans le navigateur.</li>
+      </ul>
+    </section>
+
+    <section class="guide-step" id="deploiement">
+      <h2>Stratégie de déploiement de fin de phase</h2>
+      <p>Cette phase 2 doit se terminer par un redéploiement. Le but n'est pas de changer la plateforme de livraison, mais de prouver qu'un refactoring architectural frontend n'a pas cassé la capacité à mettre KataSensei en ligne.</p>
+      <ul>
+        <li>Avant déploiement : exécute `npm run type-check`, puis `npm run build`, puis `npm run test -- tests/domain/types tests/domain/usecases tests/infrastructure/api tests/stores tests/ui/composables`.</li>
+        <li>Avant déploiement : relance ensuite le frontend avec `npm run dev` et vérifie dans le navigateur que le catalogue s'affiche encore correctement en local.</li>
+        <li>Redéploie ensuite l'application sans changer l'objectif fonctionnel livré en phase 1 :
+          <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-back
+fly deploy
+
+cd ~/workspace/katasensei/katasensei-front
+fly deploy</code></pre>
+        </li>
+        <li>Après déploiement : ouvre l'URL publique et vérifie que le catalogue s'affiche toujours correctement.</li>
+        <li>Après déploiement : vérifie qu'un backend indisponible déclenche encore un message d'erreur simple au lieu d'un plantage silencieux.</li>
+        <li>La preuve attendue en fin de phase est la suivante : le même incrément utilisateur qu'en phase 1 reste bien livrable après refactoring architectural.</li>
+      </ul>
+    </section>
+
+    <section class="guide-step" id="ressources">
+      <h2>Ressources externes utiles</h2>
+      <ul>
+        <li><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html" target="_blank" rel="noreferrer">TypeScript Handbook — Narrowing</a> : utile pour les unions discriminées et l'exhaustivité.</li>
+        <li><a href="https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html" target="_blank" rel="noreferrer">TypeScript Handbook — Template Literal Types</a> : à lire si tu ajoutes ensuite des routes typées ou d'autres contrats dérivés.</li>
+        <li><a href="https://pinia.vuejs.org/" target="_blank" rel="noreferrer">Documentation officielle Pinia</a> : utile pour garder un store centré sur l'état partagé.</li>
+        <li><a href="https://vitest.dev/" target="_blank" rel="noreferrer">Documentation officielle Vitest</a> : utile pour les tests ciblés du domaine, du repository et du store.</li>
+      </ul>
+    </section>
+
+    <section class="skills-summary">
+      <h2>Ce que tu sais faire après cette phase</h2>
+      <ul>
+        <li>Refactoriser un flux front visible sans casser la fonctionnalité utilisateur.</li>
+        <li>Créer des types métier utiles côté frontend sans sur-abstraire.</li>
+        <li>Isoler un contrat HTTP derrière un DTO et un mapper.</li>
+        <li>Faire dépendre un use case front d'un port plutôt que d'un adapter concret.</li>
+        <li>Utiliser Pinia comme source de vérité UI au lieu d'y faire du réseau.</li>
+        <li>Structurer les tests frontend en miroir du code refactorisé.</li>
+      </ul>
+      <div class="callout--tip">À retenir : la phase 2 ne cherche pas à fabriquer encore toute l'interface finale. Elle prépare un terrain stable pour que la phase 3 puisse construire de vrais composants métier avec `shadcn-vue` sans empiler la dette technique.</div>
+    </section>
+
+    <p class="footer">KataSensei Learning Path · Phase 2</p>
+
+  </main>
+</div>
+
+<script src="../assets/js/navigation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
