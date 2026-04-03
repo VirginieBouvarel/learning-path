@@ -51,7 +51,7 @@
           <div class="notion-card__link-desc">Timeline et phases détaillées</div>
         </div>
       </a>
-      <a href="../ressources.html" class="notion-card__link">
+      <a href="../ressources-externes.html" class="notion-card__link">
         <span class="notion-card__link-icon notion-card__link-icon--resources" aria-hidden="true">
           <svg viewBox="0 0 20 20">
             <path d="M5 4.5h7l3 3V15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9.5a1 1 0 0 1 1-1Z"/>
@@ -60,8 +60,8 @@
           </svg>
         </span>
         <div>
-          <div>Ressources</div>
-          <div class="notion-card__link-desc">Ressources filtrables par phase</div>
+          <div>Ressources externes</div>
+          <div class="notion-card__link-desc">Ressources externes filtrables par phase</div>
         </div>
       </a>
     </div>
@@ -103,11 +103,11 @@
     </div>
 
     <div class="callout--info">
-      <strong>Promesse test de la phase</strong> : sécuriser l'auth par des tests ciblés sur JWT, accès refusé, expiration des tokens et endpoints d'authentification, puis s'appuyer sur cette base pour refactorer le back sans casser le comportement.
+      <strong>Promesse test de la phase</strong><br>Sécuriser l'auth par des tests ciblés sur JWT, accès refusé, expiration des tokens et endpoints d'authentification, puis s'appuyer sur cette base pour refactorer le back sans casser le comportement.
     </div>
 
     <div class="callout--info">
-      <strong>ADR 001 s'applique encore ici</strong> : garde le vocabulaire métier français pour le domaine. <code>Niveau</code> remplace <code>Difficulty</code>, <code>Indice</code> remplace <code>Hint</code>, et <code>Tentative</code> remplace <code>Session</code> quand il s'agit du métier.
+      <strong>ADR 001 s'applique encore ici</strong><br>Garde le vocabulaire métier français pour le domaine. <code>Niveau</code> remplace <code>Difficulty</code>, <code>Indice</code> remplace <code>Hint</code>, et <code>Tentative</code> remplace <code>Session</code> quand il s'agit du métier.
     </div>
 
     <!-- Étape 1 -->
@@ -284,7 +284,7 @@ public KataDto findById(KataId id) {
           <p>Il apporte du sens métier, de la validation locale et une protection de type. Deux valeurs techniquement similaires deviennent distinguables par le compilateur et par le lecteur.</p>
         </div>
       </details>
-      <p><strong>Question 2.2 :</strong> pourquoi valider l'email dans le Value Object et pas "plus tard" dans le service ?</p>
+      <p><strong>Question 2.2 :</strong> pourquoi valider l'email dans le Value Object et pas directement dans le service ?</p>
       <details class="solution">
         <summary>Réponse attendue</summary>
         <div class="solution__content">
@@ -314,7 +314,7 @@ public KataDto findById(KataId id) {
         <p>Imagine que <code>KataService</code> gérait aussi l'envoi d'un email de confirmation à chaque nouveau kata créé.</p>
         <p><strong>Question :</strong> combien de raisons de changer aurait <code>KataService</code> ? Nomme-les.</p>
         <p><strong>Exercice :</strong> si tu devais ajouter "envoyer un email quand un kata est créé", comment l'organiserais-tu pour que <code>KataService</code> ne sache pas que les emails existent ?</p>
-        <p><em>Indice : pense aux Spring Events de la phase 5 — mais pour l'instant une simple interface <code>KataEventPublisher</code> suffit.</em></p>
+        <p><em>Indice : pense aux Spring Events de la phase 5 — ici, une simple interface <code>KataEventPublisher</code> suffit.</em></p>
         <details class="solution">
           <summary>Réponse et solution</summary>
           <div class="solution__content">
@@ -1066,7 +1066,7 @@ et suffisante pour le périmètre du projet.
       <details class="solution">
         <summary>Réponse attendue</summary>
         <div class="solution__content">
-          <p>À comprendre plus tard pourquoi un choix a été fait, quelles alternatives ont été rejetées et quelles conséquences accepter. Il sert de mémoire technique durable.</p>
+          <p>À comprendre pourquoi un choix a été fait, quelles alternatives ont été rejetées et quelles conséquences accepter. Il sert de mémoire technique durable.</p>
         </div>
       </details>
       <p><strong>Question 8.2 :</strong> pourquoi documenter dans le même ADR JWT et Value Objects est-il cohérent ici ?</p>

@@ -420,6 +420,16 @@ pre:not([class]) {
 .callout--info strong { color: var(--color-accent-purple); }
 .callout--tip strong { color: var(--color-accent-green); }
 
+.callout--soluce {
+  margin: 18px 0 8px;
+}
+
+.callout--soluce a {
+  color: var(--color-accent-purple);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ==========================================================================
    Tables
    ========================================================================== */
