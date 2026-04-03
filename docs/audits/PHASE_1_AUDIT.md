@@ -4,7 +4,7 @@ Document d'audit de cadrage avant réécriture de la phase 1.
 
 ## Diagnostic sévère
 
-La phase 1 actuelle, dans `site/phases/phase-1.html`, contient déjà des intentions pédagogiques utiles, mais elle ne respecte pas encore le contrat d'une vraie phase détaillée exécutable seule.
+La phase 1 actuelle, dans `public/phases/phase-1.html`, contient déjà des intentions pédagogiques utiles, mais elle ne respecte pas encore le contrat d'une vraie phase détaillée exécutable seule.
 
 ### Elle a une bonne intuition de fond, mais pas un vrai point de départ opératoire
 

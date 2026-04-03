@@ -11,6 +11,19 @@ Le learning path n'a que 2 niveaux :
 
 Il n'existe pas de niveau intermédiaire `overview de phase`.
 
+## Séparation public / interne
+
+- le dossier `public/` est la version publique du learning path
+- cette version publique s'adresse à une apprenante qui doit pouvoir parcourir le learning path de manière progressive pour construire KataSensei en toute autonomie, de la création d'un repo dédié sur GitHub jusqu'à la mise en production d'un produit final utilisable par de vrais utilisateurs en ligne
+- le contenu publié dans `public/` ne doit montrer que le résultat final utile à cette apprenante
+- le contenu publié dans `public/` ne doit jamais exposer :
+  - nos arbitrages éditoriaux
+  - nos hésitations
+  - nos itérations de conception du learning path
+  - des formulations du type `on a décidé`, `pour ne pas alourdir`, `on écrit ceci à part`, `dans cette version du parcours`
+- les autres fichiers du repo (`docs/`, audits, notes, backlog inter-phases, sources héritées `content/`) sont des supports internes qui reflètent nos réflexions itératives pour construire correctement cette partie publique
+- ces fichiers internes servent à préparer, cadrer, auditer et corriger le learning path, mais leur logique ne doit pas fuiter dans le contenu public
+
 ### Règle de relecture
 
 - si une opération est indispensable pour construire le projet final, elle doit apparaître dans la phase détaillée
@@ -49,7 +62,8 @@ Il n'existe pas de niveau intermédiaire `overview de phase`.
 ## Trame de phase
 
 - la trame validée de référence pour toutes les futures phases est décrite dans `docs/TRAME.md`
-- la page `site/phases/phase-0.html` sert de référence concrète de structure et de niveau de détail tant qu'une autre trame n'a pas été explicitement validée
+- la page `public/phases/phase-1.html` sert de référence concrète de structure et de niveau de détail tant qu'une autre trame n'a pas été explicitement validée
+- la règle de fin de phase est : validation locale + déploiement réel adapté à l'incrément de la phase
 
 ## Sources héritées à relire avant réécriture
 

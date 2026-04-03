@@ -33,12 +33,13 @@ Règles :
 
 ### Report 3
 
-- statut : `à traiter`
+- statut : `traité`
 - phase d'origine : phase 0
 - phase cible : phase 2
 - élément retiré ou allégé : Checkstyle, Stylelint et structure miroir détaillée de `tests/`
 - raison du report : la phase 1 traite déjà la persistance, l'API métier, le branchement frontend et l'outillage minimal ; détailler ces conventions ici casserait le fil conducteur principal
 - forme attendue : étape dédiée ou guide annexe au moment où l'architecture et la structure de tests seront plus stables
+- reprise effective : nouvelle phase 2 pour la structure miroir de `tests/` ; reports dédiés conservés ensuite pour `Stylelint` et `Checkstyle`
 
 ### Report 4
 
@@ -46,9 +47,9 @@ Règles :
 - phase d'origine : phase 0
 - phase cible : phase 1
 - élément retiré ou allégé : pipeline GitLab CI/CD complet et premier déploiement Fly.io
-- raison du report : le déploiement était trop précoce par rapport à la maturité réelle du projet et brouillait le livrable local minimal
-- forme attendue : section de préparation ou premier déploiement selon la cohérence du périmètre de phase 1
-- reprise effective : phase 1, section de stratégie de déploiement de fin de phase
+- raison du report : la version initiale du parcours avait repoussé ce sujet ; le cadrage a ensuite été corrigé pour rendre le déploiement obligatoire dès la fin de phase 0
+- forme attendue : premier déploiement minimal du squelette, puis redéploiements en fin de phases suivantes
+- reprise effective : phase 0, section de stratégie de déploiement de fin de phase ; phases 1 et 2 en redéploiement
 
 ### Report 5
 
@@ -64,9 +65,46 @@ Règles :
 
 ### Report 6
 
-- statut : `à traiter`
+- statut : `traité`
 - phase d'origine : phase 1
 - phase cible : phase 2
 - élément retiré ou allégé : configuration détaillée de Checkstyle, Stylelint et structuration miroir complète de `tests/`
 - raison du report : la phase 1 pose seulement les garde-fous minimaux avant commit pour rester centrée sur le premier incrément métier observable
 - forme attendue : étape dédiée ou guide annexe relié à la structuration plus rigoureuse du code et des tests
+- reprise effective : nouvelle phase 2 pour la structuration miroir de `tests/` ; `Stylelint` reporté en nouvelle phase 3 et `Checkstyle` reporté en nouvelle phase 4
+
+### Report 7
+
+- statut : `à traiter`
+- phase d'origine : phase 2
+- phase cible : phase 3
+- élément retiré ou allégé : installation explicite de `shadcn-vue` et fabrication des premiers composants Vue métier sur cette base
+- raison du report : le découpage de l'ancienne phase 2 sépare désormais le refactoring architectural du flux de données front et le chantier UI composant par composant
+- forme attendue : étape complète centrée sur l'installation, le cadrage d'usage et l'intégration de composants métier réels dans l'UI
+
+### Report 8
+
+- statut : `à traiter`
+- phase d'origine : phase 2
+- phase cible : phase 3
+- élément retiré ou allégé : configuration détaillée de `Stylelint`
+- raison du report : la nouvelle phase 2 reste centrée sur l'architecture front, les types, les mappers, les use cases et la réécriture du flux de données ; la dette CSS devient vraiment structurante au moment de construire les composants UI avec `shadcn-vue`
+- forme attendue : étape dédiée ou guide annexe lié aux conventions CSS du projet et aux composants Vue réellement créés dans la nouvelle phase 3
+
+### Report 9
+
+- statut : `à traiter`
+- phase d'origine : phase 2
+- phase cible : phase 3
+- élément retiré ou allégé : `LogService` comme port sortant front et refactorisation des logs front épars
+- raison du report : la nouvelle phase 2 est déjà architecturalement complète côté hexagone front grâce au port `KataRepository` ; ajouter `LogService` dans la même phase alourdirait inutilement le refactoring principal
+- forme attendue : mini-étape de refactorisation ou étape dédiée introduisant un second port sortant front juste après la stabilisation du socle architectural
+
+### Report 10
+
+- statut : `à traiter`
+- phase d'origine : phase 2
+- phase cible : phase 4
+- élément retiré ou allégé : configuration détaillée de `Checkstyle`
+- raison du report : le nouveau découpage rend la phase 2 très front et la phase 3 centrée sur l'UI Vue ; `Checkstyle` relève d'un cadrage qualité Java à replacer dans une phase plus cohérente avec le travail backend ou fullstack concerné
+- forme attendue : étape dédiée ou guide annexe au moment où les conventions qualité backend apportent une valeur immédiate au flux de travail

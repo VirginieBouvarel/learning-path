@@ -12,7 +12,7 @@ Quand je te dis `travaille sur la phase X`, tu dois d'abord lire les fichiers de
 4. `docs/LEARNING_PATH_EDITORIAL_RULES.md`
 5. `docs/NEXT_PHASE.md`
 6. `docs/PHASE_X.md` correspondant à la phase demandée
-7. `site/phases/phase-X.html`
+7. `public/phases/phase-X.html`
 8. dans `content/`, les deux sources héritées correspondant à la phase demandée :
    - le dossier dont le nom commence par `Phase X`
    - le fichier `.md` dont le nom commence par `Phase X`
@@ -27,7 +27,7 @@ Quand je te dis `travaille sur la phase X`, tu dois d'abord lire les fichiers de
 - le backlog inter-phases à relire avant toute nouvelle phase est `docs/NEXT_PHASE.md`
 - les règles internes transverses sont dans `docs/LEARNING_PATH_SPECS.md`
 - les règles éditoriales sont dans `docs/LEARNING_PATH_EDITORIAL_RULES.md`
-- la page `site/phases/phase-0.html` sert de référence concrète de trame validée tant qu'une autre trame n'a pas été explicitement validée
+- la page `public/phases/phase-1.html` sert de référence concrète de trame validée tant qu'une autre trame n'a pas été explicitement validée
 
 ## Environnement cible global
 
@@ -72,6 +72,7 @@ Quand l'utilisateur dit `travaille sur la phase X` :
 - ne jamais enrichir superficiellement un résumé en le faisant passer pour un guide pas-à-pas
 - raisonner comme si la phase devait être exécutée seule, sans aide humaine
 - si une étape reste trop implicite, trop grosse ou trop abstraite, elle est ratée
+- si une micro-étape ressemble à une simple liste d'ordres sans mode d'emploi concret, elle est ratée
 - privilégier la précision opératoire et la progression réelle à la densité de concepts
 
 ## Sorties attendues pendant le travail

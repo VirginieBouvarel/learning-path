@@ -2,6 +2,22 @@
 
 Document interne de référence pour écrire et relire les pages du learning path.
 
+## Public visé et frontière éditoriale
+
+- les pages du dossier `public/` constituent la version publique du learning path
+- cette version publique parle à une apprenante, pas à l'équipe qui rédige le parcours
+- elle doit lui permettre d'apprendre les technologies nécessaires pour construire KataSensei de A à Z, de la création d'un repo GitHub dédié jusqu'à la mise en production du produit final
+- le contenu public ne doit pas contenir de traces de fabrication du learning path lui-même
+- le ton du contenu public doit être direct, affirmatif et opératoire
+- le contenu public doit donner des instructions détaillées pour arriver jusqu'à l'objectif de l'étape ou de la phase
+- le contenu public ne doit pas exprimer d'hésitation, de flou, de suppositions non traitées ou d'évocation d'éléments non vérifiés
+- sont interdits dans `public/` :
+  - les justifications sur nos choix éditoriaux
+  - les références à nos discussions internes
+  - les explications sur la manière dont nous avons restructuré, déplacé ou allégé le contenu
+  - les phrases qui commentent la rédaction du parcours au lieu d'enseigner le projet
+- les documents internes (`docs/`, audits, backlog inter-phases, notes, sources héritées) peuvent contenir ces réflexions, car ils servent justement à construire et corriger la version publique
+
 ## Structure du site
 
 - le site ne comporte que 2 niveaux : `Parcours` puis `Phase`
@@ -12,6 +28,8 @@ Document interne de référence pour écrire et relire les pages du learning pat
 ## Contrat éditorial d'une phase détaillée
 
 Chaque phase détaillée doit être suffisamment complète pour permettre de construire la phase sans dépendre d'une explication externe implicite.
+
+Chaque phase détaillée doit aussi enseigner la fin logique de l'incrément : validation locale puis déploiement réel adapté à la phase. Une phase qui produit un incrément cohérent mais repousse systématiquement la mise en ligne à "plus tard" reste incomplète pédagogiquement.
 
 Chaque étape doit, quand c'est pertinent :
 
@@ -24,6 +42,8 @@ Chaque étape doit, quand c'est pertinent :
 - suivre chaque exercice d'un bloc `details` de correction intitulé `Solution - A consulter après 20 min`
 - citer les documentations officielles quand elles apportent une aide utile ou une source de vérité
 - expliciter les erreurs fréquentes, pièges ou points de vigilance quand ils sont probables
+- rédiger les micro-étapes comme des recettes concrètes avec snippets minimaux quand du code doit être écrit
+- éviter les formulations vagues du type `crée`, `mets en place`, `refactorise` sans expliquer comment s'y prendre
 
 ## ADR — usage pédagogique
 
@@ -66,3 +86,5 @@ Avant validation d'une phase, vérifier :
 - que les ADR mentionnés sont cohérents, uniques et placés au bon moment pédagogique
 - que les conventions globales ne sont pas contredites localement
 - que les parties UI non spécifiées sont soit suffisamment définies pour être fonctionnelles, soit explicitement marquées comme en attente
+- que la stratégie de déploiement de fin de phase décrit un vrai déploiement proportionné à l'incrément produit
+- qu'une preuve post-déploiement observable est bien demandée

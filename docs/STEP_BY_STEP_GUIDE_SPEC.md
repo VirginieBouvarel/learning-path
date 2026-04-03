@@ -6,6 +6,8 @@ Document de cadrage pour écrire ou réécrire les guides pas-à-pas des phases 
 
 Écrire un guide pas-à-pas de phase qui permette à une développeuse frontend Vue.js de réaliser seule, dans le bon ordre, une incrémentation réelle de KataSensei jusqu'à une version déployée et utilisable.
 
+La sortie publiée dans `public/` doit être pensée comme un document final pour l'apprenante. Elle ne doit contenir aucune trace des arbitrages internes ayant servi à produire cette version.
+
 ## Pré-travail obligatoire
 
 Avant toute réécriture d'une phase :
@@ -35,6 +37,8 @@ Cet audit n'est pas un livrable optionnel. Il fait partie du workflow normal de 
 - le guide doit partir de la situation réelle au début de la phase, pas d'une situation implicite
 - chaque action doit être exécutable sans devinette
 - chaque étape doit être petite, simple, progressive, et avoir un objectif clair
+- le ton du guide publié doit être affirmatif et orienté exécution
+- le guide publié doit donner des instructions détaillées pour atteindre l'objectif de chaque étape puis de la phase
 - on suit l'ordre réel de construction d'un vrai produit web qui va en production
 - on ne demande jamais en une seule étape un gros bloc flou du type `crée X, Y, Z`
 - on explique toujours :
@@ -45,8 +49,10 @@ Cet audit n'est pas un livrable optionnel. Il fait partie du workflow normal de 
   - quoi taper ou cliquer
   - quoi observer
   - comment savoir si c'est réussi
-- toute phase doit produire une incrémentation cohérente, testable, et si possible déployée
+- toute phase doit produire une incrémentation cohérente, testable, et déployée en fin de phase selon un niveau de déploiement adapté à sa maturité
 - toute phase doit viser une valeur utilisateur visible, sauf phase 0 où une valeur technique minimale observable est acceptable
+- le guide publié ne doit jamais commenter sa propre fabrication, ses reports éditoriaux ou les décisions internes de cadrage
+- le guide publié ne doit pas contenir d'hésitations, d'évocations de choses non vérifiées ou de formulations qui laissent la lectrice arbitrer seule un point qui devrait être déjà tranché
 
 ## Règles anti-implicite
 
@@ -97,6 +103,19 @@ Chaque étape doit contenir :
 - checklist manuelle
 - suggestion de commit si pertinente
 
+Chaque micro-étape doit être rédigée comme une recette exécutable, pas comme une simple injonction.
+
+Cela signifie qu'une micro-étape ne doit pas se limiter à `fais X`, `crée Y` ou `refactorise Z`.
+Elle doit préciser, selon le besoin réel :
+
+- où ouvrir le fichier ou le terminal
+- dans quel dossier exact se placer
+- quel fichier créer ou modifier
+- quel code écrire, avec un snippet minimal utile
+- quoi observer juste après l'action
+- comment vérifier que l'action est réussie
+- quelle correction tenter en cas d'échec probable
+
 ## Format minimal d'une micro-étape
 
 Pour chaque micro-étape, écrire si nécessaire :
@@ -106,6 +125,13 @@ Pour chaque micro-étape, écrire si nécessaire :
 3. lance `telle commande`
 4. tu dois voir `tel résultat`
 5. si tu vois `telle erreur`, fais `telle correction`
+
+Quand la micro-étape demande d'écrire ou modifier du code, ajouter aussi si nécessaire :
+
+6. ouvre `tel fichier`
+7. colle ou adapte `tel snippet minimal`
+8. vérifie que `tel import`, `tel type` ou `tel test` compile
+9. relance `telle commande` pour confirmer le résultat
 
 ## Exigences de progression
 
@@ -137,14 +163,23 @@ Chaque phase doit avoir une Definition of Done plus globale avec :
 
 ## Déploiement
 
-- on déploie au minimum à la fin de chaque phase courte
-- sinon dès qu'un incrément cohérent apporte de la valeur
+- on déploie à la fin de chaque phase
+- la preuve de fin de phase n'est pas seulement locale : elle doit aussi être visible sur un environnement déployé
+- le niveau de déploiement attendu dépend de la maturité réelle de la phase, mais il doit rester concret et exécutable
 - chaque livraison doit laisser le produit dans un état utilisable
-- si une phase est purement setup, elle doit au minimum produire :
-  - un front minimal visible
-  - un back minimal vérifiable
-  - une preuve de communication front/back si possible
-  - une preuve de déploiement ou une préparation immédiate au déploiement
+- une phase de setup ne repousse pas le déploiement "à plus tard" par défaut : elle se termine par un premier déploiement minimal cohérent
+- pour chaque phase, le guide doit expliciter :
+  - ce qu'on déploie exactement
+  - sur quel environnement
+  - quelles commandes ou actions lancer
+  - quoi vérifier avant déploiement
+  - quoi vérifier après déploiement
+  - quelle preuve visible confirme que le déploiement est réussi
+- la stratégie de déploiement de fin de phase doit être proportionnée :
+  - phase 0 : premier déploiement minimal du squelette
+  - phase 1 : redéploiement du premier flux métier visible
+  - phase 2 : redéploiement de l'application après refactoring pour prouver que la livraison n'est pas cassée
+  - phases suivantes : déploiement de l'incrément fonctionnel ou technique réellement produit
 
 ## Tests
 
@@ -211,6 +246,7 @@ Un bon guide permet à la lectrice de répondre `oui` à tout ceci :
 Le guide est mauvais si :
 
 - il dit seulement `crée X` sans détailler comment
+- il donne des listes de tâches au format "fais-ci / fais-ca" sans explication opératoire
 - il suppose l'existence d'un repo ou d'un dossier sans le dire
 - il saute directement à une commande sans préciser le contexte
 - il demande un gros bloc d'implémentation d'un coup
@@ -225,15 +261,8 @@ Le guide est mauvais si :
 
 ## Plan de travail recommandé
 
-1. valider cette spec de rédaction
-2. auditer rapidement les thèmes du parcours pour vérifier qu'ils sont cohérents avant réécriture
-3. réécrire complètement la phase 0 avec cette spec
-4. valider la phase 0
-5. réécrire complètement la phase 1
-6. valider la phase 1
-7. réécrire complètement la phase 2
-8. valider la phase 2
-9. réécrire complètement la phase 3
-10. valider la phase 3
-11. vérifier la cohérence inter-phases, ADR, ressources, DoD, déploiements
-12. mettre à jour la base ressources et les pages annexes concernées
+1. auditer rapidement les thèmes du parcours pour vérifier qu'ils sont cohérents avant réécriture
+2. réécrire complètement la phase demandée
+3. valider la phase demandée
+4. vérifier la cohérence inter-phases, ADR, ressources, DoD, déploiements
+5. mettre à jour la base ressources et les pages annexes concernées

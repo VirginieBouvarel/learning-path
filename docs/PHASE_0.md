@@ -24,6 +24,7 @@ La phase 0 doit partir d'un poste Windows 11 qui n'est pas encore prêt pour le 
 - un endpoint simple observable
 - un frontend Vue qui s'affiche localement
 - une preuve de communication frontend/backend visible dans le navigateur
+- un premier déploiement minimal du squelette fullstack
 
 ## Périmètre obligatoire
 
@@ -43,7 +44,6 @@ La phase 0 doit partir d'un poste Windows 11 qui n'est pas encore prêt pour le 
 ## Hors scope volontaire
 
 - pipeline GitLab CI/CD complet
-- déploiement Fly.io complet
 - PostgreSQL et Docker Compose
 - conventions détaillées ESLint, Prettier, Husky
 - Checkstyle et Stylelint détaillés
@@ -52,6 +52,6 @@ La phase 0 doit partir d'un poste Windows 11 qui n'est pas encore prêt pour le 
 
 ## Références utiles pour cette phase
 
-- `site/phases/phase-0.html`
+- `public/phases/phase-0.html`
 - `docs/audits/PHASE_0_AUDIT.md`
 - `docs/NEXT_PHASE.md`

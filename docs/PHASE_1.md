@@ -32,7 +32,7 @@ Les reports déjà identifiés depuis la phase 0 sont notamment :
 - produire ou mettre à jour `docs/audits/PHASE_1_AUDIT.md` avant toute autre proposition
 - faire de cet audit la première réponse de travail à l'utilisateur
 - attendre validation de cet audit avant toute édition
-- auditer l'existant de `site/phases/phase-1.html`
+- auditer l'existant de `public/phases/phase-1.html`
 - vérifier ce qui existe déjà dans les contenus source utiles au scope de la phase 1
 - reprendre les reports pertinents hérités de la phase 0
 - proposer une structure cible complète avant toute édition
@@ -41,4 +41,4 @@ Les reports déjà identifiés depuis la phase 0 sont notamment :
 
 - livrable exact de fin de phase 1 : un premier catalogue de katas persisté en PostgreSQL, exposé via `GET /katas`, `POST /katas` et `GET /katas/{id}`, avec erreurs HTTP homogènes et affichage côté frontend Vue
 - premier incrément métier réellement visé : consultation et création de katas, sans architecture hexagonale complète à ce stade
-- fichiers source internes utiles à relire pour cette phase : `docs/NEXT_PHASE.md`, `docs/audits/PHASE_1_AUDIT.md` et `site/phases/phase-0.html` comme référence concrète de trame
+- fichiers source internes utiles à relire pour cette phase : `docs/NEXT_PHASE.md`, `docs/audits/PHASE_1_AUDIT.md` et `public/phases/phase-0.html` comme référence concrète de trame

@@ -4,7 +4,7 @@ Document d'audit de référence conservé avant réécriture de la phase.
 
 ## Diagnostic sévère
 
-La phase 0 actuelle, dans `site/phases/phase-0.html`, ne respecte pas la spec de rédaction sur les points structurants.
+La phase 0 actuelle, dans `public/phases/phase-0.html`, ne respecte pas la spec de rédaction sur les points structurants.
 
 ### Elle ne part pas de l'état réel de départ
 
