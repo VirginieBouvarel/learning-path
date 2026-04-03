@@ -80,7 +80,6 @@
         <li><a href="#etape-6">6 — Lire un kata par identifiant et gérer l'absence</a></li>
         <li><a href="#etape-7">7 — Afficher le catalogue côté frontend Vue</a></li>
         <li><a href="#etape-8">8 — Ajouter l'outillage qualité minimal</a></li>
-        <li><a href="#phase-dod">Definition of Done</a></li>
         <li><a href="#checklist">Checklist de phase</a></li>
         <li><a href="#deploiement">Déploiement</a></li>
         <li><a href="#ressources">Ressources utiles</a></li>
@@ -219,13 +218,6 @@ curl http://localhost:8080/api/ping</code></pre>
       <p>3. Pourquoi la valeur métier de la phase doit-elle être formulée sans jargon technique ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une phase sert d'abord à construire une fonctionnalité utile. Les outils sont des moyens, pas le livrable final.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le frontend et le backend redémarrent encore.</li>
-        <li>Les routes héritées de la phase 0 répondent.</li>
-        <li>Tu sais décrire en une phrase le livrable métier de la phase 1.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> J'ai relancé le backend.</li>
@@ -338,13 +330,6 @@ source .env
       <p>3. Pourquoi `ddl-auto: validate` est-il plus cohérent ici que `create` ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'on veut que le schéma soit piloté par Flyway, pas reconstruit silencieusement par Hibernate à chaque démarrage.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>PostgreSQL démarre localement via Docker Compose.</li>
-        <li>Le backend connaît ses paramètres de connexion via un fichier `.env` local rechargé dans le terminal.</li>
-        <li>Tu sais vérifier que la base répond réellement.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `docker compose ps` montre PostgreSQL démarré.</li>
@@ -431,13 +416,6 @@ source .env
       <details><summary>Réponse attendue</summary><p>Parce qu'elles donnent une preuve immédiate que la lecture depuis la base fonctionne réellement, sans devoir tout créer manuellement avant chaque test.</p></details>
       <p>3. Pourquoi vérifier la base directement avec `psql` après la migration ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que les logs de démarrage ne suffisent pas. La base elle-même doit confirmer que la table et les lignes existent vraiment.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Une migration Flyway versionnée existe.</li>
-        <li>La table `kata` existe dans PostgreSQL.</li>
-        <li>Des données de départ sont présentes et visibles.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -742,14 +720,6 @@ class KataServiceIntegrationTest {
       <p>3. Pourquoi le test web utilise-t-il un mock du service ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'il veut tester la couche web sans dépendre de la vraie base. Il se concentre sur la route, le statut et le JSON.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`KataControllerWebTest` existe et passe.</li>
-        <li>`KataServiceIntegrationTest` existe et passe.</li>
-        <li>`GET /katas` renvoie les données seedées depuis PostgreSQL.</li>
-        <li>Tu sais expliquer la différence entre controller, service, repository et DTO de réponse.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> J'ai lancé `./mvnw test`.</li>
@@ -965,14 +935,6 @@ private KataRepository kataRepository;</code></pre>
       <p>3. Pourquoi créer un DTO de requête au lieu d'envoyer directement une entité `Kata` depuis le controller ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que l'objet reçu depuis l'API et l'objet de persistance n'ont pas forcément le même rôle ni la même structure.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`POST /katas` fonctionne.</li>
-        <li>Une requête valide crée un kata.</li>
-        <li>Une requête invalide est rejetée avec `400`.</li>
-        <li>Les tests couvrent au moins un cas nominal et un cas invalide.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> J'ai créé `CreerKataRequest`.</li>
@@ -1151,12 +1113,6 @@ curl http://localhost:8080/katas/99999999-9999-9999-9999-999999999999</code></pr
       <p>3. Pourquoi le frontend a-t-il intérêt à recevoir toujours le même format JSON d'erreur ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'il peut afficher ou logger les erreurs de manière cohérente au lieu de gérer plusieurs formats différents.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`GET /katas/{id}` fonctionne pour un identifiant existant.</li>
-        <li>Un identifiant absent renvoie un `404` JSON homogène.</li>
-        <li>Le projet contient une première exception métier utile et un advice global.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -1284,13 +1240,6 @@ onMounted(async () =&gt; {
       <details><summary>Réponse attendue</summary><p>Parce que cela documente la forme attendue des données et aide le frontend à détecter plus tôt certaines incohérences.</p></details>
       <p>3. Pourquoi l'interface doit-elle gérer explicitement un état de chargement et un état d'erreur ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'un utilisateur ne doit pas avoir à deviner si l'application charge, échoue ou n'a simplement rien à afficher.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le frontend appelle réellement `GET /katas`.</li>
-        <li>Le catalogue est visible dans le navigateur.</li>
-        <li>L'UI montre au moins un état de chargement et un état d'erreur simple.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -1484,15 +1433,6 @@ source .env
       <p>3. Pourquoi certains sujets comme la CI/CD complète ou Checkstyle détaillé peuvent-ils être reportés à plus tard ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'ils seront plus utiles quand l'architecture et les conventions du projet seront plus stables. Ici, l'objectif est d'abord de sécuriser le premier incrément métier.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Tu sais quelles commandes lancer avant commit côté front et côté back.</li>
-        <li>Le frontend possède au moins un lint exécutable.</li>
-        <li>Le backend possède au moins ses tests Maven exécutables.</li>
-        <li>La décision de standardiser les erreurs HTTP est formalisée dans un ADR simple et utile.</li>
-        <li>La convention de commit du projet est explicite.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Je connais mes commandes de vérification avant commit.</li>
@@ -1503,20 +1443,6 @@ source .env
       </ul>
 
       <div class="commit-suggestion">Commit recommandé : <code>chore(qualite): ajout garde-fous minimaux de phase 1</code></div>
-    </section>
-
-    <section class="guide-step" id="phase-dod">
-      <h2>Definition of Done de la phase</h2>
-      <ul>
-        <li>PostgreSQL local démarre proprement pour le projet.</li>
-        <li>La table `kata` existe et contient des données de départ.</li>
-        <li>`GET /katas`, `POST /katas` et `GET /katas/{id}` fonctionnent.</li>
-        <li>Les erreurs HTTP métiers sont renvoyées dans un format JSON homogène.</li>
-        <li>La décision de standardiser ces erreurs HTTP est formalisée dans un ADR court.</li>
-        <li>Le frontend affiche le catalogue réel des katas.</li>
-        <li>Les principales commandes de vérification locale sont définies.</li>
-        <li>Le projet possède au moins un premier niveau de tests backend et une vérification front minimale.</li>
-      </ul>
     </section>
 
     <section class="checklist" id="checklist">

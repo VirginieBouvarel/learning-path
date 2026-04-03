@@ -80,7 +80,6 @@
         <li><a href="#etape-6">6 — Brancher LogService dans le flux du catalogue</a></li>
         <li><a href="#etape-7">7 — Installer Stylelint</a></li>
         <li><a href="#etape-8">8 — Valider localement et redéployer le frontend</a></li>
-        <li><a href="#phase-dod">Definition of Done</a></li>
         <li><a href="#checklist">Checklist de phase</a></li>
         <li><a href="#deploiement">Déploiement</a></li>
         <li><a href="#ressources">Ressources utiles</a></li>
@@ -264,13 +263,6 @@ ls</code></pre>
       <details><summary>Réponse attendue</summary><p>Parce que ce contrat existe déjà dans la phase 2. La phase 3 doit construire au-dessus de ce socle, pas réinventer son modèle d'état.</p></details>
       <p>3. Pourquoi ajouter un vrai en-tête avant d'installer une bibliothèque UI ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une meilleure interface commence par une meilleure structure d'écran. La hiérarchie visuelle ne dépend pas d'abord d'une bibliothèque, mais d'un rendu plus clair.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le frontend et le backend redémarrent encore.</li>
-        <li>La vue du catalogue utilise toujours les quatre statuts hérités de la phase 2.</li>
-        <li>Le catalogue affiche déjà un vrai titre et un sous-titre visibles dans le navigateur.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -507,14 +499,6 @@ describe('KataCard', () => {
       <details><summary>Réponse attendue</summary><p>Parce que le cas nominal est le chemin principal de lecture du catalogue. L'améliorer d'abord rend immédiatement visible la valeur de la phase.</p></details>
       <p>3. Pourquoi utiliser `PrimeVue` directement dans `KataCard` à ce stade ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'aucune duplication de configuration n'est encore prouvée. Il est plus simple et plus pédagogique de partir d'un composant métier clair que d'anticiper des wrappers locaux trop tôt.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`PrimeVue` est installé et branché.</li>
-        <li>`KataCard.vue` existe et utilise `PrimeVue`.</li>
-        <li>Le cas nominal du catalogue s'affiche sous forme de cartes.</li>
-        <li>Le test de `KataCard` passe.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -783,13 +767,6 @@ describe('KataListState', () => {
       <p>3. Pourquoi laisser l'action `retry` remonter jusqu'à la vue ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que `KataListState` reste un composant d'affichage. La décision de recharger le catalogue appartient toujours à la vue et au store.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`KataListState.vue` existe.</li>
-        <li>La vue du catalogue délègue ses états d'écran à `KataListState`.</li>
-        <li>Les tests de `KataCard` et `KataListState` passent.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Le catalogue affiche trois squelettes en chargement.</li>
@@ -952,13 +929,6 @@ describe('KataListView', () => {
       <details><summary>Réponse attendue</summary><p>Parce que la vue a encore une responsabilité propre : choisir quel composant afficher selon l'état du flux.</p></details>
       <p>3. Pourquoi ce test de vue est-il plus utile qu'un simple contrôle manuel ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'il verrouille les cas utiles du catalogue pour les prochaines phases. Il évite de perdre silencieusement `empty` ou `error` lors d'un futur refactoring.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Un test de vue couvre au moins `success`, `empty` et `error`.</li>
-        <li>Le comportement visible du catalogue correspond à ces tests.</li>
-        <li>La vue reste découplée du réseau dans ses tests.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -1161,13 +1131,6 @@ describe('ConsoleLogService', () => {
       <p>3. Pourquoi masquer les champs sensibles dans le logger lui-même ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'un point centralisé est précisément l'endroit où appliquer une politique commune. Si chaque appelant devait y penser seul, les oublis seraient inévitables.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le port `LogService` existe dans le domaine.</li>
-        <li>`ConsoleLogService` existe dans l'infrastructure.</li>
-        <li>Les tests ciblés du logger passent.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `LogService` existe dans `src/domain/ports`.</li>
@@ -1360,13 +1323,6 @@ it('journalise une erreur quand le repository echoue', async () => {
       <p>3. Pourquoi cette étape ne touche-t-elle pas aux composants d'affichage ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que la journalisation principale est une préoccupation transverse du flux applicatif, pas du rendu visuel. Mélanger les deux rendrait les composants plus bavards et plus fragiles.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`GetKatasUseCase` dépend de `LogService`.</li>
-        <li>Le store injecte `LogService` au use case.</li>
-        <li>Les tests du logger et du use case passent.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Le use case journalise le démarrage du chargement.</li>
@@ -1475,14 +1431,6 @@ npm run lint:css</code></pre>
       <p>3. Pourquoi garder une règle explicite sur les classes BEM dans le linter ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une convention qui n'est jamais vérifiée finit vite par devenir une simple intention. Le linter la rend réellement applicable.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`Stylelint` est installé.</li>
-        <li>`stylelint.config.mjs` existe.</li>
-        <li>`lint:css` et `lint:css:fix` existent dans `package.json`.</li>
-        <li>`npm run lint:css` passe.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `stylelint.config.mjs` existe.</li>
@@ -1585,14 +1533,6 @@ fly deploy</code></pre>
       <p>3. Pourquoi vérifier l'URL publique dans une fenêtre privée ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que cela réduit le risque de confondre la vraie version déployée avec un cache local ou une session déjà chargée.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le type-check, les tests ciblés, le lint CSS et le build passent.</li>
-        <li>Le cas nominal et le cas d'erreur ont été vérifiés localement.</li>
-        <li>Le frontend a été redéployé sur Fly.io.</li>
-        <li>L'URL publique affiche bien la nouvelle UI du catalogue.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `npm run type-check` passe.</li>
@@ -1602,18 +1542,6 @@ fly deploy</code></pre>
         <li><input type="checkbox"> J'ai vérifié le cas nominal en local.</li>
         <li><input type="checkbox"> J'ai vérifié le cas d'erreur en local.</li>
         <li><input type="checkbox"> J'ai vérifié l'URL publique en fenêtre privée.</li>
-      </ul>
-    </section>
-
-    <section class="guide-step" id="phase-dod">
-      <h2>Definition of Done de la phase</h2>
-      <ul>
-        <li>`PrimeVue` est installé et configuré avec `Aura`.</li>
-        <li>`KataCard.vue` et `KataListState.vue` existent et sont testés.</li>
-        <li>Le catalogue affiche des cartes, des badges et des états d'écran explicites.</li>
-        <li>`LogService` existe comme port du domaine et est utilisé dans `GetKatasUseCase`.</li>
-        <li>`Stylelint` est installé, configuré et lancé via `npm run lint:css`.</li>
-        <li>Le frontend est validé localement puis redéployé sur Fly.io.</li>
       </ul>
     </section>
 

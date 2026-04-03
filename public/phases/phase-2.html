@@ -80,7 +80,6 @@
         <li><a href="#etape-6">6 — Écrire le use case pur et refactoriser le store</a></li>
         <li><a href="#etape-7">7 — Réécrire le composable UI et la vue de liste</a></li>
         <li><a href="#etape-8">8 — Vérifier la phase avant livraison</a></li>
-        <li><a href="#phase-dod">Definition of Done</a></li>
         <li><a href="#checklist">Checklist de phase</a></li>
         <li><a href="#deploiement">Déploiement</a></li>
         <li><a href="#ressources">Ressources utiles</a></li>
@@ -287,13 +286,6 @@ rg -n "isLoading|loading|error" src</code></pre>
       <p>3. Pourquoi une architecture front doit-elle rester liée à une fonctionnalité visible ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que l'objectif n'est pas de produire des couches abstraites, mais de rendre une fonctionnalité plus sûre, plus testable et plus facile à faire évoluer.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Tu as identifié les fichiers qui parlent encore directement au réseau.</li>
-        <li>Tu sais expliquer pourquoi la vue de catalogue doit être refactorisée.</li>
-        <li>Le frontend fonctionne encore au début de la phase.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> J'ai relancé le frontend et le catalogue s'affiche.</li>
@@ -388,13 +380,6 @@ ui = orchestration vue et rendu</code></pre>
       <details><summary>Réponse attendue</summary><p>Parce qu'il orchestre un cas d'usage pour l'UI Vue. Il dépend du cycle de vie ou de l'usage d'un store, donc il ne relève pas du métier pur.</p></details>
       <p>3. Pourquoi faut-il éviter de créer tous les dossiers imaginables d'un coup ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une architecture utile doit rester concrète. Une arborescence trop large au départ fabrique du vide et ajoute de la confusion au lieu de clarifier.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>La structure cible du frontend est créée.</li>
-        <li>La structure miroir minimale de `tests/` existe.</li>
-        <li>Tu sais ranger les principaux objets de la phase dans la bonne couche.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -586,14 +571,6 @@ export function toUserMessage(error: AppError): string {
       <p>3. Pourquoi `AsyncState` est-il préférable à trois variables comme `loading`, `data` et `error` quand le flux devient plus riche ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une union discriminée encode les états autorisés et réduit les combinaisons incohérentes, par exemple `loading=true` avec une erreur déjà affichée.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le modèle métier `Kata` existe côté domaine.</li>
-        <li>Les identifiants métier utiles sont typés.</li>
-        <li>Les erreurs applicatives utiles au catalogue sont modélisées.</li>
-        <li>Les tests ciblés des types passent.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `KataId` existe et son helper est centralisé.</li>
@@ -723,13 +700,6 @@ describe('KataMapper', () => {
       <details><summary>Réponse attendue</summary><p>Parce qu'une fonction pure est simple à tester, simple à comprendre et locale dans ses effets. Son rôle est de traduire, pas d'orchestrer.</p></details>
       <p>3. Pourquoi le mapper arrive-t-il avant l'adapter HTTP ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que le repository concret aura besoin d'une traduction stable entre la réponse réseau et le domaine. Sans mapper, il mélange trop de responsabilités.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le DTO API du catalogue existe.</li>
-        <li>Le mapper `ApiKataDto` → `Kata` existe.</li>
-        <li>Les tests du mapper passent.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -911,13 +881,6 @@ describe('ApiKataRepository', () => {
       <details><summary>Réponse attendue</summary><p>Parce que le domaine dépend déjà ici d'une abstraction vers l'extérieur. L'hexagone front n'a pas besoin d'un logger séparé pour exister architecturalement.</p></details>
       <p>3. Pourquoi le repository ne doit-il pas devenir un mini-store ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que son rôle est d'accéder aux données et de les traduire, pas de conserver l'état partagé ou de piloter l'UI.</p></details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le port `KataRepository` existe dans le domaine.</li>
-        <li>L'adapter `ApiKataRepository` existe en infrastructure.</li>
-        <li>Le flux HTTP brut ne sort plus du repository.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -1152,13 +1115,6 @@ describe('useKataStore', () => {
       <p>3. Pourquoi un fake repository simple est-il plus pédagogique qu'un mock opaque complexe ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'il rend visible le comportement simulé et aide à comprendre la dépendance réelle du use case.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>`GetKatasUseCase` existe et est testé.</li>
-        <li>Le store charge les katas via le use case.</li>
-        <li>Le store ne parle plus directement HTTP.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Le use case dépend bien du port `KataRepository`.</li>
@@ -1331,13 +1287,6 @@ describe('useKataList', () => {
       <p>3. Pourquoi faut-il garder cette phase sans composants métier `PrimeVue` ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que le but ici est de sécuriser le flux de données et l'architecture front. Les composants UI métier auront plus de valeur une fois ce socle stabilisé.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>La vue de liste n'appelle plus le réseau directement.</li>
-        <li>Le composable UI orchestre le store proprement.</li>
-        <li>Le catalogue s'affiche toujours correctement en local.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Le composable UI expose uniquement ce qui est utile au rendu.</li>
@@ -1423,15 +1372,6 @@ find tests -maxdepth 3 -type f | sort</code></pre>
       <p>3. Pourquoi la phase 3 peut-elle maintenant se concentrer sur `PrimeVue` ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que le flux de données et les points d'extension du front sont désormais plus stables. Les composants UI métier basés sur `PrimeVue` viendront s'appuyer sur une base moins fragile.</p></details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le type-check complet passe.</li>
-        <li>Le build frontend passe.</li>
-        <li>Les tests ciblés de la phase passent.</li>
-        <li>Le catalogue fonctionne encore côté utilisateur.</li>
-        <li>La structure source et tests est cohérente avec l'architecture visée.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `npm run type-check` passe.</li>
@@ -1446,18 +1386,6 @@ find tests -maxdepth 3 -type f | sort</code></pre>
         <strong>Soluce</strong>
         Branche de référence : <code>KS-soluce-phase-2-etape-8</code>
       </div>
-    </section>
-
-    <section class="guide-step" id="phase-dod">
-      <h2>Definition of Done de la phase</h2>
-      <ul>
-        <li>Le catalogue de katas reste utilisable côté frontend.</li>
-        <li>Le flux de lecture des katas passe par `KataRepository`, `GetKatasUseCase`, store et composable UI.</li>
-        <li>Le domaine front ne dépend pas directement de Vue ni du transport HTTP.</li>
-        <li>La structure miroir de `tests/` existe pour les couches refactorisées de cette phase.</li>
-        <li>Le type-check et les tests ciblés passent.</li>
-        <li>Le build frontend passe sans erreur.</li>
-      </ul>
     </section>
 
     <section class="checklist" id="checklist">

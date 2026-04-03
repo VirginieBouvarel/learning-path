@@ -79,7 +79,6 @@
         <li><a href="#etape-5">5 — Vérifier le backend</a></li>
         <li><a href="#etape-6">6 — Créer le frontend</a></li>
         <li><a href="#etape-7">7 — Faire communiquer front et back</a></li>
-        <li><a href="#phase-dod">Definition of Done</a></li>
         <li><a href="#checklist">Checklist de phase</a></li>
         <li><a href="#deploiement">Déploiement</a></li>
         <li><a href="#ressources">Ressources utiles</a></li>
@@ -237,15 +236,6 @@ zsh --version</code></pre>
         <p>Parce qu'il améliore l'ergonomie du terminal dès le départ et stabilise l'environnement pédagogique du parcours. On veut éviter les variations inutiles de configuration entre phases.</p>
       </details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>WSL2 est installé.</li>
-        <li>Ubuntu se lance correctement.</li>
-        <li>`zsh` est installé.</li>
-        <li>Oh My Zsh est installé.</li>
-        <li>Le shell actif est `zsh`.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> J'ai lancé `wsl --install` depuis un terminal Windows adapté.</li>
@@ -336,14 +326,6 @@ git --version</code></pre>
         <summary>Réponse attendue</summary>
         <p>Parce qu'un setup explicite réduit les causes d'échec. Si une commande ne marche pas dès le départ, il vaut mieux le découvrir avant d'avoir déjà généré plusieurs projets et douter de la source du problème.</p>
       </details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Tu sais ouvrir le bon terminal.</li>
-        <li>Le dossier `~/workspace` existe.</li>
-        <li>Tu sais vérifier où tu es avec <code>pwd</code>.</li>
-        <li>Tu as identifié si Git, Curl et Unzip sont installés.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -458,14 +440,6 @@ Monorepo initial du projet fil rouge.
         <p>Il évite de commiter des fichiers générés localement, lourds ou spécifiques à une machine, comme `node_modules`, `target` ou les fichiers d'IDE.</p>
       </details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le dossier `~/workspace/katasensei` existe.</li>
-        <li>Ce dossier est un repo Git.</li>
-        <li>La branche principale s'appelle `main`.</li>
-        <li>`.gitignore` et `README.md` existent.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `pwd` affiche le dossier `~/workspace/katasensei`.</li>
@@ -568,14 +542,6 @@ rm katasensei-back.zip</code></pre>
         <summary>Réponse attendue</summary>
         <p>Parce que cela permet d'isoler les problèmes. Si le projet généré ne démarre pas déjà, le souci vient du setup ou du scaffold, pas de ton code métier.</p>
       </details>
-
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Java 21 est installé et visible avec <code>java -version</code>.</li>
-        <li>Maven est installé et visible avec <code>mvn -version</code>.</li>
-        <li>Le dossier `katasensei-back` existe.</li>
-        <li>Le backend démarre avec <code>./mvnw spring-boot:run</code>.</li>
-      </ul>
 
       <h3>Checklist manuelle</h3>
       <ul>
@@ -716,13 +682,6 @@ management.endpoints.web.exposure.include=health</code></pre>
         <p>Parce que le frontend Vite tournera sur un autre port que le backend. Sans configuration CORS minimale, le navigateur bloquera l'appel HTTP entre `localhost:5173` et `localhost:8080`. Le faire globalement évite de dupliquer `@CrossOrigin` dans chaque controller et prépare déjà le passage du local au déploiement.</p>
       </details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li><code>/actuator/health</code> répond avec un statut `UP`.</li>
-        <li><code>/api/ping</code> répond avec un JSON contenant un message.</li>
-        <li>Tu sais relancer le backend et tester ses routes depuis un second terminal.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Le backend est lancé sur le port 8080.</li>
@@ -859,13 +818,6 @@ main {
         <p>Parce que la phase 0 vise une preuve minimale observable. Ajouter trop d'outillage avant la première communication réelle compliquerait inutilement le démarrage.</p>
       </details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Node.js et npm fonctionnent dans WSL.</li>
-        <li>Le dossier `katasensei-front` existe.</li>
-        <li>Le frontend s'affiche sur `http://localhost:5173`.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> `node -v` répond sans erreur.</li>
@@ -994,13 +946,6 @@ main {
         <p>Parce qu'avant d'abstraire, il faut d'abord voir clairement le problème concret à résoudre. La phase 0 doit montrer le flux HTTP le plus simple possible avant d'introduire des couches supplémentaires.</p>
       </details>
 
-      <h3>Definition of Done de l'étape</h3>
-      <ul>
-        <li>Le frontend charge et affiche une donnée renvoyée par le backend.</li>
-        <li>Le cas d'erreur est observable quand le backend est arrêté.</li>
-        <li>Tu sais quel terminal lancer pour chaque application.</li>
-      </ul>
-
       <h3>Checklist manuelle</h3>
       <ul>
         <li><input type="checkbox"> Le backend tourne sur `localhost:8080`.</li>
@@ -1019,20 +964,6 @@ main {
         <p>Ne commit pas d'autres fichiers si tu n'as modifié que cette intégration frontend.</p>
         <p>Message suggéré : <code>feat(front): affichage du premier appel HTTP vers le backend</code></p>
       </div>
-    </section>
-
-    <section class="guide-step" id="phase-dod">
-      <h2>Definition of Done de la phase</h2>
-      <ul>
-        <li>Le repo `~/workspace/katasensei` existe et est initialisé avec Git.</li>
-        <li>Le backend Spring Boot démarre localement sur le port 8080.</li>
-        <li>Le health check `GET /actuator/health` répond avec `UP`.</li>
-        <li>Le backend expose un endpoint `GET /api/ping` répondant en JSON.</li>
-        <li>Le frontend Vue 3 démarre localement sur le port 5173.</li>
-        <li>Le frontend affiche une donnée renvoyée par le backend.</li>
-        <li>Le cas d'échec principal est observable quand le backend est coupé.</li>
-        <li>Au moins un premier commit propre peut être créé à partir de ces étapes.</li>
-      </ul>
     </section>
 
     <section class="checklist" id="checklist">
