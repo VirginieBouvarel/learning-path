@@ -27,8 +27,8 @@
       <p class="toc__title">Dans cette page</p>
       <ul class="toc__list">
         <li><a href="#contexte">Contexte</a></li>
-        <li><a href="#css">1. CSS — scoped + BEM</a></li>
-        <li><a href="#composants">2. Composants — shadcn-vue</a></li>
+        <li><a href="#css">1. CSS — composants métier</a></li>
+        <li><a href="#composants">2. Composants — PrimeVue</a></li>
         <li><a href="#sfc">3. SFC entiers</a></li>
         <li><a href="#tests">4. Structure tests/</a></li>
         <li><a href="#stylelint">5. Stylelint</a></li>
@@ -57,10 +57,10 @@
     <section class="guide-step" id="css">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-2);">1</div>
-        <h2 class="guide-step__title">CSS — <code>&lt;style scoped&gt;</code> + BEM</h2>
+        <h2 class="guide-step__title">CSS — composants métier en <code>&lt;style scoped&gt;</code></h2>
       </div>
 
-      <p>Chaque SFC utilise <code>&lt;style scoped&gt;</code> pour l'isolation des styles. La convention de nommage des classes suit BEM (Block Element Modifier).</p>
+      <p>Les composants métier KataSensei peuvent utiliser <code>&lt;style scoped&gt;</code> pour isoler leur style local. Quand un composant métier a besoin de classes propres, la convention de nommage suit BEM (Block Element Modifier).</p>
       <pre><code class="language-css">/* Block */
 .kata-card { ... }
 
@@ -72,18 +72,18 @@
 .kata-card--selectionne { ... }
 .kata-card__niveau--difficile { ... }</code></pre>
 
-      <div class="callout--info"><strong>ℹ️ Pourquoi scoped et pas CSS Modules ?</strong> CSS Modules nécessite <code>class="$style.titre"</code> dans les templates — plus verbeux sans gain réel en SFC. <code>scoped</code> est transparent et c'est la convention Vue standard.</div>
-      <div class="callout--info"><strong>ℹ️ Pourquoi BEM et pas Tailwind ?</strong> Tailwind surcharge les templates avec 10–15 classes par élément — lisibilité réduite et friction avec l'archi hexagonale front. BEM garde le template propre et le CSS explicite.</div>
+      <div class="callout--info"><strong>ℹ️ Pourquoi scoped et pas CSS Modules ?</strong> CSS Modules nécessite <code>class="$style.titre"</code> dans les templates — plus verbeux sans gain réel en SFC. <code>scoped</code> reste une bonne convention pour les styles locaux de composants métier.</div>
+      <div class="callout--info"><strong>ℹ️ Comment concilier cela avec PrimeVue ?</strong> `PrimeVue` fournit des composants déjà stylés. Les composants métier KataSensei restent des composants de projet : ils assemblent les briques PrimeVue, gardent leur responsabilité métier et peuvent ajouter un style local en CSS natif ou SCSS quand c'est utile.</div>
     </section>
 
     <section class="guide-step" id="composants">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-2);">2</div>
-        <h2 class="guide-step__title">Composants — shadcn-vue</h2>
+        <h2 class="guide-step__title">Composants — PrimeVue</h2>
       </div>
 
-      <p>On utilise <a href="https://www.shadcn-vue.com/" target="_blank" rel="noopener">shadcn-vue</a> comme source de composants. Les composants sont copiés dans le projet (pas une dépendance externe) — on en est propriétaire, on les lit, on les comprend.</p>
-      <div class="callout--info"><strong>ℹ️ Pourquoi pas Vuetify ?</strong> Vuetify impose un design system opinionnaire difficile à personnaliser. shadcn-vue est non-opinionnaire — tu amènes le CSS, tu gardes le contrôle.</div>
+      <p>On utilise <a href="https://primevue.org/" target="_blank" rel="noopener">PrimeVue</a> comme bibliothèque de composants Vue prête à l'emploi. Le projet garde ses composants métier au-dessus de cette couche et peut les styliser en CSS natif ou en SCSS sans dépendre de Tailwind.</p>
+      <div class="callout--info"><strong>ℹ️ Pourquoi pas Vuetify ?</strong> Vuetify impose une identité Material plus marquée. `PrimeVue` reste plus neutre visuellement, plus simple à intégrer dans un produit qui veut garder sa propre direction UI.</div>
     </section>
 
     <section class="guide-step" id="sfc">
@@ -127,7 +127,7 @@
         <h2 class="guide-step__title">Linter CSS — Stylelint</h2>
       </div>
 
-      <p>Stylelint avec <code>stylelint-config-recommended-vue</code> lint les styles dans les SFC. Configuré pour s'exécuter on save dans IntelliJ, et dans le pre-commit hook Husky.</p>
+      <p>Stylelint est configuré à partir de la phase 3 avec une base standard solide et une syntaxe compatible avec les SFC Vue. Il sert à garder des styles durables et cohérents quand les composants métier commencent à se multiplier.</p>
     </section>
 
     <section class="guide-step" id="alternatives">
@@ -139,7 +139,6 @@
       <table>
         <thead><tr><th>Alternative</th><th>Raison du rejet</th></tr></thead>
         <tbody>
-          <tr><td>Tailwind CSS</td><td>Templates illisibles, friction avec l'archi hexagonale</td></tr>
           <tr><td>Vuetify 3</td><td>Design system opinionnaire, lock-in fort</td></tr>
           <tr><td>CSS Modules</td><td>Plus verbeux que <code>scoped</code> sans gain réel en SFC</td></tr>
           <tr><td>Dossier par composant</td><td>Navigation lourde pour 2 fichiers par composant</td></tr>
@@ -155,11 +154,11 @@
       </div>
 
       <ul>
-        <li>Tous les SFC utilisent <code>&lt;style scoped&gt;</code> avec BEM</li>
-        <li>shadcn-vue est introduit en phase 1, au moment où les premiers composants UI concrets apparaissent</li>
-        <li>Stylelint est configuré en phase 0 avec ESLint et Prettier</li>
+        <li>Les composants métier peuvent utiliser <code>&lt;style scoped&gt;</code> et une convention de classes lisible</li>
+        <li>`PrimeVue` est introduit en phase 3, au moment où le catalogue reçoit ses vrais composants UI métier</li>
+        <li>Stylelint est configuré en phase 3, au moment où la dette CSS devient réellement structurante</li>
         <li>Les tests vivent dans <code>tests/</code> avec la même arborescence que <code>src/</code></li>
-        <li>La convention BEM est documentée ici — pas répétée dans chaque guide de phase</li>
+        <li>Les composants `PrimeVue` restent une base technique, distincte des composants métier du domaine</li>
       </ul>
     </section>
 

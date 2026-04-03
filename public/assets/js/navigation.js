@@ -37,7 +37,7 @@ function buildNavHTML(r) {
         <li><a href="${r}phases/phase-0.html">Phase 0 — Setup</a></li>
         <li><a href="${r}phases/phase-1.html">Phase 1 — HTTP + REST</a></li>
         <li><a href="${r}phases/phase-2.html">Phase 2 — Typage fort TS</a></li>
-        <li><a href="${r}phases/phase-3.html">Phase 3 — Auth JWT + SOLID</a></li>
+        <li><a href="${r}phases/phase-3.html">Phase 3 — PrimeVue + UI métier</a></li>
         <li><a href="${r}phases/phase-4.html">Phase 4 — Hexagonale complète</a></li>
         <li><a href="${r}phases/phase-5.html">Phase 5 — Events + SSE + Redis</a></li>
         <li><a href="${r}phases/phase-6.html">Phase 6 — OpenAPI + Tests avancés</a></li>

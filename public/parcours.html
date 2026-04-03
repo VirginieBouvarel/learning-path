@@ -206,8 +206,8 @@
       <div class="phase-header" onclick="toggle(this)">
         <div class="phase-number pn-3">3</div>
         <div class="phase-info">
-          <div class="phase-title">Auth JWT, SOLID, Value Objects + erreurs exhaustives</div>
-          <div class="phase-subtitle">Spring Security + typage fort Java + 5 principes SOLID dans le vrai code</div>
+          <div class="phase-title">PrimeVue, UI métier du catalogue, LogService + Stylelint</div>
+          <div class="phase-subtitle">Le catalogue prend une vraie forme produit, sans Tailwind et sans nouveau flux métier</div>
           <div class="tags phase-tags">
             <span class="tag tag--cat-typing"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Typage fort</span></span>
             <span class="tag tag--cat-patterns"><span class="tag__dot" aria-hidden="true"></span><span class="tag__label">Design patterns</span></span>
@@ -220,29 +220,29 @@
       </div>
       <div class="phase-body">
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">🛡️</span><span class="concept-title">Spring Security + JWT</span><span class="concept-analogy">≈ axios interceptor</span></div>
-          <p>Spring intercepte chaque requête avant ton code. Token invalide → 401 automatique. TDD : tu écris d'abord le test "accès refusé sans token" avant d'implémenter le filtre.</p>
+          <div class="concept-header"><span class="concept-icon">🧩</span><span class="concept-title">PrimeVue en styled mode</span><span class="concept-analogy">≈ composants prêts à l'emploi sans Tailwind</span></div>
+          <p>PrimeVue fournit des composants Vue déjà prêts et déjà propres. Tu gardes le contrôle via CSS natif ou SCSS, sans imposer Tailwind au projet.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">🏷️</span><span class="concept-title">Value Objects Java — miroir des branded types</span><span class="concept-analogy">≈ branded types TS</span></div>
-          <p>record UserId(UUID value). Le compilateur Java refuse KataId là où UserId est attendu. Même garantie que les branded types TS.</p>
+          <div class="concept-header"><span class="concept-icon">🧱</span><span class="concept-title">Composants métier du catalogue</span><span class="concept-analogy">≈ wrappers et vues propres</span></div>
+          <p>`KataCard` et `KataListState` rendent enfin le catalogue lisible. Les états de chargement, vide et erreur deviennent visibles et cohérents.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">🧱</span><span class="concept-title">SOLID dans KataSensei — pas dans un livre</span><span class="concept-analogy">≈ principes appliqués au vrai code</span></div>
-          <p>Chaque principe illustré par mauvaise version → version corrigée dans le code de KataSensei. Le diff est la leçon.</p>
+          <div class="concept-header"><span class="concept-icon">🪵</span><span class="concept-title">LogService comme port sortant front</span><span class="concept-analogy">≈ journalisation centralisée</span></div>
+          <p>Les logs front ne dépendent plus directement de `console`. Le catalogue adopte une vraie stratégie de logs, plus propre et plus durable.</p>
         </div>
         <div class="concept">
-          <div class="concept-header"><span class="concept-icon">🚨</span><span class="concept-title">AppError union front + hiérarchie back</span><span class="concept-analogy">≈ discriminated union d'erreurs exhaustive</span></div>
-          <p>Front : le compilateur force le traitement de chaque cas (network, validation, not-found, unauthorized). Back : hiérarchie d'exceptions métier exhaustive et cohérente.</p>
+          <div class="concept-header"><span class="concept-icon">🎨</span><span class="concept-title">Stylelint robuste pour les SFC Vue</span><span class="concept-analogy">≈ garde-fou CSS durable</span></div>
+          <p>Le CSS du projet est enfin contrôlé par une configuration stable, compatible avec les fichiers `.vue` et pensée pour durer.</p>
         </div>
         <hr>
         <div class="callout callout-status">
           <div class="callout-title">KATASENSEI À CETTE ÉTAPE</div>
-          <p>Auth JWT end-to-end. Un utilisateur s'inscrit, se connecte, voit ses katas. Les Value Objects Java mirroient les branded types TS. Gestion d'erreurs exhaustive des deux côtés.</p>
+          <p>Le catalogue garde le même flux métier, mais il devient beaucoup plus propre côté interface. Les composants Vue sont mieux découpés, les états d'écran sont lisibles, les logs sont centralisés et le CSS est enfin cadré.</p>
         </div>
         <div class="callout callout-livrable">
           <div class="callout-title">LIVRABLE TECHNIQUE</div>
-          <p>Auth complète en TDD. Tests JWT sur accès refusé, expiration et endpoints d'auth. AppError union. Refactoring back phase 1 sécurisé par les tests. ADR 005 écrit.</p>
+          <p>PrimeVue configuré en styled mode. Composants métier du catalogue. LogService front. Stylelint. Validation locale complète puis redéploiement de l'UI améliorée.</p>
         </div>
       </div>
     </div>

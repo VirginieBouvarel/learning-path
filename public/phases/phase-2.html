@@ -128,7 +128,7 @@
       </ul>
 
       <h2>Valeur livrée à l'utilisateur</h2>
-      <p>Le catalogue continue à fonctionner, mais il repose désormais sur une base front beaucoup plus fiable, ce qui réduit le risque de régression et prépare la phase 3, centrée sur les composants UI métier avec `shadcn-vue`.</p>
+      <p>Le catalogue continue à fonctionner, mais il repose désormais sur une base front beaucoup plus fiable, ce qui réduit le risque de régression et prépare la phase 3, centrée sur les composants UI métier avec `PrimeVue`.</p>
 
       <h2>Prérequis</h2>
       <ul>
@@ -163,7 +163,7 @@
     </div>
 
     <div class="callout--info">
-      <strong>Info parcours</strong><br>On ne construit pas encore les composants UI métier avec `shadcn-vue`. Ici, on stabilise d'abord le flux de données et la structure front. `shadcn-vue`, `Stylelint` et `LogService` arriveront dans la phase suivante.
+      <strong>Info parcours</strong><br>On ne construit pas encore les composants UI métier avec `PrimeVue`. Ici, on stabilise d'abord le flux de données et la structure front. `PrimeVue`, `Stylelint` et `LogService` arriveront dans la phase suivante.
     </div>
 
     <section class="guide-step" id="etape-1">
@@ -1276,7 +1276,7 @@ describe('useKataList', () => {
       <details><summary>Réponse attendue</summary><p>Assembler l'UI, choisir quoi afficher selon l'état et déléguer la logique métier et technique aux couches déjà prévues pour cela.</p></details>
       <p>2. Pourquoi un composable UI peut-il dépendre du store alors qu'un use case ne le doit pas ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'un composable UI vit au niveau de l'interface et orchestre une fonctionnalité visible. Le use case, lui, doit rester exécutable sans Vue.</p></details>
-      <p>3. Pourquoi faut-il garder cette phase sans composants métier `shadcn-vue` ?</p>
+      <p>3. Pourquoi faut-il garder cette phase sans composants métier `PrimeVue` ?</p>
       <details><summary>Réponse attendue</summary><p>Parce que le but ici est de sécuriser le flux de données et l'architecture front. Les composants UI métier auront plus de valeur une fois ce socle stabilisé.</p></details>
 
       <h3>Definition of Done de l'étape</h3>
@@ -1368,8 +1368,8 @@ find tests -maxdepth 3 -type f | sort</code></pre>
       <details><summary>Réponse attendue</summary><p>Parce qu'un refactoring sert le produit. Si la fonctionnalité n'est plus observable ou n'est plus fiable, la dette technique n'a pas vraiment diminué.</p></details>
       <p>2. Pourquoi vérifier aussi l'arborescence et pas seulement les tests ?</p>
       <details><summary>Réponse attendue</summary><p>Parce qu'une architecture est aussi un moyen de rendre les responsabilités visibles. Les tests valident le comportement, l'arborescence aide à garder la lisibilité du système.</p></details>
-      <p>3. Pourquoi la phase 3 peut-elle maintenant se concentrer sur `shadcn-vue` ?</p>
-      <details><summary>Réponse attendue</summary><p>Parce que le flux de données et les points d'extension du front sont désormais plus stables. Les composants UI métier viendront s'appuyer sur une base moins fragile.</p></details>
+      <p>3. Pourquoi la phase 3 peut-elle maintenant se concentrer sur `PrimeVue` ?</p>
+      <details><summary>Réponse attendue</summary><p>Parce que le flux de données et les points d'extension du front sont désormais plus stables. Les composants UI métier basés sur `PrimeVue` viendront s'appuyer sur une base moins fragile.</p></details>
 
       <h3>Definition of Done de l'étape</h3>
       <ul>
@@ -1463,7 +1463,7 @@ fly deploy</code></pre>
         <li>Utiliser Pinia comme source de vérité UI au lieu d'y faire du réseau.</li>
         <li>Structurer les tests frontend en miroir du code refactorisé.</li>
       </ul>
-      <div class="callout--tip">À retenir : la phase 2 ne cherche pas à fabriquer encore toute l'interface finale. Elle prépare un terrain stable pour que la phase 3 puisse construire de vrais composants métier avec `shadcn-vue` sans empiler la dette technique.</div>
+      <div class="callout--tip">À retenir : la phase 2 ne cherche pas à fabriquer encore toute l'interface finale. Elle prépare un terrain stable pour que la phase 3 puisse construire de vrais composants métier avec `PrimeVue` sans empiler la dette technique.</div>
     </section>
 
     <p class="footer">KataSensei Learning Path · Phase 2</p>
