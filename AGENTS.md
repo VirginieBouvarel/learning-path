@@ -24,9 +24,9 @@ KataSensei = plateforme d'entraînement aux katas de code. Éditeur Monaco, supe
 ## Structure du site
 
 ```
-site/
+public/
 ├── index.html            ← page d'accueil / vue d'ensemble du parcours
-├── ressources.html       ← base documentaire filtrable par phase, catégorie, type
+├── ressources-externes.html ← base documentaire filtrable par phase, catégorie, type
 ├── phases/               ← guides détaillés phases 0-3 + overview phases 4-7
 ├── guides/               ← conventions, ADR, aides transverses
 └── assets/               ← CSS partagé, JS de navigation et filtres, images
@@ -91,7 +91,7 @@ Cette règle est prioritaire sur toute envie d'ajuster rapidement l'existant.
 Interdictions explicites :
 
 - ne pas commencer par proposer un "lot de changements"
-- ne pas commencer par proposer des ajustements partiels de `site/phases/phase-X.html`
+- ne pas commencer par proposer des ajustements partiels de `public/phases/phase-X.html`
 - ne pas sauter la création ou la mise à jour de `docs/audits/PHASE_X_AUDIT.md`
 - ne pas éditer la phase tant que l'audit n'a pas été validé
 

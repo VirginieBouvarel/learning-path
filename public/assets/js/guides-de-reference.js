@@ -19,14 +19,14 @@ function updateQueryString(id) {
   const params = new URLSearchParams(window.location.search);
   params.set("page", id);
   const query = params.toString();
-  window.history.replaceState({}, "", `guides-internes.html?${query}`);
+  window.history.replaceState({}, "", `guides-de-reference.html?${query}`);
 }
 
 function rewriteReferenceUrl(url) {
   if (!url || url.startsWith("http") || url.startsWith("mailto:") || url.startsWith("#")) return url;
   if (url.startsWith("../guides/")) {
     const page = url.split("/").pop().replace(".html", "");
-    return `guides-internes.html?page=${page}`;
+    return `guides-de-reference.html?page=${page}`;
   }
   if (url.startsWith("../assets/")) return url.slice(3);
   if (url.startsWith("../phases/")) return url.slice(3);
@@ -38,7 +38,7 @@ function buildSidebar(selectedId) {
   const nav = document.getElementById("guides-nav");
   if (!nav) return;
   nav.innerHTML = INTERNAL_GUIDES.map(guide => `
-    <a href="guides-internes.html?page=${guide.id}" class="guides-nav__link${guide.id === selectedId ? " guides-nav__link--active" : ""}" data-guide-id="${guide.id}">
+    <a href="guides-de-reference.html?page=${guide.id}" class="guides-nav__link${guide.id === selectedId ? " guides-nav__link--active" : ""}" data-guide-id="${guide.id}">
       ${guide.menuTitle || guide.title}
     </a>
   `).join("");

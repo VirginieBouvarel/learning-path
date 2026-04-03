@@ -8,7 +8,7 @@
 
 /**
  * Retourne le préfixe racine selon la profondeur de la page courante.
- * - pages à la racine (index.html, parcours.html, ressources.html) → ""
+ * - pages à la racine (index.html, parcours.html, ressources-externes.html, guides-de-reference.html) → ""
  * - pages dans un sous-dossier (phases/, guides/) → "../"
  */
 function getRootPrefix() {
@@ -44,8 +44,8 @@ function buildNavHTML(r) {
         <li><a href="${r}phases/phase-7.html">Phase 7 — CI/CD + Prod</a></li>
       </ul>
     </li>
-    <li><a href="${r}guides-internes.html" class="site-nav__link" data-page="guides-internes">Guides internes</a></li>
-    <li><a href="${r}ressources.html" class="site-nav__link" data-page="ressources">Ressources</a></li>
+    <li><a href="${r}guides-de-reference.html" class="site-nav__link" data-page="guides-de-reference">Guides de référence</a></li>
+    <li><a href="${r}ressources-externes.html" class="site-nav__link" data-page="ressources-externes">Ressources externes</a></li>
     <li class="site-nav__item--push"><a href="${r}parcours-v2.html" class="site-nav__link" data-page="parcours-v2">Parcours V2</a></li>
   </ul>
 </nav>
@@ -76,9 +76,9 @@ function highlightActivePage() {
       isActive = true;
     } else if (page === 'phases' && path.includes('/phases/')) {
       isActive = true;
-    } else if (page === 'guides-internes' && (path.endsWith('guides-internes.html') || path.includes('/guides/'))) {
+    } else if (page === 'guides-de-reference' && (path.endsWith('guides-de-reference.html') || path.includes('/guides/'))) {
       isActive = true;
-    } else if (page === 'ressources' && path.includes('ressources.html')) {
+    } else if (page === 'ressources-externes' && path.includes('ressources-externes.html')) {
       isActive = true;
     }
     if (isActive) link.classList.add('site-nav__link--active');

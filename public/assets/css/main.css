@@ -833,7 +833,7 @@ hr { border: none; border-top: 1px solid var(--color-border); margin: 20px 0; }
   flex-shrink: 0;
   opacity: .8;
 }
-.subpage[href*="ressources.html"]::before {
+.subpage[href*="ressources-externes.html"]::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23666662' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2.75h6l2 2V13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1.25Z'/%3E%3Cpath d='M10 2.75V5h2'/%3E%3Cpath d='M5.25 7.25h5.5M5.25 9.25h5.5M5.25 11.25h3.5'/%3E%3C/svg%3E");
 }
 .subpage[href*="guides/"]::before {

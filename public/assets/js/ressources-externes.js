@@ -249,14 +249,14 @@ function matchesFilter(card, filter) {
 }
 
 function labelFromParams(params) {
-  if (params.get("phase")) return { kind: "phase", value: params.get("phase"), label: `Ressources — ${params.get("phase")}` };
+  if (params.get("phase")) return { kind: "phase", value: params.get("phase"), label: `Ressources externes — ${params.get("phase")}` };
   if (params.get("category")) {
     const raw = params.get("category");
-    return { kind: "category", value: raw, label: `Ressources — ${raw === "Securite" ? "Sécurité" : raw}` };
+    return { kind: "category", value: raw, label: `Ressources externes — ${raw === "Securite" ? "Sécurité" : raw}` };
   }
   if (params.get("type")) {
     const raw = params.get("type");
-    return { kind: "type", value: raw, label: raw === "Guide KS" ? "Ressources — Guides internes" : `Ressources — ${raw}` };
+    return { kind: "type", value: raw, label: raw === "Guide KS" ? "Ressources externes — Guides de référence" : `Ressources externes — ${raw}` };
   }
   return { kind: "all", value: "all", label: "Toutes les ressources" };
 }
