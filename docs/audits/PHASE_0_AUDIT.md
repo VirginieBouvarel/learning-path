@@ -55,7 +55,7 @@ En l'état, ce n'est pas une base à "améliorer". Il faut repartir de zéro sur
 
 ## Structure cible proposée
 
-Je propose une phase 0 reconstruite autour d'un objectif unique : partir d'un poste Windows 11 + WSL2 Ubuntu sans repo projet prêt, et finir avec un monorepo initial où :
+Je propose une phase 0 reconstruite autour d'un objectif unique : partir d'un poste Windows 11 (WSL2 non installé, aucun outil de développement présent), et finir avec un monorepo initial où :
 
 - le front minimal s'affiche en local
 - le back minimal répond
@@ -80,7 +80,7 @@ Je propose une phase 0 reconstruite autour d'un objectif unique : partir d'un po
 
 ### Clarifier le point de départ et préparer l'espace de travail
 
-Situation réelle : Windows 11, WSL2 Ubuntu prêt, aucun repo KataSensei encore créé.
+Situation réelle : Windows 11, WSL2 non installé, aucun outil de développement présent, aucun repo KataSensei encore créé.
 
 Objectif : vérifier les outils minimums réellement nécessaires pour démarrer.
 
@@ -169,3 +169,39 @@ Chaque étape sera reconstruite avec ce squelette strict :
 - Definition of Done
 - checklist manuelle
 - suggestion de commit si pertinente
+
+---
+
+## Mise à jour — Corrections appliquées (2026-04-03)
+
+La page `public/phases/phase-0.html` existante a été évaluée comme structurellement conforme à la spec (7 étapes, trame complète, exercices, questions, DoD, checklist, déploiement, ressources). Une réécriture complète n'était pas nécessaire. Les corrections chirurgicales suivantes ont été appliquées.
+
+### Corrections appliquées
+
+**1. Sidebar — contenu interne supprimé**
+Les mentions "Database Notion à créer après stabilisation des guides" et "Database Notion à créer pour compétences, phases et validations" ont été remplacées par des descriptions neutres et publiques.
+
+**2. `.gitignore` enrichi**
+Le snippet de l'étape 3 couvrait seulement `.DS_Store`, `node_modules`, `dist`, `.idea`, `.vscode`, `target` et `*.log`. Il a été enrichi avec `.env`, `*.class` et `*.jar` pour éviter que des fichiers sensibles ou compilés soient commités accidentellement.
+
+**3. Section déploiement réécrite**
+La section déploiement supposait `flyctl` installé et utilisateur connecté, sans documenter ces prérequis. Elle a été réécrite pour couvrir dans l'ordre :
+- installation de `flyctl` dans WSL et configuration du PATH
+- connexion au compte Fly.io
+- création du `Dockerfile` backend (jar Java 21)
+- compilation du jar avec `./mvnw package -DskipTests`
+- `fly launch` et `fly deploy` côté backend
+- création du `nginx.conf` pour servir les fichiers statiques Vite
+- création du `Dockerfile` frontend (build multi-étapes Node + nginx)
+- remplacement de l'URL codée en dur dans `App.vue` par `import.meta.env.VITE_API_URL`
+- création de `.env` local (ignoré) et `.env.example` (committé)
+- `fly launch`, `fly secrets set` et `fly deploy` côté frontend
+- vérifications après déploiement
+
+**4. Scripts Prism complétés**
+Les composants `prism-docker.min.js` et `prism-nginx.min.js` ont été ajoutés pour la coloration des snippets Dockerfile et nginx ajoutés par la correction 3.
+
+### Bugs restants non traités
+
+- La section déploiement ne couvre pas la configuration CORS du backend pour l'URL publique Fly.io du frontend (le `@CrossOrigin` actuel est limité à `localhost:5173`). Ce point mérite une note ou une micro-étape à intégrer avant la prochaine révision de la phase.
+- Les sous-pages `phase-0-wsl2.html`, `phase-0-ide.html` et `phase-0-structure.html` n'ont pas été auditées dans cette session.
