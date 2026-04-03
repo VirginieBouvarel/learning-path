@@ -28,11 +28,11 @@
       <div class="home-side-list">
         <div class="home-side-item">
           <div class="home-side-item__title">Backlog KataSensei</div>
-          <div class="home-side-item__desc">Database Notion à créer après stabilisation des guides.</div>
+          <div class="home-side-item__desc">Suivi des tâches dans Notion.</div>
         </div>
         <div class="home-side-item">
           <div class="home-side-item__title">Suivi de progression</div>
-          <div class="home-side-item__desc">Database Notion à créer pour compétences, phases et validations.</div>
+          <div class="home-side-item__desc">Suivi des compétences et validations dans Notion.</div>
         </div>
       </div>
     </div>
@@ -166,6 +166,45 @@
       <strong>Info parcours</strong><br>On ne construit pas encore les composants UI métier avec `PrimeVue`. Ici, on stabilise d'abord le flux de données et la structure front. `PrimeVue`, `Stylelint` et `LogService` arriveront dans la phase suivante.
     </div>
 
+    <div class="callout--warning">
+      <strong>Prérequis technique — à faire avant de commencer</strong>
+      <p>Si Pinia n'a pas été installé lors de la création du projet Vue en phase 0, installe-le maintenant.</p>
+      <p>Ouvre un terminal Ubuntu dans WSL, place-toi dans le dossier frontend, puis lance :</p>
+      <pre><code class="language-bash">cd ~/workspace/katasensei/katasensei-front
+npm install pinia</code></pre>
+      <p>Ouvre ensuite <code>src/main.ts</code> et vérifie qu'il contient bien ces deux lignes. Si elles sont absentes, ajoute-les :</p>
+      <pre><code class="language-typescript">import { createPinia } from 'pinia'
+// ...
+app.use(createPinia())</code></pre>
+      <p>Résultat attendu : <code>npm run dev</code> démarre sans erreur liée à Pinia.</p>
+      <hr>
+      <p><strong>Alias <code>@/</code> — configuration obligatoire</strong></p>
+      <p>Tous les imports de cette phase utilisent l'alias <code>@/</code> pour pointer vers <code>src/</code>. Il doit être configuré dans deux fichiers avant de créer les premiers fichiers métier.</p>
+      <p>Ouvre <code>vite.config.ts</code> et ajoute la section <code>resolve.alias</code> :</p>
+      <pre><code class="language-typescript">import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  }
+})</code></pre>
+      <p>Ouvre ensuite <code>tsconfig.app.json</code> (ou <code>tsconfig.json</code> si tu n'as qu'un seul fichier tsconfig) et vérifie que <code>compilerOptions</code> contient :</p>
+      <pre><code class="language-json">{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}</code></pre>
+      <p>Résultat attendu : <code>npm run type-check</code> ne signale plus d'erreur de module introuvable sur les imports <code>@/</code>.</p>
+    </div>
+
     <section class="guide-step" id="etape-1">
       <div class="guide-step__heading">
         <div class="guide-step__number" style="background: var(--phase-2);">1</div>
@@ -263,7 +302,7 @@ rg -n "isLoading|loading|error" src</code></pre>
       </ul>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-1</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-1</code>
       </div>
     </section>
 
@@ -367,7 +406,7 @@ ui = orchestration vue et rendu</code></pre>
       <div class="commit-suggestion">Commit recommandé : <code>chore(front): pose structure front et miroir de tests</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-2</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-2</code>
       </div>
     </section>
 
@@ -390,7 +429,7 @@ ui = orchestration vue et rendu</code></pre>
 export interface Kata {
   id: KataId
   titre: string
-  description: string
+  consigne: string
   niveau: NiveauKata
 }</code></pre>
           Si ton éditeur signale que `KataId` est inconnu, c'est normal : tu vas le créer juste après.
@@ -408,7 +447,7 @@ export type NiveauKata = 'debutant' | 'intermediaire' | 'avance'
 export interface Kata {
   id: KataId
   titre: string
-  description: string
+  consigne: string
   niveau: NiveauKata
 }</code></pre>
           Résultat attendu : seul ce fichier contient le `as` nécessaire au branding et `Kata.ts` compile sans import manquant.
@@ -566,7 +605,7 @@ export function toUserMessage(error: AppError): string {
       <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout types metier et erreurs applicatives</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-3</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-3</code>
       </div>
     </section>
 
@@ -588,9 +627,10 @@ export function toUserMessage(error: AppError): string {
           <pre><code class="language-typescript">export interface ApiKataDto {
   id: string
   titre: string
-  description: string
-  niveau: string
+  consigne: string
+  niveau: 'FACILE' | 'MOYEN' | 'DIFFICILE'
 }</code></pre>
+          <div class="callout--info">Le backend (phase 1) envoie le champ <code>consigne</code> et les niveaux en majuscules : <code>FACILE</code>, <code>MOYEN</code>, <code>DIFFICILE</code>. Le DTO doit refléter exactement ce contrat HTTP. La conversion vers les valeurs du domaine front (<code>debutant</code>, <code>intermediaire</code>, <code>avance</code>) se fait dans le mapper.</div>
         </li>
         <li>Crée `src/infrastructure/api/mappers/KataMapper.ts`.
           Ce fichier ne doit pas redéclarer `ApiKataDto`. Colle directement ce fichier complet, imports compris :
@@ -598,22 +638,33 @@ export function toUserMessage(error: AppError): string {
 import { toKataId } from '@/domain/types/branded'
 import type { ApiKataDto } from '@/infrastructure/api/dto/ApiKataDto'
 
+const niveauMap: Record&lt;ApiKataDto['niveau'], NiveauKata&gt; = {
+  FACILE: 'debutant',
+  MOYEN: 'intermediaire',
+  DIFFICILE: 'avance'
+}
+
 export const KataMapper = {
   toDomain(dto: ApiKataDto): Kata {
     return {
       id: toKataId(dto.id),
       titre: dto.titre,
-      description: dto.description,
-      niveau: dto.niveau as NiveauKata
+      consigne: dto.consigne,
+      niveau: niveauMap[dto.niveau]
     }
   },
 
   toDto(kata: Kata): ApiKataDto {
+    const niveauBackMap: Record&lt;NiveauKata, ApiKataDto['niveau']&gt; = {
+      debutant: 'FACILE',
+      intermediaire: 'MOYEN',
+      avance: 'DIFFICILE'
+    }
     return {
       id: kata.id,
       titre: kata.titre,
-      description: kata.description,
-      niveau: kata.niveau
+      consigne: kata.consigne,
+      niveau: niveauBackMap[kata.niveau]
     }
   }
 }</code></pre>
@@ -630,14 +681,15 @@ describe('KataMapper', () => {
     const dto: ApiKataDto = {
       id: 'kata-1',
       titre: 'FizzBuzz',
-      description: 'Ecris FizzBuzz',
-      niveau: 'debutant'
+      consigne: 'Ecris FizzBuzz',
+      niveau: 'FACILE'
     }
 
     const kata = KataMapper.toDomain(dto)
 
     expect(kata.id).toBe('kata-1')
     expect(kata.titre).toBe('FizzBuzz')
+    expect(kata.consigne).toBe('Ecris FizzBuzz')
     expect(kata.niveau).toBe('debutant')
   })
 })</code></pre>
@@ -689,7 +741,7 @@ describe('KataMapper', () => {
       <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout dto api et mapper kata</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-4</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-4</code>
       </div>
     </section>
 
@@ -877,7 +929,7 @@ describe('ApiKataRepository', () => {
       <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout port katarepository et adapter http</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-5</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-5</code>
       </div>
     </section>
 
@@ -938,7 +990,7 @@ describe('GetKatasUseCase', () => {
     const kata: Kata = {
       id: 'kata-1' as KataId,
       titre: 'FizzBuzz',
-      description: 'Ecris FizzBuzz',
+      consigne: 'Ecris FizzBuzz',
       niveau: 'debutant'
     }
 
@@ -1025,7 +1077,7 @@ describe('useKataStore', () => {
       findAll: vi.fn().mockResolvedValue({
         ok: true,
         value: [
-          { id: 'kata-1', titre: 'FizzBuzz', description: 'Ecris FizzBuzz', niveau: 'debutant' }
+          { id: 'kata-1', titre: 'FizzBuzz', consigne: 'Ecris FizzBuzz', niveau: 'debutant' }
         ]
       }),
       findById: vi.fn()
@@ -1117,7 +1169,7 @@ describe('useKataStore', () => {
       <div class="commit-suggestion">Commit recommandé : <code>feat(front): ajout use case getkatas et refactorisation du store</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-6</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-6</code>
       </div>
     </section>
 
@@ -1229,7 +1281,7 @@ describe('useKataList', () => {
         {
           id: 'kata-1' as KataId,
           titre: 'FizzBuzz',
-          description: 'Ecris FizzBuzz',
+          consigne: 'Ecris FizzBuzz',
           niveau: 'debutant'
         }
       ]
@@ -1296,7 +1348,7 @@ describe('useKataList', () => {
       <div class="commit-suggestion">Commit recommandé : <code>refactor(front): reecriture de la vue liste sur store et composable ui</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-7</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-7</code>
       </div>
     </section>
 
@@ -1392,7 +1444,7 @@ find tests -maxdepth 3 -type f | sort</code></pre>
       <div class="commit-suggestion">Commit recommandé : <code>test(front): validation finale de l architecture front typee</code></div>
       <div class="callout--info callout--soluce">
         <strong>Soluce</strong>
-        Voir la branche : <a href="../index.html"><code>KS-soluce-phase-2-etape-8</code></a>
+        Branche de référence : <code>KS-soluce-phase-2-etape-8</code>
       </div>
     </section>
 
