@@ -175,6 +175,7 @@ Chaque phase doit avoir une Definition of Done plus globale avec :
   - quoi vérifier avant déploiement
   - quoi vérifier après déploiement
   - quelle preuve visible confirme que le déploiement est réussi
+- chaque phase qui introduit ou modifie un endpoint backend doit vérifier que la configuration CORS couvre l'URL publique du frontend déployé, et pas seulement `localhost`
 - la stratégie de déploiement de fin de phase doit être proportionnée :
   - phase 0 : premier déploiement minimal du squelette
   - phase 1 : redéploiement du premier flux métier visible
