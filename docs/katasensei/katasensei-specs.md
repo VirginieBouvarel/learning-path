@@ -225,6 +225,9 @@ Permet de retrouver une session via `git log --grep="mot-cle"`.
 
 ### Fichiers modifiés
 - [nom-fichier.md @ hash](lien GitHub vers le fichier au commit exact)
+
+## Prochaine session
+- ...
 ```
 
 Le lien vers un fichier à un instant T :
