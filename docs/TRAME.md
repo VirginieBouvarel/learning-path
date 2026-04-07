@@ -2,27 +2,6 @@
 
 Ce document fixe la trame éditoriale à réutiliser pour toutes les phases détaillées du learning path.
 
-Références :
-
-- la spec de rédaction reste `docs/STEP_BY_STEP_GUIDE_SPEC.md`
-- la référence concrète de rendu est `public/phases/phase-1.html` tant qu'une autre trame n'a pas été explicitement validée
-
-Rappel de frontière :
-
-- `public/` est la version publique lue par l'apprenante
-- la page de phase finale ne doit contenir que le parcours utile pour construire KataSensei
-- elle ne doit contenir aucune trace des arbitrages internes ayant servi à produire cette version
-
-## Pré-travail obligatoire avant toute réécriture
-
-Avant de proposer le moindre changement à une phase :
-
-- produire ou mettre à jour `docs/audits/PHASE_X_AUDIT.md`
-- utiliser `docs/audits/PHASE_0_AUDIT.md` comme référence de niveau d'exigence
-- présenter cet audit à l'utilisateur avant toute proposition d'édition
-- attendre sa validation
-- seulement ensuite réécrire la phase depuis zéro
-
 ## Structure obligatoire d'une page de phase
 
 La page doit contenir au minimum :
@@ -97,9 +76,3 @@ Le bloc `Commit` ne doit pas être regroupé en fin de phase. Il doit être plac
   - des vérifications locales
   - un déploiement adapté au niveau de la phase
   - une preuve post-déploiement observable
-
-## Règle de continuité
-
-- avant de concevoir une nouvelle phase, relire `docs/NEXT_PHASE.md`
-- quand un point reporté doit être réintégré, il doit l'être explicitement dans la nouvelle phase
-- après validation d'une phase, mettre à jour `docs/NEXT_PHASE.md`
